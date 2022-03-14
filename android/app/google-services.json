@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "228130743588",
+    "project_id": "music-pool-app-50127",
+    "storage_bucket": "music-pool-app-50127.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:228130743588:android:19362cb3eb0dd7ef27ffb1",
+        "android_client_info": {
+          "package_name": "com.CrutoiAlexandru.music_pool_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "228130743588-1nk9hk6gv9he31b8ao8l8gs0ct5ndahb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.CrutoiAlexandru.music_pool_app",
+            "certificate_hash": "dd4e9381e75f35059f2a986d9943601fcebdb02e"
+          }
+        },
+        {
+          "client_id": "228130743588-va3fjvmgml44eiq8g6c7fj4l9l53acuh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaGBPT_J2MuhsYM1lVXMhHU1I5DtY11W8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "228130743588-va3fjvmgml44eiq8g6c7fj4l9l53acuh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

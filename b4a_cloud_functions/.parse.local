@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "_default": {
+      "link": "music_pool_app"
+    },
+    "music_pool_app": {
+      "applicationId": "4RKxzJoaviPA9igyvI3MnfOey5RJ8etXSh6GSrj7"
+    }
+  }
+}
