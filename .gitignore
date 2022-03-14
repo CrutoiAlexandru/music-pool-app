@@ -45,4 +45,4 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-.spotify_config.dart
+.config_for_app.dart

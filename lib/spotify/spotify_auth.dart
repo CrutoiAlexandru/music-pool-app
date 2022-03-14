@@ -1,7 +1,7 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter/services.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
-import '.spotify_config.dart';
+import '../.config_for_app.dart';
 
 class SpotifyAuth {
   final endpoint = 'accounts.spotify.com';

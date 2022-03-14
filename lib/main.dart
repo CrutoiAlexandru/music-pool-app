@@ -1,25 +1,26 @@
 // ignore_for_file: deprecated_member_use
+// ignore_for_file: import_of_legacy_library_into_null_safe
 
-import 'package:firebase/firebase.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_web_auth/flutter_web_auth.dart';
-import 'spotify/spotify_auth.dart';
 import 'ui//body/sliver_appbar.dart';
 import 'ui/body/sliver_list.dart';
-import 'ui/config.dart';
 import 'ui/drawer/drawer.dart';
 import 'ui/body/platform_buttons.dart';
-import '../spotify/.spotify_config.dart';
+import '.config_for_app.dart';
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'dart:async';
-import 'dart:io' show HttpServer;
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
-import 'package:flutter_web_auth/flutter_web_auth.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-void main() {
+  const keyApplicationId = B4aConfig.keyApplicationId;
+  const keyClientKey = B4aConfig.keyClientKey;
+
+  const keyParseServerUrl = 'https://parseapi.back4app.com';
+
+  await Parse().initialize(keyApplicationId, keyParseServerUrl,
+      clientKey: keyClientKey, debug: true);
+
   runApp(const MyApp());
 }
 
@@ -67,14 +68,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var spot = SpotifyAuth();
-  String r = '';
+  // var spot = SpotifyAuth();
+  String r = 'super';
 
-  void authenticate() {
-    final result = spot.getToken().toString();
-
-    setState(() => r = result
-        .toString()); //Uri.parse(result.toString()).queryParameters['code'].toString());
+  void doCallCloudCodeHello() async {
+    //Executes a cloud function with no parameters that returns a Map object
+    final ParseCloudFunction function = ParseCloudFunction('hello');
+    final ParseResponse parseResponse = await function.execute();
+    if (parseResponse.success && parseResponse.result != null) {
+      print(parseResponse.result);
+    }
   }
 
   @override
@@ -90,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
           SliverToBoxAdapter(
             child: TextButton(
               onPressed: () {
-                authenticate();
+                doCallCloudCodeHello();
               },
               child: Text(r), //const Icon(Icons.abc_sharp),
             ),
