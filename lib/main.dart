@@ -2,24 +2,22 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
 import 'package:flutter/material.dart';
+import 'package:music_pool_app/spotify/spotify_auth.dart';
 import 'ui//body/sliver_appbar.dart';
 import 'ui/body/sliver_list.dart';
 import 'ui/drawer/drawer.dart';
 import 'ui/body/platform_buttons.dart';
-import '.config_for_app.dart';
-
-import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // WidgetsFlutterBinding.ensureInitialized();
 
-  const keyApplicationId = B4aConfig.keyApplicationId;
-  const keyClientKey = B4aConfig.keyClientKey;
+  // const keyApplicationId = B4aConfig.keyApplicationId;
+  // const keyClientKey = B4aConfig.keyClientKey;
 
-  const keyParseServerUrl = 'https://parseapi.back4app.com';
+  // const keyParseServerUrl = 'https://parseapi.back4app.com';
 
-  await Parse().initialize(keyApplicationId, keyParseServerUrl,
-      clientKey: keyClientKey, debug: true);
+  // await Parse().initialize(keyApplicationId, keyParseServerUrl,
+  //     clientKey: keyClientKey, debug: true);
 
   runApp(const MyApp());
 }
@@ -68,17 +66,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // var spot = SpotifyAuth();
+  var spot = SpotifyAuth();
   String r = 'super';
 
-  void doCallCloudCodeHello() async {
-    //Executes a cloud function with no parameters that returns a Map object
-    final ParseCloudFunction function = ParseCloudFunction('hello');
-    final ParseResponse parseResponse = await function.execute();
-    if (parseResponse.success && parseResponse.result != null) {
-      print(parseResponse.result);
-    }
-  }
+  // void doCallCloudCodeHello() async {
+  //   //Executes a cloud function with no parameters that returns a Map object
+  //   final ParseCloudFunction function = ParseCloudFunction('hello');
+  //   final ParseResponse parseResponse = await function.execute();
+  //   if (parseResponse.success && parseResponse.result != null) {
+  //     print(parseResponse.result);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
           SliverToBoxAdapter(
             child: TextButton(
               onPressed: () {
-                doCallCloudCodeHello();
+                spot.auth();
               },
               child: Text(r), //const Icon(Icons.abc_sharp),
             ),

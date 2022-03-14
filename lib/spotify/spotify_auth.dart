@@ -1,6 +1,5 @@
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter/services.dart';
-import 'package:flutter_web_auth/flutter_web_auth.dart';
 import '../.config_for_app.dart';
 
 class SpotifyAuth {
@@ -9,7 +8,7 @@ class SpotifyAuth {
   // final redirectURI = 'https://music-pool-app-50127.web.app/#/';
   final redirectURI = 'http://localhost:8888/#/';
 
-  Future<void> getToken() async {
+  Future<void> auth() async {
     var r;
     var url = Uri.https(endpoint, '/authorize', {
       'response_type': 'code',
@@ -19,14 +18,5 @@ class SpotifyAuth {
     });
 
     print('#####################AUTH############################');
-
-    try {
-      r = FlutterWebAuth.authenticate(
-          url: url.toString(), callbackUrlScheme: redirectURI);
-    } on PlatformException catch (e) {
-      r = "nope";
-    }
-
-    print(r);
   }
 }
