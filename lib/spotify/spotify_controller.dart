@@ -15,17 +15,15 @@ class SpotifyController extends StatefulWidget {
   const SpotifyController({Key? key}) : super(key: key);
 
   @override
-  _SpotifyController createState() => _SpotifyController();
+  LiveSpotifyController createState() => LiveSpotifyController();
 }
 
-class _SpotifyController extends State<SpotifyController> {
+class LiveSpotifyController extends State<SpotifyController> {
   bool _loading = false;
   bool _connected = false;
   final endpoint = 'accounts.spotify.com';
   final redirectURI = 'https://music-pool-app-50127.web.app/auth.html';
-  String token = '';
-
-  final headers = {};
+  static String token = '';
 
   @override
   Widget build(BuildContext context) {
@@ -53,13 +51,6 @@ class _SpotifyController extends State<SpotifyController> {
               );
             },
           ),
-          TextButton(
-            onPressed: () async {
-              final res = await search('rap god');
-              print(res);
-            },
-            child: const Text('search'),
-          ),
         ],
       ),
     );
@@ -71,9 +62,8 @@ class _SpotifyController extends State<SpotifyController> {
       'type': ['track'],
       'limit': '1',
     });
-    print(token);
-    print('\n' + url.toString());
-    final res = await http.get(url);
+    final res =
+        await http.get(url, headers: {'Authorization': 'Bearer $token'});
     return res.body.toString();
   }
 

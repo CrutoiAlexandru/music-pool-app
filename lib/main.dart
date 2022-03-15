@@ -2,7 +2,7 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
 import 'package:flutter/material.dart';
-import 'package:music_pool_app/spotify/spotify_auth.dart';
+import 'package:music_pool_app/spotify/spotify_controller.dart';
 import 'ui//body/sliver_appbar.dart';
 import 'ui/body/sliver_list.dart';
 import 'ui/drawer/drawer.dart';

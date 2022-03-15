@@ -1,11 +1,14 @@
 // music platform buttons builder methods
 // needs to contain search bar to search songs on each platform
 import 'package:flutter/material.dart';
+import 'package:music_pool_app/spotify/spotify_controller.dart';
 
 import '../config.dart';
 
 // method for spotify button
 TextButton spotifyButton(BuildContext context) {
+  String input = '';
+
   return TextButton(
       style: TextButton.styleFrom(
         primary: Colors.white,
@@ -20,11 +23,14 @@ TextButton spotifyButton(BuildContext context) {
                 ),
                 content: SingleChildScrollView(
                   child: Column(
-                    children: const [
-                      Text('This is where you add songs from Spotify'),
+                    children: [
+                      const Text('This is where you add songs from Spotify'),
                       TextField(
+                        onChanged: (text) {
+                          input = text;
+                        },
                         cursorColor: Config.colorStyle,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: Config.colorStyle)),
                           border: OutlineInputBorder(),
@@ -49,7 +55,11 @@ TextButton spotifyButton(BuildContext context) {
                         primary: Colors.white,
                         elevation: 2,
                         backgroundColor: Config.colorStyle),
-                    onPressed: () => Navigator.pop(context, 'Add song'),
+                    onPressed: () async {
+                      final res = await LiveSpotifyController().search(input);
+                      print(res);
+                      Navigator.pop(context, 'Add song');
+                    },
                     child: const Text('Add song'),
                   ),
                 ],
