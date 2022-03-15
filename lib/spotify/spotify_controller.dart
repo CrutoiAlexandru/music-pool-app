@@ -1,8 +1,6 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 // ignore_for_file: avoid_print
 
-import 'dart:html';
-
 import 'package:firebase/firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,7 +18,7 @@ class SpotifyController extends StatefulWidget {
 
 class LiveSpotifyController extends State<SpotifyController> {
   bool _loading = false;
-  bool _connected = false;
+  static bool connected = false;
   final endpoint = 'accounts.spotify.com';
   final redirectURI = 'https://music-pool-app-50127.web.app/auth.html';
   static String token = '';
@@ -45,7 +43,7 @@ class LiveSpotifyController extends State<SpotifyController> {
             builder: (context, snapshot) {
               return TextButton(
                 onPressed: () {
-                  setStatus('Connection status: $_connected');
+                  setStatus('Connection status: $connected');
                 },
                 child: const Text("Connection status"),
               );
@@ -77,7 +75,7 @@ class LiveSpotifyController extends State<SpotifyController> {
               'playlist-read-private, '
               'playlist-modify-public,user-read-currently-playing');
       setState(() {
-        _connected = true;
+        connected = true;
       });
       setStatus(
           'Got a token: $authenticationToken'); // DONT FORGET TO REMOVE THE TOKEN FROM THE CONSOLE WHEN LAUNCHING
@@ -98,7 +96,7 @@ class LiveSpotifyController extends State<SpotifyController> {
       var result = await SpotifySdk.disconnect();
       setState(() {
         token = '';
-        _connected = false;
+        connected = false;
         _loading = false;
       });
       setStatus(result ? 'disconnect successful' : 'disconnect failed');

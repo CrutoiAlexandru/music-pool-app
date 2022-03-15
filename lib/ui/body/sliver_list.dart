@@ -41,7 +41,7 @@ SliverList sliverList() {
           ),
         );
       },
-      childCount: 20,
+      childCount: 2,
     ),
   );
 }

@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
       drawer: drawerAdder(),
       body: CustomScrollView(
         // body using slivers due to looks and convenience
-        slivers: <Widget>[
+        slivers: [
           // app bar
           // show the image of the current song playing as background(future implementation)
           sliverAppBar(),
