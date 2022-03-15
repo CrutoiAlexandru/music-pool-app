@@ -56,7 +56,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  var spot = SpotifyAuth();
+  // var spot = SpotifyAuth();
 
   @override
   Widget build(BuildContext context) {
@@ -68,12 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // app bar
           // show the image of the current song playing as background(future implementation)
           sliverAppBar(),
-          SliverToBoxAdapter(
-            child: TextButton(
-              onPressed: spot.auth,
-              child: const Text('login'),
-            ),
-          ),
+          const SpotifyController(),
           // 2 buttons designed for Spotify and Soundcloud(future implementation)
           sliverToBoxAdapter(context),
           // list of songs that are in queue
