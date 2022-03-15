@@ -9,16 +9,6 @@ import 'ui/drawer/drawer.dart';
 import 'ui/body/platform_buttons.dart';
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-
-  // const keyApplicationId = B4aConfig.keyApplicationId;
-  // const keyClientKey = B4aConfig.keyClientKey;
-
-  // const keyParseServerUrl = 'https://parseapi.back4app.com';
-
-  // await Parse().initialize(keyApplicationId, keyParseServerUrl,
-  //     clientKey: keyClientKey, debug: true);
-
   runApp(const MyApp());
 }
 
@@ -67,16 +57,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var spot = SpotifyAuth();
-  String r = 'super';
-
-  // void doCallCloudCodeHello() async {
-  //   //Executes a cloud function with no parameters that returns a Map object
-  //   final ParseCloudFunction function = ParseCloudFunction('hello');
-  //   final ParseResponse parseResponse = await function.execute();
-  //   if (parseResponse.success && parseResponse.result != null) {
-  //     print(parseResponse.result);
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -90,10 +70,8 @@ class _MyHomePageState extends State<MyHomePage> {
           sliverAppBar(),
           SliverToBoxAdapter(
             child: TextButton(
-              onPressed: () {
-                spot.auth();
-              },
-              child: Text(r), //const Icon(Icons.abc_sharp),
+              onPressed: spot.auth,
+              child: const Text('login'),
             ),
           ),
           // 2 buttons designed for Spotify and Soundcloud(future implementation)

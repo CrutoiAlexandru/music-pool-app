@@ -40,6 +40,7 @@ dependencies:
   http: ^0.12.2
   url_launcher: ^6.0.5
   parse_server_sdk_flutter: ^2.1.0
+  spotify_sdk: ^1.0.0
   
 dev_dependencies:
   flutter_test:
