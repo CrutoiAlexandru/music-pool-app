@@ -24,33 +24,31 @@ class LiveSpotifyController extends State<SpotifyController> {
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Column(
-        children: [
-          // TextButton(onPressed: checkFire, child: const Text("FIRE")),
-          TextButton(
-            onPressed: () async {
-              token = await auth();
-            },
-            child: const Text('login'),
-          ),
-          TextButton(
-            onPressed: disconnect,
-            child: const Text('logout'),
-          ),
-          StreamBuilder<ConnectionStatus>(
-            stream: SpotifySdk.subscribeConnectionStatus(),
-            builder: (context, snapshot) {
-              return TextButton(
-                onPressed: () {
-                  setStatus('Connection status: $connected');
-                },
-                child: const Text("Connection status"),
-              );
-            },
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        // TextButton(onPressed: checkFire, child: const Text("FIRE")),
+        TextButton(
+          onPressed: () async {
+            token = await auth();
+          },
+          child: const Text('login'),
+        ),
+        TextButton(
+          onPressed: disconnect,
+          child: const Text('logout'),
+        ),
+        StreamBuilder<ConnectionStatus>(
+          stream: SpotifySdk.subscribeConnectionStatus(),
+          builder: (context, snapshot) {
+            return TextButton(
+              onPressed: () {
+                setStatus('Connection status: $connected');
+              },
+              child: const Text("Connection status"),
+            );
+          },
+        ),
+      ],
     );
   }
 

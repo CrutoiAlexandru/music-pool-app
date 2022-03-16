@@ -14,7 +14,8 @@ Widget spotifyButton(BuildContext context) {
   String input = '';
 
   Future<void> addData() async {
-    final songslist = FirebaseFirestore.instance.collection('song_list');
+    final songslist = FirebaseFirestore.instance.collection(
+        'song_list'); // NEEDS THE CODE OF THE SESSION, EACH SESH WILL BE THE DIRECTORY
     // ADD ACTUAL TRACK DATA RECOVERED FROM MUSCI PLATFORM
     return songslist
         .add({
@@ -182,13 +183,11 @@ Widget soundcloudButton(BuildContext context) {
 
 // method for both buttons
 Widget sliverToBoxAdapter(BuildContext context) {
-  return SliverToBoxAdapter(
-    child: SizedBox(
-      height: 50.0,
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-        spotifyButton(context),
-        soundcloudButton(context),
-      ]),
-    ),
+  return SizedBox(
+    height: 50.0,
+    child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+      spotifyButton(context),
+      soundcloudButton(context),
+    ]),
   );
 }

@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../config.dart';
 
-SliverAppBar sliverAppBar() {
-  return const SliverAppBar(
-    floating: true,
-    expandedHeight: 160.0,
-    flexibleSpace: FlexibleSpaceBar(
+AppBar sliverAppBar() {
+  return AppBar(
+    // floating: true,
+    // expandedHeight: 160.0,
+    toolbarHeight: 160,
+    flexibleSpace: const FlexibleSpaceBar(
       title: Text(
         'MusicPool: #SESSION SHARE CODE',
         style: TextStyle(color: Colors.white),
