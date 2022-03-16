@@ -1,4 +1,3 @@
-// ignore_for_file: import_of_legacy_library_into_null_safe
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
@@ -69,12 +68,13 @@ class LiveSpotifyController extends State<SpotifyController> {
   Future<String> auth() async {
     try {
       var authenticationToken = await SpotifySdk.getAuthenticationToken(
-          clientId: SpotifyConfig.clientID,
-          redirectUrl: redirectURI,
-          scope: 'app-remote-control, '
-              'user-modify-playback-state, '
-              'playlist-read-private, '
-              'playlist-modify-public,user-read-currently-playing');
+        clientId: SpotifyConfig.clientID,
+        redirectUrl: redirectURI,
+        scope: 'app-remote-control, '
+            'user-modify-playback-state, '
+            'playlist-read-private, '
+            'playlist-modify-public,user-read-currently-playing',
+      );
       setState(() {
         connected = true;
       });

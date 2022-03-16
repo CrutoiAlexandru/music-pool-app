@@ -101,7 +101,7 @@ Widget spotifyButton(BuildContext context) {
 }
 
 // method for soundcloud button
-TextButton soundcloudButton(BuildContext context) {
+Widget soundcloudButton(BuildContext context) {
   String input = '';
 
   void isEntered() async {
@@ -181,7 +181,7 @@ TextButton soundcloudButton(BuildContext context) {
 }
 
 // method for both buttons
-SliverToBoxAdapter sliverToBoxAdapter(BuildContext context) {
+Widget sliverToBoxAdapter(BuildContext context) {
   return SliverToBoxAdapter(
     child: SizedBox(
       height: 50.0,
