@@ -1,13 +1,13 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 // ignore_for_file: avoid_print
 
-import 'package:firebase/firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:spotify_sdk/models/connection_status.dart';
 import '../.config_for_app.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:http/http.dart' as http;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SpotifyController extends StatefulWidget {
   const SpotifyController({Key? key}) : super(key: key);
@@ -28,6 +28,7 @@ class LiveSpotifyController extends State<SpotifyController> {
     return SliverToBoxAdapter(
       child: Column(
         children: [
+          // TextButton(onPressed: checkFire, child: const Text("FIRE")),
           TextButton(
             onPressed: () async {
               token = await auth();

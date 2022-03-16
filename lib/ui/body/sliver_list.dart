@@ -1,7 +1,15 @@
+// ignore_for_file: import_of_legacy_library_into_null_safe
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../config.dart';
 
 SliverList sliverList() {
+  // void checkFire() {
+  // final Stream<QuerySnapshot> songSnaps =
+  //     FirebaseFirestore.instance.collection('song_list').snapshots();
+  // }
+
   return SliverList(
     delegate: SliverChildBuilderDelegate(
       (BuildContext context, int index) {
@@ -15,6 +23,29 @@ SliverList sliverList() {
                 primary: Colors.white,
                 elevation: 2,
                 backgroundColor: Config.colorStyle),
+            // child: StreamBuilder<QuerySnapshot>(
+            //   stream: songSnaps,
+            //   builder: (BuildContext context,
+            //       AsyncSnapshot<QuerySnapshot> snapshot) {
+            //     print(snapshot);
+            //     if (snapshot.hasError) {
+            //       print(snapshot.error);
+            //       return const Text('error');
+            //     }
+            //     if (snapshot.connectionState == ConnectionState.waiting) {
+            //       return const Text('Loading!');
+            //     }
+
+            //     final data = snapshot.requireData;
+
+            //     return ListView.builder(
+            //       itemCount: data.size,
+            //       itemBuilder: (context, index) {
+            //         return Text('Song ${data.docs[index]['track']}');
+            //       },
+            //     );
+            //   },
+            // ),
             child: Row(
               children: [
                 const Icon(

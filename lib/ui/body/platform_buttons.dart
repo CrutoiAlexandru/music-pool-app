@@ -1,17 +1,34 @@
 // music platform buttons builder methods
 // needs to contain search bar to search songs on each platform
+// ignore_for_file: import_of_legacy_library_into_null_safe
+
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../config.dart';
 
 // method for spotify button
-TextButton spotifyButton(BuildContext context) {
+// TextButton spotifyButton(BuildContext context) {
+Widget spotifyButton(BuildContext context) {
   String input = '';
+
+  Future<void> addData() async {
+    final songslist = FirebaseFirestore.instance.collection('song_list');
+    // ADD ACTUAL TRACK DATA RECOVERED FROM MUSCI PLATFORM
+    return songslist
+        .add({
+          'track': 'rap god',
+          'artist': 'eminem',
+        })
+        .then((value) => print('Added song'))
+        .catchError((error) => print("Failed to add data: $error"));
+  }
 
   void isEntered() async {
     final res = await LiveSpotifyController().search(input);
     print(res);
+    addData();
     Navigator.pop(context, 'Add song');
   }
 
