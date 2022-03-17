@@ -2,6 +2,8 @@
 // needs to contain search bar to search songs on each platform
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,14 +15,17 @@ import '../config.dart';
 Widget spotifyButton(BuildContext context) {
   String input = '';
 
-  Future<void> addData() async {
+  Future<void> addData(
+      String artist, String name, String playbackUri, String icon) async {
     final songslist = FirebaseFirestore.instance.collection(
         'song_list'); // NEEDS THE CODE OF THE SESSION, EACH SESH WILL BE THE DIRECTORY
     // ADD ACTUAL TRACK DATA RECOVERED FROM MUSCI PLATFORM
     return songslist
         .add({
-          'track': 'rap god',
-          'artist': 'eminem',
+          'track': name,
+          'artist': artist,
+          'playback_uri': playbackUri,
+          'icon': icon
         })
         .then((value) => print('Added song'))
         .catchError((error) => print("Failed to add data: $error"));
@@ -28,8 +33,18 @@ Widget spotifyButton(BuildContext context) {
 
   void isEntered() async {
     final res = await LiveSpotifyController().search(input);
-    print(res);
-    addData();
+    if (res.isEmpty) {
+      print('No input');
+      return;
+    }
+    final json = jsonDecode(res);
+    print(json['tracks']['items'][0]['album']['images'][0]['url']);
+    addData(
+        json['tracks']['items'][0]['name'],
+        json['tracks']['items'][0]['artists'][0]['name'],
+        json['tracks']['items'][0]['uri'],
+        json['tracks']['items'][0]['album']['images'][0]['url']);
+
     Navigator.pop(context, 'Add song');
   }
 
@@ -182,12 +197,17 @@ Widget soundcloudButton(BuildContext context) {
 }
 
 // method for both buttons
-Widget sliverToBoxAdapter(BuildContext context) {
-  return SizedBox(
-    height: 50.0,
-    child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-      spotifyButton(context),
-      soundcloudButton(context),
-    ]),
-  );
+class MusicAddButtons extends StatelessWidget {
+  const MusicAddButtons({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50.0,
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        spotifyButton(context),
+        soundcloudButton(context),
+      ]),
+    );
+  }
 }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../config.dart';
-
-AppBar sliverAppBar() {
+AppBar PoolAppBar() {
   return AppBar(
     // floating: true,
     // expandedHeight: 160.0,

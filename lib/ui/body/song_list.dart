@@ -1,0 +1,104 @@
+// ignore_for_file: import_of_legacy_library_into_null_safe, prefer_typing_uninitialized_variables
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+
+import '../config.dart';
+
+class SongList extends StatefulWidget {
+  const SongList({Key? key}) : super(key: key);
+
+  // This widget is the home page of your application. It is stateful, meaning
+  // that it has a State object (defined below) that contains fields that affect
+  // how it looks.
+
+  // This class is the configuration for the state. It holds the values (in this
+  // case the title) provided by the parent (in this case the App widget) and
+  // used by the build method of the State. Fields in a Widget subclass are
+  // always marked "final".
+
+  @override
+  _SongList createState() => _SongList();
+}
+
+class _SongList extends State<SongList> {
+  final database =
+      FirebaseFirestore.instance.collection('song_list').snapshots();
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: database,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasError) {
+          return const Center(child: Text('Something went wrong'));
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return ListView.builder(
+          itemCount: snapshot.requireData.size,
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            return Container(
+              color: Config.colorStyle,
+              height: 100.0,
+              margin: const EdgeInsets.only(top: 10),
+              child: TextButton(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                    primary: Colors.white,
+                    elevation: 2,
+                    backgroundColor: Config.colorStyle),
+                child: Row(
+                  children: [
+                    Image.network(
+                      snapshot.data!.docs.toList()[index].data()['icon'],
+                      height: 75,
+                      loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 10),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          snapshot.data!.docs.toList()[index].data()['track'],
+                          textScaleFactor: 2,
+                          style: const TextStyle(
+                              color: Color.fromARGB(230, 255, 255, 255)),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                            snapshot.data!.docs
+                                .toList()[index]
+                                .data()['artist'],
+                            style: const TextStyle(
+                                color: Color.fromARGB(150, 255, 255, 255))),
+                      ],
+                    ),
+                    // const Spacer(), // SHOW WHICH SONG IS PLAYING
+                    // const SizedBox(child: CircularProgressIndicator()),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}

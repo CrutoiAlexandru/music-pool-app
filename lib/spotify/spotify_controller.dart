@@ -6,7 +6,6 @@ import 'package:spotify_sdk/models/connection_status.dart';
 import '../.config_for_app.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:http/http.dart' as http;
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SpotifyController extends StatefulWidget {
   const SpotifyController({Key? key}) : super(key: key);
