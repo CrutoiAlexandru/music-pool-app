@@ -2,7 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:spotify_sdk/models/connection_status.dart';
+import 'package:spotify_sdk/models/player_context.dart';
+import 'package:spotify_sdk/models/player_state.dart';
+// import 'package:spotify_sdk/spotify_sdk_web.dart';
 import '../.config_for_app.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:http/http.dart' as http;
@@ -18,36 +20,72 @@ class LiveSpotifyController extends State<SpotifyController> {
   bool _loading = false;
   static bool connected = false;
   final endpoint = 'accounts.spotify.com';
-  final redirectURI = 'https://music-pool-app-50127.web.app/auth.html';
+  final redirectUrl = 'https://music-pool-app-50127.web.app/auth.html';
   static String token = '';
+  // var web = Player(PlayerOptions());
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // TextButton(onPressed: checkFire, child: const Text("FIRE")),
+        ListTile(
+          title: connected
+              ? const Text('Log out of Spotify')
+              : const Text('Log in to Spotify'),
+          onTap: connected ? disconnect : () async => token = await auth(),
+        ),
+        TextButton(onPressed: play, child: const Text('PLAY')),
         TextButton(
-          onPressed: () async {
-            token = await auth();
-          },
-          child: const Text('login'),
-        ),
-        TextButton(
-          onPressed: disconnect,
-          child: const Text('logout'),
-        ),
-        StreamBuilder<ConnectionStatus>(
-          stream: SpotifySdk.subscribeConnectionStatus(),
-          builder: (context, snapshot) {
-            return TextButton(
-              onPressed: () {
-                setStatus('Connection status: $connected');
-              },
-              child: const Text("Connection status"),
-            );
-          },
-        ),
+            onPressed: () {
+              SpotifySdk.connectToSpotifyRemote(
+                  clientId: SpotifyConfig.clientID, redirectUrl: redirectUrl);
+            },
+            child: const Text('CONNECT')),
       ],
+    );
+  }
+
+  Widget _buildPlayerStateWidget() {
+    return StreamBuilder<PlayerState>(
+      stream: SpotifySdk.subscribePlayerState(),
+      builder: (BuildContext context, AsyncSnapshot<PlayerState> snapshot) {
+        var track = snapshot.data?.track;
+        var playerState = snapshot.data;
+
+        if (playerState == null || track == null) {
+          return Center(
+            child: Container(),
+          );
+        }
+
+        return const Text("yesman");
+      },
+    );
+  }
+
+  Widget _buildPlayerContextWidget() {
+    return StreamBuilder<PlayerContext>(
+      stream: SpotifySdk.subscribePlayerContext(),
+      initialData: PlayerContext('', '', '', ''),
+      builder: (BuildContext context, AsyncSnapshot<PlayerContext> snapshot) {
+        var playerContext = snapshot.data;
+        if (playerContext == null) {
+          return const Center(
+            child: Text('Not connected'),
+          );
+        }
+
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('Title: ${playerContext.title}'),
+            Text('Subtitle: ${playerContext.subtitle}'),
+            Text('Type: ${playerContext.type}'),
+            Text('Uri: ${playerContext.uri}'),
+          ],
+        );
+      },
     );
   }
 
@@ -64,9 +102,12 @@ class LiveSpotifyController extends State<SpotifyController> {
 
   Future<String> auth() async {
     try {
+      // FOR WEB
+      // GET AUTH TOKEN THROUGH SERVER SIDE REQUEST
+      // NEED TO ALSO RECEIVE REFRESH TOKEN AND EXPIRE TIME, JS?
       var authenticationToken = await SpotifySdk.getAuthenticationToken(
         clientId: SpotifyConfig.clientID,
-        redirectUrl: redirectURI,
+        redirectUrl: redirectUrl,
         scope: 'app-remote-control, '
             'user-modify-playback-state, '
             'playlist-read-private, '
@@ -83,6 +124,33 @@ class LiveSpotifyController extends State<SpotifyController> {
     } on MissingPluginException {
       setStatus('not implemented');
       return Future.error('not implemented');
+    }
+  }
+
+  Future<void> connectToSpotifyRemote() async {
+    try {
+      setState(() {
+        _loading = true;
+      });
+      var result = await SpotifySdk.connectToSpotifyRemote(
+          clientId: SpotifyConfig.clientID, redirectUrl: redirectUrl);
+      print(result);
+      setStatus(result
+          ? 'connect to spotify successful'
+          : 'connect to spotify failed');
+      setState(() {
+        _loading = false;
+      });
+    } on PlatformException catch (e) {
+      setState(() {
+        _loading = false;
+      });
+      setStatus(e.code, message: e.message);
+    } on MissingPluginException {
+      setState(() {
+        _loading = false;
+      });
+      setStatus('not implemented');
     }
   }
 
@@ -107,6 +175,36 @@ class LiveSpotifyController extends State<SpotifyController> {
       setState(() {
         _loading = false;
       });
+      setStatus('not implemented');
+    }
+  }
+
+  Future<void> play() async {
+    try {
+      await SpotifySdk.play(spotifyUri: 'spotify:track:4bdEXTweGw1O4IEMbnn5Tv');
+    } on PlatformException catch (e) {
+      setStatus(e.code, message: e.message);
+    } on MissingPluginException {
+      setStatus('not implemented');
+    }
+  }
+
+  Future<void> stop() async {
+    try {
+      await SpotifySdk.pause();
+    } on PlatformException catch (e) {
+      setStatus(e.code, message: e.message);
+    } on MissingPluginException {
+      setStatus('not implemented');
+    }
+  }
+
+  Future getPlayerState() async {
+    try {
+      return await SpotifySdk.getPlayerState();
+    } on PlatformException catch (e) {
+      setStatus(e.code, message: e.message);
+    } on MissingPluginException {
       setStatus('not implemented');
     }
   }

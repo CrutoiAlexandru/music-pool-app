@@ -2,6 +2,8 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:music_pool_app/session/session.dart';
+import 'package:provider/provider.dart';
 
 import '../config.dart';
 
@@ -18,15 +20,25 @@ class SongList extends StatefulWidget {
   // always marked "final".
 
   @override
-  _SongList createState() => _SongList();
+  LiveSongList createState() => LiveSongList();
 }
 
-class _SongList extends State<SongList> {
-  final database =
-      FirebaseFirestore.instance.collection('song_list').snapshots();
+class LiveSongList extends State<SongList> {
+  static var database;
+
+  @override
+  void initState() {
+    database = FirebaseFirestore.instance.collection('default').snapshots();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (Provider.of<SessionNotifier>(context).session.isNotEmpty) {
+      database = FirebaseFirestore.instance
+          .collection(Provider.of<SessionNotifier>(context).session)
+          .snapshots();
+    }
     return StreamBuilder(
       stream: database,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -37,66 +49,75 @@ class _SongList extends State<SongList> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-        return ListView.builder(
-          itemCount: snapshot.requireData.size,
-          scrollDirection: Axis.vertical,
+        return ListView(
           shrinkWrap: true,
-          itemBuilder: (context, index) {
-            return Container(
-              color: Config.colorStyle,
-              height: 100.0,
-              margin: const EdgeInsets.only(top: 10),
-              child: TextButton(
-                onPressed: () {},
-                style: TextButton.styleFrom(
-                    primary: Colors.white,
-                    elevation: 2,
-                    backgroundColor: Config.colorStyle),
-                child: Row(
-                  children: [
-                    Image.network(
-                      snapshot.data!.docs.toList()[index].data()['icon'],
-                      height: 75,
-                      loadingBuilder: (BuildContext context, Widget child,
-                          ImageChunkEvent? loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Center(
-                          child: CircularProgressIndicator(
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                                : null,
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(width: 10),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ListView.builder(
+              physics: const ClampingScrollPhysics(),
+              itemCount: snapshot.requireData.size,
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return Container(
+                  color: Config.colorStyle,
+                  height: 100.0,
+                  margin: const EdgeInsets.only(top: 10),
+                  child: TextButton(
+                    onPressed: () {},
+                    style: TextButton.styleFrom(
+                        primary: Colors.white,
+                        elevation: 2,
+                        backgroundColor: Config.colorStyle),
+                    child: Row(
                       children: [
-                        Text(
-                          snapshot.data!.docs.toList()[index].data()['track'],
-                          textScaleFactor: 2,
-                          style: const TextStyle(
-                              color: Color.fromARGB(230, 255, 255, 255)),
+                        Image.network(
+                          snapshot.data!.docs.toList()[index].data()['icon'],
+                          height: 75,
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          },
                         ),
-                        const SizedBox(height: 10),
-                        Text(
-                            snapshot.data!.docs
-                                .toList()[index]
-                                .data()['artist'],
-                            style: const TextStyle(
-                                color: Color.fromARGB(150, 255, 255, 255))),
+                        const SizedBox(width: 10),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              snapshot.data!.docs
+                                  .toList()[index]
+                                  .data()['track'],
+                              textScaleFactor: 2,
+                              style: const TextStyle(
+                                  color: Color.fromARGB(230, 255, 255, 255)),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                                snapshot.data!.docs
+                                    .toList()[index]
+                                    .data()['artist'],
+                                style: const TextStyle(
+                                    color: Color.fromARGB(150, 255, 255, 255))),
+                          ],
+                        ),
+                        // const Spacer(), // SHOW WHICH SONG IS PLAYING
+                        // const SizedBox(child: CircularProgressIndicator()),
                       ],
                     ),
-                    // const Spacer(), // SHOW WHICH SONG IS PLAYING
-                    // const SizedBox(child: CircularProgressIndicator()),
-                  ],
-                ),
-              ),
-            );
-          },
+                  ),
+                );
+              },
+            ),
+          ],
         );
       },
     );

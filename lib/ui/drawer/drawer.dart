@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../session/session.dart';
+import '../../spotify/spotify_controller.dart';
 import '../config.dart';
 
-//Drawer drawerAdder() {
 class DrawerAdder extends StatelessWidget {
   const DrawerAdder({Key? key}) : super(key: key);
 
@@ -19,20 +20,8 @@ class DrawerAdder extends StatelessWidget {
             ),
             child: Text('Options'),
           ),
-          ListTile(
-            title: const Text('Create session'),
-            onTap: () {
-              // Update the state of the app.
-              // ...
-            },
-          ),
-          ListTile(
-            title: const Text('ETC'),
-            onTap: () {
-              // Update the state of the app.
-              // ...
-            },
-          ),
+          const SpotifyController(),
+          const Session(),
           ListTile(
             onTap: () => SystemNavigator.pop(),
             title: const Icon(Icons.exit_to_app),
