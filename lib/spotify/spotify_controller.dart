@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:spotify_sdk/models/player_context.dart';
@@ -20,9 +22,8 @@ class LiveSpotifyController extends State<SpotifyController> {
   bool _loading = false;
   static bool connected = false;
   final endpoint = 'accounts.spotify.com';
-  final redirectUrl = 'https://music-pool-app-50127.web.app/auth.html';
+  static const redirectUrl = 'https://music-pool-app-50127.web.app/auth.html';
   static String token = '';
-  // var web = Player(PlayerOptions());
 
   @override
   Widget build(BuildContext context) {
@@ -32,62 +33,72 @@ class LiveSpotifyController extends State<SpotifyController> {
           title: connected
               ? const Text('Log out of Spotify')
               : const Text('Log in to Spotify'),
-          onTap: connected ? disconnect : () async => token = await auth(),
+          onTap: connected
+              ? disconnect
+              : () async {
+                  token = await auth();
+                  setState(() {});
+                },
         ),
         TextButton(onPressed: play, child: const Text('PLAY')),
+        // LOGIN AND CONNECT TO REMOTE WILL BE THE SAME BUTTON
+        // LOGIN NEEDED FOR TOKEN AND DATA REQUESTS
+        // REMOTE FOR PLAYBACK
         TextButton(
-            onPressed: () {
-              SpotifySdk.connectToSpotifyRemote(
-                  clientId: SpotifyConfig.clientID, redirectUrl: redirectUrl);
+            onPressed: () async {
+              token = await auth();
+              if (token.isNotEmpty) {
+                connectToSpotifyRemote();
+              }
             },
             child: const Text('CONNECT')),
       ],
     );
   }
 
-  Widget _buildPlayerStateWidget() {
-    return StreamBuilder<PlayerState>(
-      stream: SpotifySdk.subscribePlayerState(),
-      builder: (BuildContext context, AsyncSnapshot<PlayerState> snapshot) {
-        var track = snapshot.data?.track;
-        var playerState = snapshot.data;
+  // Widget _buildPlayerStateWidget() {
+  //   return StreamBuilder<PlayerState>(
+  //     stream: SpotifySdk.subscribePlayerState(),
+  //     builder: (BuildContext context, AsyncSnapshot<PlayerState> snapshot) {
+  //       var track = snapshot.data?.track;
+  //       var playerState = snapshot.data;
 
-        if (playerState == null || track == null) {
-          return Center(
-            child: Container(),
-          );
-        }
+  //       if (playerState == null || track == null) {
+  //         return Center(
+  //           child: Container(),
+  //         );
+  //       }
 
-        return const Text("yesman");
-      },
-    );
-  }
+  //       return const Text("yesman");
+  //     },
+  //   );
+  // }
 
-  Widget _buildPlayerContextWidget() {
-    return StreamBuilder<PlayerContext>(
-      stream: SpotifySdk.subscribePlayerContext(),
-      initialData: PlayerContext('', '', '', ''),
-      builder: (BuildContext context, AsyncSnapshot<PlayerContext> snapshot) {
-        var playerContext = snapshot.data;
-        if (playerContext == null) {
-          return const Center(
-            child: Text('Not connected'),
-          );
-        }
+  // Widget _buildPlayerContextWidget() {
+  //   return StreamBuilder<PlayerContext>(
+  //     stream: SpotifySdk.subscribePlayerContext(),
+  //     initialData: PlayerContext('', '', '', ''),
+  //     builder: (BuildContext context, AsyncSnapshot<PlayerContext> snapshot) {
+  //       var playerContext = snapshot.data;
+  //       if (playerContext == null) {
+  //         return const Center(
+  //           child: Text('Not connected'),
+  //         );
+  //       }
 
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text('Title: ${playerContext.title}'),
-            Text('Subtitle: ${playerContext.subtitle}'),
-            Text('Type: ${playerContext.type}'),
-            Text('Uri: ${playerContext.uri}'),
-          ],
-        );
-      },
-    );
-  }
+  //       return Column(
+  //         mainAxisAlignment: MainAxisAlignment.start,
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: <Widget>[
+  //           Text('Title: ${playerContext.title}'),
+  //           Text('Subtitle: ${playerContext.subtitle}'),
+  //           Text('Type: ${playerContext.type}'),
+  //           Text('Uri: ${playerContext.uri}'),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   Future<String> search(song) async {
     var url = Uri.https('api.spotify.com', '/v1/search', {
@@ -100,9 +111,8 @@ class LiveSpotifyController extends State<SpotifyController> {
     return res.body.toString();
   }
 
-  Future<String> auth() async {
+  static Future<String> auth() async {
     try {
-      // FOR WEB
       // GET AUTH TOKEN THROUGH SERVER SIDE REQUEST
       // NEED TO ALSO RECEIVE REFRESH TOKEN AND EXPIRE TIME, JS?
       var authenticationToken = await SpotifySdk.getAuthenticationToken(
@@ -113,16 +123,12 @@ class LiveSpotifyController extends State<SpotifyController> {
             'playlist-read-private, '
             'playlist-modify-public,user-read-currently-playing',
       );
-      setState(() {
-        connected = true;
-      });
-      setStatus(
-          'Got a token: $authenticationToken'); // DONT FORGET TO REMOVE THE TOKEN FROM THE CONSOLE WHEN LAUNCHING
+      connected = true;
+      print('Got token: $authenticationToken');
       return authenticationToken;
     } on PlatformException catch (e) {
       return Future.error('$e.code: $e.message');
     } on MissingPluginException {
-      setStatus('not implemented');
       return Future.error('not implemented');
     }
   }

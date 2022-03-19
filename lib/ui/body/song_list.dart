@@ -38,6 +38,8 @@ class LiveSongList extends State<SongList> {
       database = FirebaseFirestore.instance
           .collection(Provider.of<SessionNotifier>(context).session)
           .snapshots();
+    } else {
+      database = FirebaseFirestore.instance.collection('default').snapshots();
     }
     return StreamBuilder(
       stream: database,
@@ -51,6 +53,7 @@ class LiveSongList extends State<SongList> {
         }
         return ListView(
           shrinkWrap: true,
+          physics: const ClampingScrollPhysics(),
           children: [
             ListView.builder(
               physics: const ClampingScrollPhysics(),
@@ -95,18 +98,22 @@ class LiveSongList extends State<SongList> {
                             Text(
                               snapshot.data!.docs
                                   .toList()[index]
-                                  .data()['track'],
+                                  .data()['artist'],
                               textScaleFactor: 2,
                               style: const TextStyle(
-                                  color: Color.fromARGB(230, 255, 255, 255)),
+                                color: Color.fromARGB(230, 255, 255, 255),
+                                overflow: TextOverflow.clip,
+                              ),
                             ),
                             const SizedBox(height: 10),
                             Text(
-                                snapshot.data!.docs
-                                    .toList()[index]
-                                    .data()['artist'],
-                                style: const TextStyle(
-                                    color: Color.fromARGB(150, 255, 255, 255))),
+                              snapshot.data!.docs
+                                  .toList()[index]
+                                  .data()['track'],
+                              style: const TextStyle(
+                                color: Color.fromARGB(150, 255, 255, 255),
+                              ),
+                            ),
                           ],
                         ),
                         // const Spacer(), // SHOW WHICH SONG IS PLAYING

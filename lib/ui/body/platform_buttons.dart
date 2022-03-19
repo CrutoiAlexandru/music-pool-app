@@ -23,13 +23,12 @@ class SpotifyButton extends StatefulWidget {
 // Widget spotifyButton(BuildContext context) {
 class _SpotifyButton extends State<SpotifyButton> {
   String input = '';
-  String defSession = 'default';
   var songslist;
+  String session = 'default';
 
   @override
   void initState() {
-    songslist = FirebaseFirestore.instance.collection(defSession);
-
+    songslist = FirebaseFirestore.instance.collection('default');
     super.initState();
   }
 
@@ -50,6 +49,11 @@ class _SpotifyButton extends State<SpotifyButton> {
     final res = await LiveSpotifyController().search(input);
     if (res.isEmpty) {
       print('No input');
+      // print(songslist.docs());
+      return;
+    }
+    if (session == 'default') {
+      print('no session');
       return;
     }
     final json = jsonDecode(res);
@@ -66,8 +70,12 @@ class _SpotifyButton extends State<SpotifyButton> {
   @override
   Widget build(BuildContext context) {
     if (Provider.of<SessionNotifier>(context).session.isNotEmpty) {
+      session = Provider.of<SessionNotifier>(context).session;
       songslist = FirebaseFirestore.instance
           .collection(Provider.of<SessionNotifier>(context).session);
+    } else {
+      session = 'default';
+      songslist = FirebaseFirestore.instance.collection('default');
     }
     return TextButton(
         style: TextButton.styleFrom(
@@ -131,7 +139,7 @@ class _SpotifyButton extends State<SpotifyButton> {
                       ],
                     )),
         child: const Icon(
-          Icons.ac_unit,
+          Icons.add,
           color: Config.colorStyle,
           size: 40,
         ));

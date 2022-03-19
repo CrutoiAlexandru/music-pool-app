@@ -55,8 +55,7 @@ class _SessionWidget extends State<Session> {
   String input = '';
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
+    return Column(
       children: [
         ListTile(
           title: const Text('Create session'),

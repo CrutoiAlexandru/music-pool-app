@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../session/session.dart';
@@ -10,22 +11,32 @@ class DrawerAdder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
+      child: Column(
         // Important: Remove any padding from the ListView.
-        padding: EdgeInsets.zero,
+        // padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(
-              color: Config.colorStyle,
-            ),
-            child: Text('Options'),
+          ListView(
+            shrinkWrap: true,
+            children: const [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Config.colorStyle,
+                ),
+                child: Text('Options'),
+              ),
+              SpotifyController(),
+            ],
           ),
-          const SpotifyController(),
           const Session(),
-          ListTile(
-            onTap: () => SystemNavigator.pop(),
-            title: const Icon(Icons.exit_to_app),
-          ),
+          const Spacer(),
+          if (!kIsWeb)
+            ListTile(
+              onTap: () => SystemNavigator.pop(),
+              title: const Icon(
+                Icons.exit_to_app,
+                color: Colors.red,
+              ),
+            ),
         ],
       ),
     );
