@@ -2,10 +2,11 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:music_pool_app/session/session.dart';
+import 'package:music_pool_app/global/global.dart';
+import 'package:music_pool_app/global/session/session.dart';
 import 'package:provider/provider.dart';
 
-import '../config.dart';
+import 'package:music_pool_app/ui/config.dart';
 
 class SongList extends StatefulWidget {
   const SongList({Key? key}) : super(key: key);
@@ -25,6 +26,7 @@ class SongList extends StatefulWidget {
 
 class LiveSongList extends State<SongList> {
   static var database;
+  int total = 0;
 
   @override
   void initState() {
@@ -41,6 +43,7 @@ class LiveSongList extends State<SongList> {
     } else {
       database = FirebaseFirestore.instance.collection('default').snapshots();
     }
+
     return StreamBuilder(
       stream: database,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -64,11 +67,11 @@ class LiveSongList extends State<SongList> {
               itemBuilder: (context, index) {
                 return Container(
                   color: Config.colorStyle,
-                  height: 100.0,
+                  height: 75.0,
                   margin: const EdgeInsets.only(top: 10),
                   child: TextButton(
                     onPressed: () {
-                      Provider.of<SessionNotifier>(context, listen: false)
+                      Provider.of<GlobalNotifier>(context, listen: false)
                           .playingNumber(index);
                     },
                     style: TextButton.styleFrom(

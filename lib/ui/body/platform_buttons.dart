@@ -8,9 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-
-import '../../session/session.dart';
-import '../config.dart';
+import 'package:music_pool_app/global/session/session.dart';
+import 'package:music_pool_app/ui/config.dart';
 
 class SpotifyButton extends StatefulWidget {
   const SpotifyButton({Key? key}) : super(key: key);

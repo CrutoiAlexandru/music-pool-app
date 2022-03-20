@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../session/session.dart';
-import '../../spotify/spotify_controller.dart';
-import '../config.dart';
+import 'package:music_pool_app/global/session/session.dart';
+import 'package:music_pool_app/spotify/spotify_controller.dart';
+import 'package:music_pool_app/ui/config.dart';
 
 class DrawerAdder extends StatelessWidget {
   const DrawerAdder({Key? key}) : super(key: key);
