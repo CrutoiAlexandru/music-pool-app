@@ -51,6 +51,7 @@ class LiveSongList extends State<SongList> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
+
         return ListView(
           shrinkWrap: true,
           physics: const ClampingScrollPhysics(),
@@ -67,7 +68,8 @@ class LiveSongList extends State<SongList> {
                   margin: const EdgeInsets.only(top: 10),
                   child: TextButton(
                     onPressed: () {
-                      print(index);
+                      Provider.of<SessionNotifier>(context, listen: false)
+                          .playingNumber(index);
                     },
                     style: TextButton.styleFrom(
                         primary: Colors.white,

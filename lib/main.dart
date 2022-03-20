@@ -3,10 +3,12 @@
 
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/session/session.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
+import 'package:music_pool_app/ui/body/bottom_app_bar.dart';
 import 'package:music_pool_app/ui/body/song_list.dart';
 import 'package:music_pool_app/ui/config.dart';
 import 'ui/drawer/drawer.dart';
@@ -99,9 +101,7 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
             ? const Text('MusicPool')
             : Text('Session: ' + Provider.of<SessionNotifier>(context).session),
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: Config.colorStyle,
-      ),
+      bottomNavigationBar: const SongBottomAppBar(),
       body: ListView(
         children: const [
           MusicAddButtons(),

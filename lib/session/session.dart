@@ -15,8 +15,15 @@ class Session extends StatefulWidget {
 
 class SessionNotifier extends ChangeNotifier {
   String session = '';
+  int playing = 0;
+
+  playingNumber(index) {
+    playing = index;
+    notifyListeners();
+  }
 
   makeSession() {
+    playing = 0;
     const _chars =
         'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
 
@@ -30,6 +37,7 @@ class SessionNotifier extends ChangeNotifier {
   }
 
   setSession(String input) {
+    playing = 0;
     session = input;
     if (session.isNotEmpty) {
       notifyListeners();
@@ -37,6 +45,7 @@ class SessionNotifier extends ChangeNotifier {
   }
 
   emptySession() {
+    playing = 0;
     // ON EXIT DELETE ALL DOCS, SHOULD BE IN EMPTY SESSION
     FirebaseFirestore.instance.collection(session).get().then((snapshot) {
       for (DocumentSnapshot ds in snapshot.docs) {
@@ -46,6 +55,7 @@ class SessionNotifier extends ChangeNotifier {
   }
 
   leaveSession() {
+    playing = 0;
     session = '';
     notifyListeners();
   }
