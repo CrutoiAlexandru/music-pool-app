@@ -15,6 +15,7 @@ import '../config.dart';
 class SpotifyButton extends StatefulWidget {
   const SpotifyButton({Key? key}) : super(key: key);
 
+  @override
   State<SpotifyButton> createState() => _SpotifyButton();
 }
 
@@ -30,41 +31,6 @@ class _SpotifyButton extends State<SpotifyButton> {
   void initState() {
     songslist = FirebaseFirestore.instance.collection('default');
     super.initState();
-  }
-
-  Future<void> addData(
-      String artist, String name, String playbackUri, String icon) async {
-    return songslist
-        .add({
-          'track': name,
-          'artist': artist,
-          'playback_uri': playbackUri,
-          'icon': icon
-        })
-        .then((value) => print('Added song'))
-        .catchError((error) => print("Failed to add data: $error"));
-  }
-
-  void isEntered() async {
-    final res = await LiveSpotifyController().search(input);
-    if (res.isEmpty) {
-      print('No input');
-      // print(songslist.docs());
-      return;
-    }
-    if (session == 'default') {
-      print('no session');
-      return;
-    }
-    final json = jsonDecode(res);
-    print(res);
-    addData(
-        json['tracks']['items'][0]['name'],
-        json['tracks']['items'][0]['artists'][0]['name'],
-        json['tracks']['items'][0]['uri'],
-        json['tracks']['items'][0]['album']['images'][0]['url']);
-
-    Navigator.pop(context, 'Add song');
   }
 
   @override
@@ -101,7 +67,7 @@ class _SpotifyButton extends State<SpotifyButton> {
                                 'This is where you add songs from Spotify'),
                             TextField(
                               autofocus: true,
-                              maxLength: 20,
+                              maxLength: 50,
                               onChanged: (text) {
                                 input = text;
                               },
@@ -143,6 +109,41 @@ class _SpotifyButton extends State<SpotifyButton> {
           color: Config.colorStyle,
           size: 40,
         ));
+  }
+
+  Future<void> addData(
+      String artist, String name, String playbackUri, String icon) async {
+    return songslist
+        .add({
+          'track': name,
+          'artist': artist,
+          'playback_uri': playbackUri,
+          'icon': icon
+        })
+        .then((value) => print('Added song'))
+        .catchError((error) => print("Failed to add data: $error"));
+  }
+
+  void isEntered() async {
+    final res = await LiveSpotifyController().search(input);
+    if (res.isEmpty) {
+      print('No input');
+      // print(songslist.docs());
+      return;
+    }
+    if (session == 'default') {
+      print('no session');
+      return;
+    }
+    final json = jsonDecode(res);
+    print(res);
+    addData(
+        json['tracks']['items'][0]['name'],
+        json['tracks']['items'][0]['artists'][0]['name'],
+        json['tracks']['items'][0]['uri'],
+        json['tracks']['items'][0]['album']['images'][0]['url']);
+
+    Navigator.pop(context, 'Add song');
   }
 }
 

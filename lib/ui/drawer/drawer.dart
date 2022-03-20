@@ -24,11 +24,11 @@ class DrawerAdder extends StatelessWidget {
                 ),
                 child: Text('Options'),
               ),
-              SpotifyController(),
             ],
           ),
           const Session(),
           const Spacer(),
+          const SpotifyController(),
           if (!kIsWeb)
             ListTile(
               onTap: () => SystemNavigator.pop(),

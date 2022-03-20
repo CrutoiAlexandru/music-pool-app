@@ -1,8 +1,8 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, avoid_web_libraries_in_flutter
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:music_pool_app/ui/config.dart';
 import '../.config_for_app.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:http/http.dart' as http;
@@ -18,11 +18,13 @@ class SpotifyController extends StatefulWidget {
 }
 
 class LiveSpotifyController extends State<SpotifyController> {
+  // remove _loading if not usefull for future
   bool _loading = false;
   static bool connected = false;
   final endpoint = 'accounts.spotify.com';
   static const redirectUrl = 'https://music-pool-app-50127.web.app/auth.html';
   static String token = '';
+  var player;
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +32,14 @@ class LiveSpotifyController extends State<SpotifyController> {
       children: [
         ListTile(
           title: connected
-              ? const Text('Log out of Spotify')
-              : const Text('Log in to Spotify'),
+              ? const Text(
+                  'Log out of Spotify',
+                  style: TextStyle(color: Colors.red),
+                )
+              : const Text(
+                  'Log in to Spotify',
+                  style: TextStyle(color: Config.colorStyle),
+                ),
           onTap: connected
               ? disconnect
               : () async {
@@ -39,22 +47,24 @@ class LiveSpotifyController extends State<SpotifyController> {
                   setState(() {});
                 },
         ),
-        TextButton(onPressed: play, child: const Text('PLAY')),
+        // TextButton(onPressed: play, child: const Text('PLAY')),
         // LOGIN AND CONNECT TO REMOTE WILL BE THE SAME BUTTON
         // LOGIN NEEDED FOR TOKEN AND DATA REQUESTS
         // REMOTE FOR PLAYBACK
-        TextButton(
-            onPressed: () async {
-              token = await auth();
-              if (token.isNotEmpty) {
-                if (kIsWeb) {
-                  // js.context.callMethod('logger', [token]);
-                } else {
-                  connectToSpotifyRemote();
-                }
-              }
-            },
-            child: const Text('CONNECT')),
+        // TextButton(
+        //     onPressed: () async {
+        //       token = await auth();
+        //       if (token.isNotEmpty) {
+        //         if (kIsWeb) {
+        //           // js.allowInterop(createWebPlayer); // ???????????????
+        //           // connectToSpotifyRemote();
+        //           js.context.callMethod('logger', [token]); // only premium
+        //         } else {
+        //           connectToSpotifyRemote();
+        //         }
+        //       }
+        //     },
+        //     child: const Text('CONNECT')),
       ],
     );
   }
@@ -128,6 +138,8 @@ class LiveSpotifyController extends State<SpotifyController> {
         scope: 'streaming, '
             'user-read-email, '
             'user-read-private, '
+            'user-read-currently-playing, '
+            'app-remote-control, '
             'user-modify-playback-state',
       );
       connected = true;
@@ -144,12 +156,28 @@ class LiveSpotifyController extends State<SpotifyController> {
   //   player = Player(
   //     PlayerOptions(
   //         name: 'WebPlayer',
-  //         getOAuthToken: () {
-  //           return token;
+  //         getOAuthToken: (cb) {
+  //           cb(token);
   //         },
   //         volume: 100),
   //   );
-  //   // player.addListener(token, () {});
+
+  //   player.addListener("not_ready", (e) {
+  //     print("Device ID has gone offline $e");
+  //   });
+
+  //   player.addListener("initialization_error", (message) {
+  //     print(message);
+  //   });
+
+  //   player.addListener("authentication_error", (message) {
+  //     print(message);
+  //   });
+
+  //   player.addListener("account_error", (message) {
+  //     print(message);
+  //   });
+
   //   player.connect();
   // }
 
@@ -184,28 +212,10 @@ class LiveSpotifyController extends State<SpotifyController> {
   }
 
   Future<void> disconnect() async {
-    try {
-      setState(() {
-        _loading = true;
-      });
-      var result = await SpotifySdk.disconnect();
-      setState(() {
-        token = '';
-        connected = false;
-        _loading = false;
-      });
-      setStatus(result ? 'disconnect successful' : 'disconnect failed');
-    } on PlatformException catch (e) {
-      setState(() {
-        _loading = false;
-      });
-      setStatus(e.code, message: e.message);
-    } on MissingPluginException {
-      setState(() {
-        _loading = false;
-      });
-      setStatus('not implemented');
-    }
+    setState(() {
+      token = '';
+      connected = false;
+    });
   }
 
   Future<void> play() async {

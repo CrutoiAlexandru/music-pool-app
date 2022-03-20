@@ -96,8 +96,9 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
       drawer: const DrawerAdder(),
       appBar: AppBar(
         toolbarHeight: 160,
-        title:
-            Text('Session: ' + Provider.of<SessionNotifier>(context).session),
+        title: Provider.of<SessionNotifier>(context).session.isEmpty
+            ? const Text('MusicPool')
+            : Text('Session: ' + Provider.of<SessionNotifier>(context).session),
       ),
       body: ListView(
         children: const [

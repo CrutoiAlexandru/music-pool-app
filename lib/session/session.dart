@@ -122,13 +122,17 @@ class _SessionWidget extends State<Session> {
         ),
         if (Provider.of<SessionNotifier>(context).session.isNotEmpty)
           ListTile(
-            title: const Text('Empty session'),
+            title: const Text('Empty session',
+                style: TextStyle(color: Color.fromARGB(255, 255, 81, 0))),
             onTap: Provider.of<SessionNotifier>(context, listen: false)
                 .emptySession,
           ),
         if (Provider.of<SessionNotifier>(context).session.isNotEmpty)
           ListTile(
-            title: const Text('Leave session'),
+            title: const Text(
+              'Leave session',
+              style: TextStyle(color: Colors.red),
+            ),
             onTap: Provider.of<SessionNotifier>(context, listen: false)
                 .leaveSession,
           ),
