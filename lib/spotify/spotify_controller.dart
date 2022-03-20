@@ -1,15 +1,14 @@
 // ignore_for_file: avoid_print
-
 import 'dart:async';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:spotify_sdk/models/player_context.dart';
-import 'package:spotify_sdk/models/player_state.dart';
-// import 'package:spotify_sdk/spotify_sdk_web.dart';
 import '../.config_for_app.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:http/http.dart' as http;
+
+// WEB ONLY LIBRARIES MUST BE REMOVED BEFORE ANDROID BUILD
+// import 'dart:js' as js;
 
 class SpotifyController extends StatefulWidget {
   const SpotifyController({Key? key}) : super(key: key);
@@ -48,7 +47,11 @@ class LiveSpotifyController extends State<SpotifyController> {
             onPressed: () async {
               token = await auth();
               if (token.isNotEmpty) {
-                connectToSpotifyRemote();
+                if (kIsWeb) {
+                  // js.context.callMethod('logger', [token]);
+                } else {
+                  connectToSpotifyRemote();
+                }
               }
             },
             child: const Text('CONNECT')),
@@ -118,10 +121,14 @@ class LiveSpotifyController extends State<SpotifyController> {
       var authenticationToken = await SpotifySdk.getAuthenticationToken(
         clientId: SpotifyConfig.clientID,
         redirectUrl: redirectUrl,
-        scope: 'app-remote-control, '
-            'user-modify-playback-state, '
-            'playlist-read-private, '
-            'playlist-modify-public,user-read-currently-playing',
+        // scope: 'app-remote-control, '
+        //     'user-modify-playback-state, '
+        //     'playlist-read-private, '
+        //     'playlist-modify-public,user-read-currently-playing',
+        scope: 'streaming, '
+            'user-read-email, '
+            'user-read-private, '
+            'user-modify-playback-state',
       );
       connected = true;
       print('Got token: $authenticationToken');
@@ -133,13 +140,29 @@ class LiveSpotifyController extends State<SpotifyController> {
     }
   }
 
+  // void createWebPlayer() {
+  //   player = Player(
+  //     PlayerOptions(
+  //         name: 'WebPlayer',
+  //         getOAuthToken: () {
+  //           return token;
+  //         },
+  //         volume: 100),
+  //   );
+  //   // player.addListener(token, () {});
+  //   player.connect();
+  // }
+
   Future<void> connectToSpotifyRemote() async {
     try {
       setState(() {
         _loading = true;
       });
       var result = await SpotifySdk.connectToSpotifyRemote(
-          clientId: SpotifyConfig.clientID, redirectUrl: redirectUrl);
+        clientId: SpotifyConfig.clientID,
+        redirectUrl: redirectUrl,
+        accessToken: token,
+      );
       print(result);
       setStatus(result
           ? 'connect to spotify successful'
