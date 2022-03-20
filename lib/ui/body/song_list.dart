@@ -66,7 +66,9 @@ class LiveSongList extends State<SongList> {
                   height: 100.0,
                   margin: const EdgeInsets.only(top: 10),
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      print(index);
+                    },
                     style: TextButton.styleFrom(
                         primary: Colors.white,
                         elevation: 2,

@@ -3,7 +3,6 @@
 
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/session/session.dart';
@@ -99,6 +98,9 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
         title: Provider.of<SessionNotifier>(context).session.isEmpty
             ? const Text('MusicPool')
             : Text('Session: ' + Provider.of<SessionNotifier>(context).session),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Config.colorStyle,
       ),
       body: ListView(
         children: const [
