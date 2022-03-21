@@ -48,17 +48,13 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
 
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const SizedBox(
-              height: 110,
+              height: 80,
               child: Text('loading', textAlign: TextAlign.center),
             );
-            // return const Text('loading', textAlign: TextAlign.center);
           }
 
           if (snapshot.data.docs.isEmpty || index == -1) {
-            return const Text(
-              'Nothing playing',
-              textAlign: TextAlign.center,
-            );
+            return const SizedBox();
           }
 
           return Container(

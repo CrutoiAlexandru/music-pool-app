@@ -25,7 +25,7 @@ class LiveSpotifyController extends State<SpotifyController> {
   static bool connected = false;
   final endpoint = 'accounts.spotify.com';
   static const redirectUrl = 'https://music-pool-app-50127.web.app/auth.html';
-  static String token = '';
+  String token = '';
   var player;
 
   @override
