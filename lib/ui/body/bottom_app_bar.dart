@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
@@ -37,7 +39,13 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
     index = Provider.of<GlobalNotifier>(context).playing;
 
     return BottomAppBar(
-      color: Colors.transparent,
+      shape: const AutomaticNotchedShape(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(25), topLeft: Radius.circular(25)),
+        ),
+      ),
+      color: Colors.black,
       child: StreamBuilder(
         stream: database,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -58,6 +66,13 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
           }
 
           return Container(
+            // decoration: const BoxDecoration(
+            //   gradient: LinearGradient(
+            //       begin: Alignment.bottomCenter,
+            //       end: Alignment.topCenter,
+            //       colors: [Colors.black, Colors.transparent]),
+            // ),
+            // color: Colors.black,
             height: 75,
             margin: const EdgeInsets.only(top: 5),
             child: Row(

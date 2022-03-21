@@ -69,8 +69,7 @@ class LiveSongList extends State<SongList> {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 return Container(
-                  color: Colors.transparent, //Config.colorStyle,
-                  height: 50.0,
+                  color: Colors.transparent,
                   margin: const EdgeInsets.only(top: 10),
                   child: TextButton(
                     onPressed: () {

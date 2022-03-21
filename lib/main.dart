@@ -114,13 +114,13 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
             ? const Text('MusicPool')
             : Text('Session: ' + Provider.of<SessionNotifier>(context).session),
       ),
+      bottomNavigationBar: const SongBottomAppBar(),
       body: ListView(
         children: const [
           MusicAddButtons(),
           SongList(),
         ],
       ),
-      bottomNavigationBar: const SongBottomAppBar(),
     );
   }
 }
