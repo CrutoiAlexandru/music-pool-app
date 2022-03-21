@@ -25,7 +25,7 @@ class LiveSpotifyController extends State<SpotifyController> {
   static bool connected = false;
   final endpoint = 'accounts.spotify.com';
   static const redirectUrl = 'https://music-pool-app-50127.web.app/auth.html';
-  String token = '';
+  static String token = '';
   var player;
 
   @override
@@ -139,10 +139,6 @@ class LiveSpotifyController extends State<SpotifyController> {
       var authenticationToken = await SpotifySdk.getAuthenticationToken(
         clientId: SpotifyConfig.clientID,
         redirectUrl: redirectUrl,
-        // scope: 'app-remote-control, '
-        //     'user-modify-playback-state, '
-        //     'playlist-read-private, '
-        //     'playlist-modify-public,user-read-currently-playing',
         scope: 'streaming, '
             'user-read-email, '
             'user-read-private, '

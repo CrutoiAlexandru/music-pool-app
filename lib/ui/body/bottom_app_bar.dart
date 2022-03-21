@@ -1,13 +1,13 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
+import 'package:music_pool_app/ui/config.dart';
 import 'package:provider/provider.dart';
-
-import '../../global/session/session.dart';
+import 'package:music_pool_app/global/session/session.dart';
+import 'package:music_pool_app/ui/player/player.dart';
 
 class SongBottomAppBar extends StatefulWidget {
   const SongBottomAppBar({Key? key}) : super(key: key);
@@ -65,61 +65,137 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
             return const SizedBox();
           }
 
-          return Container(
-            // decoration: const BoxDecoration(
-            //   gradient: LinearGradient(
-            //       begin: Alignment.bottomCenter,
-            //       end: Alignment.topCenter,
-            //       colors: [Colors.black, Colors.transparent]),
-            // ),
-            // color: Colors.black,
-            height: 75,
-            margin: const EdgeInsets.only(top: 5),
-            child: Row(
-              children: [
-                const SizedBox(width: 10),
-                Image.network(
-                  snapshot.data!.docs.toList()[index].data()['icon'],
-                  height: 50,
-                  loadingBuilder: (BuildContext context, Widget child,
-                      ImageChunkEvent? loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
-                      ),
-                    );
-                  },
+          return Wrap(
+            children: [
+              TextButton(
+                style: TextButton.styleFrom(
+                  primary: Colors.transparent,
                 ),
-                const SizedBox(width: 10),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                onPressed: () {
+                  Navigator.of(context).push(_createRoute());
+                },
+                child: Column(
                   children: [
-                    Text(
-                      snapshot.data!.docs.toList()[index].data()['artist'],
-                      textScaleFactor: 2,
-                      style: const TextStyle(
-                        color: Color.fromARGB(230, 255, 255, 255),
-                        overflow: TextOverflow.clip,
-                      ),
+                    const Icon(
+                      Icons.arrow_drop_up_sharp,
+                      color: Colors.white,
                     ),
-                    Text(
-                      snapshot.data!.docs.toList()[index].data()['track'],
-                      style: const TextStyle(
-                        color: Color.fromARGB(150, 255, 255, 255),
-                      ),
+                    Row(
+                      children: [
+                        // const SizedBox(width: 10),
+                        Hero(
+                          tag: 'icon',
+                          child: Image.network(
+                            snapshot.data!.docs.toList()[index].data()['icon'],
+                            height: 50,
+                            loadingBuilder: (BuildContext context, Widget child,
+                                ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Hero(
+                              tag: 'track',
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width - 145,
+                                child: Text(
+                                  snapshot.data!.docs
+                                      .toList()[index]
+                                      .data()['track'],
+                                  textScaleFactor: 2,
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(230, 255, 255, 255),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Hero(
+                              tag: 'artist',
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width - 145,
+                                child: Text(
+                                  snapshot.data!.docs
+                                      .toList()[index]
+                                      .data()['artist'],
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(150, 255, 255, 255),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        // DEBATE PUTTING A PLAY PAUSE BUTTON
+                        // PLAY PAUSE
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            primary: Config.colorStyle,
+                          ),
+                          onPressed: () {},
+                          child: const Icon(
+                            Icons.play_arrow,
+                            color: Colors.white,
+                            size: 50,
+                          ),
+                        ),
+                        // CONSIDERING PLAY STATE, DECIDE IF SHOW PAUSE OR PLAY
+                        // TextButton(
+                        //   style: TextButton.styleFrom(
+                        //     primary: Config.colorStyle,
+                        //   ),
+                        //   onPressed: () {},
+                        //   child: const Icon(
+                        //     Icons.pause,
+                        //     color: Colors.white,
+                        //     size: 50,
+                        //   ),
+                        // ),
+                      ],
                     ),
+                    const LinearProgressIndicator(
+                      value: 1,
+                    ),
+                    const SizedBox(height: 10),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),
     );
   }
+}
+
+Route _createRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => const Second(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.0, 1.0);
+      const end = Offset.zero;
+      final tween = Tween(begin: begin, end: end);
+      final offsetAnimation = animation.drive(tween);
+
+      return SlideTransition(
+        position: offsetAnimation,
+        child: child,
+      );
+    },
+  );
 }

@@ -134,7 +134,6 @@ class _SpotifyButton extends State<SpotifyButton> {
     final res = await LiveSpotifyController().search(input);
     if (res.isEmpty) {
       print('No input');
-      // print(songslist.docs());
       return;
     }
     if (session == 'default') {
@@ -144,10 +143,10 @@ class _SpotifyButton extends State<SpotifyButton> {
     final json = jsonDecode(res);
     print(res);
     addData(
-        json['tracks']['items'][0]['name'],
         json['tracks']['items'][0]['artists'][0]['name'],
+        json['tracks']['items'][0]['name'],
         json['tracks']['items'][0]['uri'],
-        json['tracks']['items'][0]['album']['images'][1]['url']);
+        json['tracks']['items'][0]['album']['images'][0]['url']);
 
     Navigator.pop(context, 'Add song');
   }

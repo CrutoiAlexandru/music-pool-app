@@ -111,7 +111,7 @@ class LiveSongList extends State<SongList> {
                             Text(
                               snapshot.data!.docs
                                   .toList()[index]
-                                  .data()['artist'],
+                                  .data()['track'],
                               textScaleFactor: 1.25,
                               style: index ==
                                       Provider.of<GlobalNotifier>(context)
@@ -128,7 +128,7 @@ class LiveSongList extends State<SongList> {
                             Text(
                               snapshot.data!.docs
                                   .toList()[index]
-                                  .data()['track'],
+                                  .data()['artist'],
                               textScaleFactor: 0.9,
                               style: index ==
                                       Provider.of<GlobalNotifier>(context)
