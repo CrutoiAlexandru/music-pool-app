@@ -84,9 +84,14 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
   @override
   void initState() {
     super.initState();
+    // simple way of refreshing the token
+    // by creating a new one
+    // probably not good
     timer = Timer.periodic(const Duration(seconds: 3600), (Timer t) {
       try {
-        LiveSpotifyController.auth();
+        if (LiveSpotifyController.connected) {
+          LiveSpotifyController.auth();
+        }
       } on Exception catch (e) {
         print(e);
       }

@@ -1,6 +1,7 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe, prefer_typing_uninitialized_variables
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/global/session/session.dart';
@@ -26,7 +27,7 @@ class SongList extends StatefulWidget {
 
 class LiveSongList extends State<SongList> {
   static var database;
-  int total = 0;
+  int playing = 0;
 
   @override
   void initState() {
@@ -43,6 +44,8 @@ class LiveSongList extends State<SongList> {
     } else {
       database = FirebaseFirestore.instance.collection('default').snapshots();
     }
+
+    // playing = Provider.of<GlobalNotifier>(context).playing;
 
     return StreamBuilder(
       stream: database,
@@ -66,8 +69,8 @@ class LiveSongList extends State<SongList> {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 return Container(
-                  color: Config.colorStyle,
-                  height: 75.0,
+                  color: Colors.transparent, //Config.colorStyle,
+                  height: 50.0,
                   margin: const EdgeInsets.only(top: 10),
                   child: TextButton(
                     onPressed: () {
@@ -75,29 +78,33 @@ class LiveSongList extends State<SongList> {
                           .playingNumber(index);
                     },
                     style: TextButton.styleFrom(
-                        primary: Colors.white,
-                        elevation: 2,
-                        backgroundColor: Config.colorStyle),
+                      primary: Colors.white,
+                      elevation: 0,
+                      backgroundColor: Colors.transparent,
+                    ),
                     child: Row(
                       children: [
-                        Image.network(
-                          snapshot.data!.docs.toList()[index].data()['icon'],
-                          height: 75,
-                          loadingBuilder: (BuildContext context, Widget child,
-                              ImageChunkEvent? loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes !=
-                                        null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ),
-                            );
-                          },
+                        if (kIsWeb)
+                          Image.network(
+                            snapshot.data!.docs.toList()[index].data()['icon'],
+                            height: 40,
+                            loadingBuilder: (BuildContext context, Widget child,
+                                ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              );
+                            },
+                          ),
+                        const SizedBox(
+                          width: 10,
                         ),
-                        const SizedBox(width: 10),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,25 +113,35 @@ class LiveSongList extends State<SongList> {
                               snapshot.data!.docs
                                   .toList()[index]
                                   .data()['artist'],
-                              textScaleFactor: 2,
-                              style: const TextStyle(
-                                color: Color.fromARGB(230, 255, 255, 255),
-                                overflow: TextOverflow.clip,
-                              ),
+                              textScaleFactor: 1.25,
+                              style: index ==
+                                      Provider.of<GlobalNotifier>(context)
+                                          .playing
+                                  ? const TextStyle(
+                                      color: Config.colorStyle,
+                                      overflow: TextOverflow.clip)
+                                  : const TextStyle(
+                                      color: Color.fromARGB(200, 255, 255, 255),
+                                      overflow: TextOverflow.clip,
+                                    ),
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 5),
                             Text(
                               snapshot.data!.docs
                                   .toList()[index]
                                   .data()['track'],
-                              style: const TextStyle(
-                                color: Color.fromARGB(150, 255, 255, 255),
-                              ),
+                              textScaleFactor: 0.9,
+                              style: index ==
+                                      Provider.of<GlobalNotifier>(context)
+                                          .playing
+                                  ? const TextStyle(
+                                      color: Config.colorStyleDark)
+                                  : const TextStyle(
+                                      color: Color.fromARGB(150, 255, 255, 255),
+                                    ),
                             ),
                           ],
                         ),
-                        // const Spacer(), // SHOW WHICH SONG IS PLAYING
-                        // const SizedBox(child: CircularProgressIndicator()),
                       ],
                     ),
                   ),

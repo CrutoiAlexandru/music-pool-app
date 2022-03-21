@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 
 class GlobalNotifier extends ChangeNotifier {
-  int playing = 0;
+  int playing = -1;
+  bool connected = false;
 
-  playingNumber(index) {
+  playingNumber(int index) {
     playing = index;
     notifyListeners();
   }
 
   resetNumber() {
-    playing = 0;
+    playing = -1;
+    notifyListeners();
+  }
+
+  setConnection(bool input) {
+    connected = input;
     notifyListeners();
   }
 }

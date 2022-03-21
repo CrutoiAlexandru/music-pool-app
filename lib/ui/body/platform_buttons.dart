@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
@@ -42,72 +43,78 @@ class _SpotifyButton extends State<SpotifyButton> {
       session = 'default';
       songslist = FirebaseFirestore.instance.collection('default');
     }
-    return TextButton(
-        style: TextButton.styleFrom(
-          primary: Colors.white,
-          elevation: 1,
-        ),
-        onPressed: () => LiveSpotifyController.connected == false
-            ? showDialog(
-                context: context,
-                builder: (BuildContext context) => const AlertDialog(
-                    title: Text('You are not logged in to Spotify!')))
-            : showDialog(
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                      title: const Text(
-                        'Spotify',
-                        style: TextStyle(color: Config.colorStyle),
-                      ),
-                      content: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            const Text(
-                                'This is where you add songs from Spotify'),
-                            TextField(
-                              autofocus: true,
-                              maxLength: 50,
-                              onChanged: (text) {
-                                input = text;
-                              },
-                              onEditingComplete: isEntered,
-                              cursorColor: Config.colorStyle,
-                              decoration: const InputDecoration(
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Config.colorStyle)),
-                                border: OutlineInputBorder(),
-                                hintText: 'Enter a song',
-                              ),
+
+    if (!Provider.of<GlobalNotifier>(context).connected) {
+      return const SizedBox();
+    }
+
+    return Column(
+      children: [
+        const SizedBox(height: 10),
+        TextButton(
+          style: TextButton.styleFrom(
+            primary: Colors.white,
+            elevation: 1,
+          ),
+          onPressed: () => showDialog(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                    title: const Text(
+                      'Spotify',
+                      style: TextStyle(color: Config.colorStyle),
+                    ),
+                    content: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          const Text(
+                              'This is where you add songs from Spotify'),
+                          TextField(
+                            autofocus: true,
+                            maxLength: 50,
+                            onChanged: (text) {
+                              input = text;
+                            },
+                            onEditingComplete: isEntered,
+                            cursorColor: Config.colorStyle,
+                            decoration: const InputDecoration(
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Config.colorStyle)),
+                              border: OutlineInputBorder(),
+                              hintText: 'Enter a song',
                             ),
-                            // maybe implement a list of songs found on the platform !?
-                          ],
-                        ),
+                          ),
+                          // maybe implement a list of songs found on the platform !?
+                        ],
                       ),
-                      actions: <Widget>[
-                        TextButton(
-                          style: TextButton.styleFrom(
-                              primary: Colors.white,
-                              elevation: 2,
-                              backgroundColor: Config.colorStyle),
-                          onPressed: () => Navigator.pop(context, 'Cancel'),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          style: TextButton.styleFrom(
-                              primary: Colors.white,
-                              elevation: 2,
-                              backgroundColor: Config.colorStyle),
-                          onPressed: isEntered,
-                          child: const Text('Add song'),
-                        ),
-                      ],
-                    )),
-        child: const Icon(
-          Icons.add,
-          color: Config.colorStyle,
-          size: 40,
-        ));
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        style: TextButton.styleFrom(
+                            primary: Colors.white,
+                            elevation: 2,
+                            backgroundColor: Config.colorStyle),
+                        onPressed: () => Navigator.pop(context, 'Cancel'),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                            primary: Colors.white,
+                            elevation: 2,
+                            backgroundColor: Config.colorStyle),
+                        onPressed: isEntered,
+                        child: const Text('Add song'),
+                      ),
+                    ],
+                  )),
+          child: const Icon(
+            Icons.add,
+            color: Config.colorStyle,
+            size: 40,
+          ),
+        )
+      ],
+    );
   }
 
   Future<void> addData(
@@ -140,7 +147,7 @@ class _SpotifyButton extends State<SpotifyButton> {
         json['tracks']['items'][0]['name'],
         json['tracks']['items'][0]['artists'][0]['name'],
         json['tracks']['items'][0]['uri'],
-        json['tracks']['items'][0]['album']['images'][0]['url']);
+        json['tracks']['items'][0]['album']['images'][1]['url']);
 
     Navigator.pop(context, 'Add song');
   }
@@ -153,7 +160,7 @@ class MusicAddButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 50.0,
+      // height: 50.0,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: const [

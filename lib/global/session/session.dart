@@ -59,7 +59,7 @@ class _SessionWidget extends State<Session> {
         ListTile(
           title: const Text('Create session'),
           onTap: () {
-            Provider.of<SessionNotifier>(context).makeSession();
+            Provider.of<SessionNotifier>(context, listen: false).makeSession();
             Provider.of<GlobalNotifier>(context, listen: false).resetNumber();
           },
         ),

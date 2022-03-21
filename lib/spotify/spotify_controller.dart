@@ -2,7 +2,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/ui/config.dart';
+import 'package:provider/provider.dart';
 import '../.config_for_app.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:http/http.dart' as http;
@@ -41,9 +43,15 @@ class LiveSpotifyController extends State<SpotifyController> {
                   style: TextStyle(color: Config.colorStyle),
                 ),
           onTap: connected
-              ? disconnect
+              ? () {
+                  disconnect();
+                  Provider.of<GlobalNotifier>(context, listen: false)
+                      .setConnection(connected);
+                }
               : () async {
                   token = await auth();
+                  Provider.of<GlobalNotifier>(context, listen: false)
+                      .setConnection(connected);
                   setState(() {});
                 },
         ),

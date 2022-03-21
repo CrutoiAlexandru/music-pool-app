@@ -16,7 +16,7 @@ class SongBottomAppBar extends StatefulWidget {
 
 class _SongBottomAppBar extends State<SongBottomAppBar> {
   var database;
-  int index = 0;
+  int index = -1;
 
   @override
   void initState() {
@@ -36,12 +36,8 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
 
     index = Provider.of<GlobalNotifier>(context).playing;
 
-    // if (database.length < index) {
-    //   Provider.of<GlobalNotifier>(context).playingNumber(0);
-    // }
-
     return BottomAppBar(
-      color: Colors.black,
+      color: Colors.transparent,
       child: StreamBuilder(
         stream: database,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -58,7 +54,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
             // return const Text('loading', textAlign: TextAlign.center);
           }
 
-          if (snapshot.data.docs.isEmpty) {
+          if (snapshot.data.docs.isEmpty || index == -1) {
             return const Text(
               'Nothing playing',
               textAlign: TextAlign.center,
@@ -66,13 +62,14 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
           }
 
           return Container(
-            height: 100.0,
-            margin: const EdgeInsets.only(top: 10),
+            height: 75,
+            margin: const EdgeInsets.only(top: 5),
             child: Row(
               children: [
+                const SizedBox(width: 10),
                 Image.network(
                   snapshot.data!.docs.toList()[index].data()['icon'],
-                  height: 75,
+                  height: 50,
                   loadingBuilder: (BuildContext context, Widget child,
                       ImageChunkEvent? loadingProgress) {
                     if (loadingProgress == null) return child;
@@ -99,7 +96,6 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                         overflow: TextOverflow.clip,
                       ),
                     ),
-                    const SizedBox(height: 10),
                     Text(
                       snapshot.data!.docs.toList()[index].data()['track'],
                       style: const TextStyle(
