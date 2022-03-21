@@ -2,19 +2,14 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
 import 'dart:async';
-import 'dart:math';
-import 'dart:ui';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/global/session/session.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
 import 'package:music_pool_app/ui/body/bottom_app_bar.dart';
 import 'package:music_pool_app/ui/body/song_list.dart';
-import 'package:music_pool_app/ui/config.dart';
 import 'ui/drawer/drawer.dart';
 import 'ui/body/platform_buttons.dart';
 import 'package:provider/provider.dart';

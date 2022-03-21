@@ -1,16 +1,18 @@
 // ignore_for_file: avoid_print, avoid_web_libraries_in_flutter
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/ui/config.dart';
 import 'package:provider/provider.dart';
-import '../.config_for_app.dart';
+import 'package:music_pool_app/.config_for_app.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:http/http.dart' as http;
 
 // WEB ONLY LIBRARIES MUST BE REMOVED BEFORE ANDROID BUILD
-// import 'dart:js' as js;
+import 'dart:js' as js;
+import 'package:spotify_sdk/spotify_sdk_web.dart';
 
 class SpotifyController extends StatefulWidget {
   const SpotifyController({Key? key}) : super(key: key);
@@ -59,67 +61,30 @@ class LiveSpotifyController extends State<SpotifyController> {
         // LOGIN AND CONNECT TO REMOTE WILL BE THE SAME BUTTON
         // LOGIN NEEDED FOR TOKEN AND DATA REQUESTS
         // REMOTE FOR PLAYBACK
-        // TextButton(
-        //     onPressed: () async {
-        //       token = await auth();
-        //       if (token.isNotEmpty) {
-        //         if (kIsWeb) {
-        //           // js.allowInterop(createWebPlayer); // ???????????????
-        //           // connectToSpotifyRemote();
-        //           js.context.callMethod('logger', [token]); // only premium
-        //         } else {
-        //           connectToSpotifyRemote();
-        //         }
-        //       }
-        //     },
-        //     child: const Text('CONNECT')),
+        TextButton(
+            onPressed: () async {
+              token = await auth();
+              if (token.isNotEmpty) {
+                if (kIsWeb) {
+                  js.allowInterop(createWebPlayer); // ???????????????
+                  connectToSpotifyRemote();
+                  // js.context.callMethod('logger', [token]); // only premium
+                } else {
+                  connectToSpotifyRemote();
+                }
+              }
+            },
+            child: const Text('CONNECT')),
+        TextButton(
+            onPressed: () {
+              // if (token.isNotEmpty) {
+              play();
+              // }
+            },
+            child: const Text('play')),
       ],
     );
   }
-
-  // Widget _buildPlayerStateWidget() {
-  //   return StreamBuilder<PlayerState>(
-  //     stream: SpotifySdk.subscribePlayerState(),
-  //     builder: (BuildContext context, AsyncSnapshot<PlayerState> snapshot) {
-  //       var track = snapshot.data?.track;
-  //       var playerState = snapshot.data;
-
-  //       if (playerState == null || track == null) {
-  //         return Center(
-  //           child: Container(),
-  //         );
-  //       }
-
-  //       return const Text("yesman");
-  //     },
-  //   );
-  // }
-
-  // Widget _buildPlayerContextWidget() {
-  //   return StreamBuilder<PlayerContext>(
-  //     stream: SpotifySdk.subscribePlayerContext(),
-  //     initialData: PlayerContext('', '', '', ''),
-  //     builder: (BuildContext context, AsyncSnapshot<PlayerContext> snapshot) {
-  //       var playerContext = snapshot.data;
-  //       if (playerContext == null) {
-  //         return const Center(
-  //           child: Text('Not connected'),
-  //         );
-  //       }
-
-  //       return Column(
-  //         mainAxisAlignment: MainAxisAlignment.start,
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: <Widget>[
-  //           Text('Title: ${playerContext.title}'),
-  //           Text('Subtitle: ${playerContext.subtitle}'),
-  //           Text('Type: ${playerContext.type}'),
-  //           Text('Uri: ${playerContext.uri}'),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 
   Future<String> search(song) async {
     var url = Uri.https('api.spotify.com', '/v1/search', {
@@ -140,10 +105,13 @@ class LiveSpotifyController extends State<SpotifyController> {
         clientId: SpotifyConfig.clientID,
         redirectUrl: redirectUrl,
         scope: 'streaming, '
+            'app-remote-control, '
             'user-read-email, '
             'user-read-private, '
+            'playlist-read-private, '
+            'playlist-modify-public, '
             'user-read-currently-playing, '
-            'app-remote-control, '
+            'user-read-playback-state, '
             'user-modify-playback-state',
       );
       connected = true;
@@ -156,34 +124,34 @@ class LiveSpotifyController extends State<SpotifyController> {
     }
   }
 
-  // void createWebPlayer() {
-  //   player = Player(
-  //     PlayerOptions(
-  //         name: 'WebPlayer',
-  //         getOAuthToken: (cb) {
-  //           cb(token);
-  //         },
-  //         volume: 100),
-  //   );
+  void createWebPlayer() {
+    player = Player(
+      PlayerOptions(
+          name: 'WebPlayer',
+          getOAuthToken: (cb) {
+            cb(token);
+          },
+          volume: 100),
+    );
 
-  //   player.addListener("not_ready", (e) {
-  //     print("Device ID has gone offline $e");
-  //   });
+    player.addListener("not_ready", (e) {
+      print("Device ID has gone offline $e");
+    });
 
-  //   player.addListener("initialization_error", (message) {
-  //     print(message);
-  //   });
+    player.addListener("initialization_error", (message) {
+      print(message);
+    });
 
-  //   player.addListener("authentication_error", (message) {
-  //     print(message);
-  //   });
+    player.addListener("authentication_error", (message) {
+      print(message);
+    });
 
-  //   player.addListener("account_error", (message) {
-  //     print(message);
-  //   });
+    player.addListener("account_error", (message) {
+      print(message);
+    });
 
-  //   player.connect();
-  // }
+    player.connect();
+  }
 
   Future<void> connectToSpotifyRemote() async {
     try {
@@ -224,7 +192,8 @@ class LiveSpotifyController extends State<SpotifyController> {
 
   Future<void> play() async {
     try {
-      await SpotifySdk.play(spotifyUri: 'spotify:track:4bdEXTweGw1O4IEMbnn5Tv');
+      await SpotifySdk.play(
+          spotifyUri: 'spotify:track:0Z2J91b2iTGLVTZC4fKgxf', asRadio: true);
     } on PlatformException catch (e) {
       setStatus(e.code, message: e.message);
     } on MissingPluginException {

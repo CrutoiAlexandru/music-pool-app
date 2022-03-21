@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
@@ -171,7 +172,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                     const LinearProgressIndicator(
                       value: 1,
                     ),
-                    const SizedBox(height: 10),
+                    if (kIsWeb) const SizedBox(height: 10),
                   ],
                 ),
               ),
