@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/global/session/session.dart';
+import 'package:music_pool_app/spotify/spotify_controller.dart';
 import 'package:provider/provider.dart';
 
 import 'package:music_pool_app/ui/config.dart';
@@ -45,8 +46,6 @@ class LiveSongList extends State<SongList> {
       database = FirebaseFirestore.instance.collection('default').snapshots();
     }
 
-    // playing = Provider.of<GlobalNotifier>(context).playing;
-
     return StreamBuilder(
       stream: database,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -57,6 +56,9 @@ class LiveSongList extends State<SongList> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
+
+        Provider.of<GlobalNotifier>(context, listen: false)
+            .setPlaylistSize(snapshot.requireData.size);
 
         return ListView(
           shrinkWrap: true,
@@ -73,8 +75,32 @@ class LiveSongList extends State<SongList> {
                   margin: const EdgeInsets.only(top: 10),
                   child: TextButton(
                     onPressed: () {
-                      Provider.of<GlobalNotifier>(context, listen: false)
-                          .playingNumber(index);
+                      if (!Provider.of<GlobalNotifier>(context, listen: false)
+                              .playState ||
+                          Provider.of<GlobalNotifier>(context, listen: false)
+                                  .playing !=
+                              index) {
+                        if (Provider.of<GlobalNotifier>(context, listen: false)
+                                .playing ==
+                            index) {
+                          LiveSpotifyController.resume();
+                        } else {
+                          LiveSpotifyController.play(snapshot.data!.docs
+                              .toList()[index]
+                              .data()['playback_uri']);
+                        }
+                        Provider.of<GlobalNotifier>(context, listen: false)
+                            .playingNumber(index);
+
+                        Provider.of<GlobalNotifier>(context, listen: false)
+                            .setPlayingState(true);
+                      } else {
+                        Provider.of<GlobalNotifier>(context, listen: false)
+                            .playingNumber(index);
+                        LiveSpotifyController.pause();
+                        Provider.of<GlobalNotifier>(context, listen: false)
+                            .setPlayingState(false);
+                      }
                     },
                     style: TextButton.styleFrom(
                       primary: Colors.white,

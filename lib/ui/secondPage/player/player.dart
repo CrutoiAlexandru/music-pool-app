@@ -1,0 +1,288 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:music_pool_app/global/global.dart';
+import 'package:music_pool_app/global/session/session.dart';
+import 'package:music_pool_app/spotify/spotify_controller.dart';
+import 'package:music_pool_app/ui/config.dart';
+import 'package:provider/provider.dart';
+import 'package:spotify_sdk/models/player_state.dart';
+import 'package:spotify_sdk/spotify_sdk.dart';
+import 'package:spotify_sdk/spotify_sdk_web.dart';
+import 'package:http/http.dart' as http;
+
+class SongPlayer extends StatefulWidget {
+  const SongPlayer({Key? key}) : super(key: key);
+
+  @override
+  State<SongPlayer> createState() => _SongPlayer();
+}
+
+class _SongPlayer extends State<SongPlayer> {
+  var database;
+  int index = -1;
+
+  @override
+  void initState() {
+    database = FirebaseFirestore.instance.collection('default').snapshots();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (Provider.of<SessionNotifier>(context).session.isNotEmpty) {
+      database = FirebaseFirestore.instance
+          .collection(Provider.of<SessionNotifier>(context).session)
+          .snapshots();
+    } else {
+      database = FirebaseFirestore.instance.collection('default').snapshots();
+    }
+
+    return StreamBuilder(
+      stream: database,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasError) {
+          return const Text('Something went wrong',
+              textAlign: TextAlign.center);
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(
+            height: 80,
+            child: Text('loading', textAlign: TextAlign.center),
+          );
+        }
+
+        if (snapshot.data.docs.isEmpty ||
+            Provider.of<GlobalNotifier>(context).playing == -1) {
+          return const SizedBox();
+        }
+
+        return Column(
+          children: [
+            Hero(
+              tag: 'icon',
+              child: Center(
+                child: Image.network(
+                  snapshot.data!.docs
+                      .toList()[Provider.of<GlobalNotifier>(context).playing]
+                      .data()['icon'],
+                  width: MediaQuery.of(context).size.width < 600
+                      ? MediaQuery.of(context).size.width - 20
+                      : 580,
+                  loadingBuilder: (BuildContext context, Widget child,
+                      ImageChunkEvent? loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Hero(
+              tag: 'track',
+              child: Text(
+                snapshot.data!.docs
+                    .toList()[Provider.of<GlobalNotifier>(context).playing]
+                    .data()['track'],
+                textScaleFactor: 2,
+                style: const TextStyle(
+                  color: Color.fromARGB(230, 255, 255, 255),
+                  overflow: TextOverflow.clip,
+                ),
+              ),
+            ),
+            Hero(
+              tag: 'artist',
+              child: Text(
+                snapshot.data!.docs
+                    .toList()[Provider.of<GlobalNotifier>(context).playing]
+                    .data()['artist'],
+                style: const TextStyle(
+                  color: Color.fromARGB(150, 255, 255, 255),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                    primary: Config.colorStyle,
+                  ),
+                  onPressed: () {
+                    if (Provider.of<GlobalNotifier>(context, listen: false)
+                            .playing !=
+                        0) {
+                      Provider.of<GlobalNotifier>(context, listen: false)
+                          .playingNumber(Provider.of<GlobalNotifier>(context,
+                                      listen: false)
+                                  .playing -
+                              1);
+                      LiveSpotifyController.play(snapshot.data!.docs
+                          .toList()[Provider.of<GlobalNotifier>(context,
+                                  listen: false)
+                              .playing]
+                          .data()['playback_uri']);
+                      Provider.of<GlobalNotifier>(context, listen: false)
+                          .setPlayingState(true);
+                    }
+                  },
+                  child: const Icon(
+                    Icons.skip_previous,
+                    color: Colors.white,
+                    size: 50,
+                  ),
+                ),
+                const SizedBox(width: 40),
+                Provider.of<GlobalNotifier>(context).playState
+                    ? TextButton(
+                        style: TextButton.styleFrom(
+                          primary: Config.colorStyle,
+                        ),
+                        onPressed: () {
+                          LiveSpotifyController.pause();
+                          Provider.of<GlobalNotifier>(context, listen: false)
+                              .setPlayingState(false);
+                        },
+                        child: const Icon(
+                          Icons.pause,
+                          color: Colors.white,
+                          size: 50,
+                        ),
+                      )
+                    : TextButton(
+                        style: TextButton.styleFrom(
+                          primary: Config.colorStyle,
+                        ),
+                        onPressed: () {
+                          LiveSpotifyController.resume();
+                          Provider.of<GlobalNotifier>(context, listen: false)
+                              .setPlayingState(true);
+                        },
+                        child: const Icon(
+                          Icons.play_arrow,
+                          color: Colors.white,
+                          size: 50,
+                        ),
+                      ),
+                const SizedBox(width: 40),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    primary: Config.colorStyle,
+                  ),
+                  onPressed: () {
+                    if (Provider.of<GlobalNotifier>(context, listen: false)
+                            .playing <
+                        Provider.of<GlobalNotifier>(context, listen: false)
+                                .playlistSize -
+                            1) {
+                      Provider.of<GlobalNotifier>(context, listen: false)
+                          .playingNumber(Provider.of<GlobalNotifier>(context,
+                                      listen: false)
+                                  .playing +
+                              1);
+                      LiveSpotifyController.play(snapshot.data!.docs
+                          .toList()[Provider.of<GlobalNotifier>(context,
+                                  listen: false)
+                              .playing]
+                          .data()['playback_uri']);
+                      Provider.of<GlobalNotifier>(context, listen: false)
+                          .setPlayingState(true);
+                    } else {
+                      Provider.of<GlobalNotifier>(context, listen: false)
+                          .playingNumber(0);
+                      LiveSpotifyController.play(snapshot.data!.docs
+                          .toList()[Provider.of<GlobalNotifier>(context,
+                                  listen: false)
+                              .playing]
+                          .data()['playback_uri']);
+                      Provider.of<GlobalNotifier>(context, listen: false)
+                          .setPlayingState(true);
+                    }
+                  },
+                  child: const Icon(
+                    Icons.skip_next,
+                    color: Colors.white,
+                    size: 50,
+                  ),
+                )
+              ],
+            ),
+            const BuildPlayerStateWidget(),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class BuildPlayerStateWidget extends StatefulWidget {
+  const BuildPlayerStateWidget({Key? key}) : super(key: key);
+
+  @override
+  State<BuildPlayerStateWidget> createState() => _BuildPlayerStateWidget();
+}
+
+class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
+  var stream;
+
+  @override
+  void initState() {
+    stream = SpotifySdk.subscribePlayerState();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: stream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        var playerState = snapshot.data;
+        var track = snapshot.data?.track;
+
+        if (snapshot.hasError) {
+          return const Center(child: Text('Something went wrong'));
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (Provider.of<GlobalNotifier>(context).playState) {
+          Timer.periodic(const Duration(seconds: 1), (Timer t) {
+            getProgress();
+          });
+        }
+
+        return //text;
+            Text(
+                'Progress: ${(playerState.playbackPosition / 1000).floor()}s/${(track.duration / 1000).floor()}s');
+      },
+    );
+  }
+}
+
+Future<int> getProgress() async {
+  var url = Uri.https('api.spotify.com', '/v1/me/player');
+  final res = await http.get(url,
+      headers: {'Authorization': 'Bearer ${LiveSpotifyController.token}'});
+
+  var body = jsonDecode(res.body);
+
+  int progress = body['progress_ms'];
+
+  print(progress);
+
+  return 1;
+}

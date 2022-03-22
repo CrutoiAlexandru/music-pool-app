@@ -2,13 +2,13 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
+import 'package:music_pool_app/spotify/spotify_controller.dart';
 import 'package:music_pool_app/ui/config.dart';
+import 'package:music_pool_app/ui/secondPage/secondPage.dart';
 import 'package:provider/provider.dart';
 import 'package:music_pool_app/global/session/session.dart';
-import 'package:music_pool_app/ui/player/player.dart';
 
 class SongBottomAppBar extends StatefulWidget {
   const SongBottomAppBar({Key? key}) : super(key: key);
@@ -37,8 +37,6 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
       database = FirebaseFirestore.instance.collection('default').snapshots();
     }
 
-    index = Provider.of<GlobalNotifier>(context).playing;
-
     return BottomAppBar(
       shape: const AutomaticNotchedShape(
         RoundedRectangleBorder(
@@ -62,7 +60,8 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
             );
           }
 
-          if (snapshot.data.docs.isEmpty || index == -1) {
+          if (snapshot.data.docs.isEmpty ||
+              Provider.of<GlobalNotifier>(context).playing == -1) {
             return const SizedBox();
           }
 
@@ -83,11 +82,14 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                     ),
                     Row(
                       children: [
-                        // const SizedBox(width: 10),
+                        if (kIsWeb) const SizedBox(width: 10),
                         Hero(
                           tag: 'icon',
                           child: Image.network(
-                            snapshot.data!.docs.toList()[index].data()['icon'],
+                            snapshot.data!.docs
+                                .toList()[Provider.of<GlobalNotifier>(context)
+                                    .playing]
+                                .data()['icon'],
                             height: 50,
                             loadingBuilder: (BuildContext context, Widget child,
                                 ImageChunkEvent? loadingProgress) {
@@ -112,10 +114,12 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                             Hero(
                               tag: 'track',
                               child: SizedBox(
-                                width: MediaQuery.of(context).size.width - 145,
+                                width: MediaQuery.of(context).size.width - 155,
                                 child: Text(
                                   snapshot.data!.docs
-                                      .toList()[index]
+                                      .toList()[
+                                          Provider.of<GlobalNotifier>(context)
+                                              .playing]
                                       .data()['track'],
                                   textScaleFactor: 2,
                                   style: const TextStyle(
@@ -128,10 +132,12 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                             Hero(
                               tag: 'artist',
                               child: SizedBox(
-                                width: MediaQuery.of(context).size.width - 145,
+                                width: MediaQuery.of(context).size.width - 155,
                                 child: Text(
                                   snapshot.data!.docs
-                                      .toList()[index]
+                                      .toList()[
+                                          Provider.of<GlobalNotifier>(context)
+                                              .playing]
                                       .data()['artist'],
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
@@ -142,31 +148,45 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                             ),
                           ],
                         ),
-                        // DEBATE PUTTING A PLAY PAUSE BUTTON
-                        // PLAY PAUSE
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            primary: Config.colorStyle,
-                          ),
-                          onPressed: () {},
-                          child: const Icon(
-                            Icons.play_arrow,
-                            color: Colors.white,
-                            size: 50,
-                          ),
-                        ),
-                        // CONSIDERING PLAY STATE, DECIDE IF SHOW PAUSE OR PLAY
-                        // TextButton(
-                        //   style: TextButton.styleFrom(
-                        //     primary: Config.colorStyle,
-                        //   ),
-                        //   onPressed: () {},
-                        //   child: const Icon(
-                        //     Icons.pause,
-                        //     color: Colors.white,
-                        //     size: 50,
-                        //   ),
-                        // ),
+                        Provider.of<GlobalNotifier>(context).playState
+                            ? TextButton(
+                                style: TextButton.styleFrom(
+                                  primary: Config.colorStyle,
+                                ),
+                                onPressed: () {
+                                  LiveSpotifyController.pause();
+                                  Provider.of<GlobalNotifier>(context,
+                                          listen: false)
+                                      .setPlayingState(false);
+                                },
+                                child: const Icon(
+                                  Icons.pause,
+                                  color: Colors.white,
+                                  size: 50,
+                                ),
+                              )
+                            : TextButton(
+                                style: TextButton.styleFrom(
+                                  primary: Config.colorStyle,
+                                ),
+                                onPressed: () {
+                                  LiveSpotifyController.resume();
+                                  // (snapshot.data!.docs
+                                  //   .toList()[Provider.of<GlobalNotifier>(
+                                  //           context,
+                                  //           listen: false)
+                                  //       .playing]
+                                  //   .data()['playback_uri']);
+                                  Provider.of<GlobalNotifier>(context,
+                                          listen: false)
+                                      .setPlayingState(true);
+                                },
+                                child: const Icon(
+                                  Icons.play_arrow,
+                                  color: Colors.white,
+                                  size: 50,
+                                ),
+                              ),
                       ],
                     ),
                     const LinearProgressIndicator(
@@ -186,7 +206,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
 
 Route _createRoute() {
   return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => const Second(),
+    pageBuilder: (context, animation, secondaryAnimation) => const SecondPage(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(0.0, 1.0);
       const end = Offset.zero;

@@ -52,36 +52,20 @@ class LiveSpotifyController extends State<SpotifyController> {
                 }
               : () async {
                   token = await auth();
-                  Provider.of<GlobalNotifier>(context, listen: false)
-                      .setConnection(connected);
+                  if (connected) {
+                    Provider.of<GlobalNotifier>(context, listen: false)
+                        .setConnection(connected);
+                  }
                   setState(() {});
+
+                  if (kIsWeb) {
+                    js.allowInterop(createWebPlayer);
+                    connectToSpotifyRemote();
+                  } else {
+                    connectToSpotifyRemote();
+                  }
                 },
         ),
-        // TextButton(onPressed: play, child: const Text('PLAY')),
-        // LOGIN AND CONNECT TO REMOTE WILL BE THE SAME BUTTON
-        // LOGIN NEEDED FOR TOKEN AND DATA REQUESTS
-        // REMOTE FOR PLAYBACK
-        TextButton(
-            onPressed: () async {
-              token = await auth();
-              if (token.isNotEmpty) {
-                if (kIsWeb) {
-                  js.allowInterop(createWebPlayer); // ???????????????
-                  connectToSpotifyRemote();
-                  // js.context.callMethod('logger', [token]); // only premium
-                } else {
-                  connectToSpotifyRemote();
-                }
-              }
-            },
-            child: const Text('CONNECT')),
-        TextButton(
-            onPressed: () {
-              // if (token.isNotEmpty) {
-              play();
-              // }
-            },
-            child: const Text('play')),
       ],
     );
   }
@@ -99,8 +83,6 @@ class LiveSpotifyController extends State<SpotifyController> {
 
   static Future<String> auth() async {
     try {
-      // GET AUTH TOKEN THROUGH SERVER SIDE REQUEST
-      // NEED TO ALSO RECEIVE REFRESH TOKEN AND EXPIRE TIME, JS?
       var authenticationToken = await SpotifySdk.getAuthenticationToken(
         clientId: SpotifyConfig.clientID,
         redirectUrl: redirectUrl,
@@ -190,10 +172,9 @@ class LiveSpotifyController extends State<SpotifyController> {
     });
   }
 
-  Future<void> play() async {
+  static Future<void> play(String spotifyUri) async {
     try {
-      await SpotifySdk.play(
-          spotifyUri: 'spotify:track:0Z2J91b2iTGLVTZC4fKgxf', asRadio: true);
+      await SpotifySdk.play(spotifyUri: spotifyUri, asRadio: true);
     } on PlatformException catch (e) {
       setStatus(e.code, message: e.message);
     } on MissingPluginException {
@@ -201,7 +182,7 @@ class LiveSpotifyController extends State<SpotifyController> {
     }
   }
 
-  Future<void> stop() async {
+  static Future<void> pause() async {
     try {
       await SpotifySdk.pause();
     } on PlatformException catch (e) {
@@ -211,7 +192,17 @@ class LiveSpotifyController extends State<SpotifyController> {
     }
   }
 
-  Future getPlayerState() async {
+  static Future<void> resume() async {
+    try {
+      await SpotifySdk.resume();
+    } on PlatformException catch (e) {
+      setStatus(e.code, message: e.message);
+    } on MissingPluginException {
+      setStatus('not implemented');
+    }
+  }
+
+  static Future getPlayerState() async {
     try {
       return await SpotifySdk.getPlayerState();
     } on PlatformException catch (e) {
@@ -221,7 +212,7 @@ class LiveSpotifyController extends State<SpotifyController> {
     }
   }
 
-  void setStatus(String code, {String? message}) {
+  static void setStatus(String code, {String? message}) {
     var text = message ?? '';
     print('$code$text');
   }
