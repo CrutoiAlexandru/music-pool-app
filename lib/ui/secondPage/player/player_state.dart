@@ -16,10 +16,12 @@ class BuildPlayerStateWidget extends StatefulWidget {
 
 class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
   late Timer timer;
-  var prog;
+  var prog = 0;
+  var duration = 0;
 
   @override
   void initState() {
+    getSongLength();
     setTimer();
     super.initState();
   }
@@ -28,6 +30,21 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
   void dispose() {
     cancelTimer();
     super.dispose();
+  }
+
+  getSongLength() async {
+    print('SAFE');
+    var url = Uri.https('api.spotify.com', '/v1/me/player');
+    final res = await http.get(url,
+        headers: {'Authorization': 'Bearer ${LiveSpotifyController.token}'});
+
+    var body = jsonDecode(res.body);
+    if (body['item']['duration_ms'].runtimeType == int) {
+      int duration = body['item']['duration_ms'];
+
+      Provider.of<GlobalNotifier>(context, listen: false)
+          .setDuration((duration / 1000).floor());
+    }
   }
 
   setTimer() {
@@ -53,6 +70,13 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // everytime the song changes get its length
+    if (Provider.of<GlobalNotifier>(context).progress == 0) {
+      Future.delayed(const Duration(seconds: 1), () {
+        getSongLength();
+      });
+    }
+
     if (Provider.of<GlobalNotifier>(context).playState) {
       if (!timer.isActive) {
         setTimer();
@@ -63,8 +87,9 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
       }
     }
 
-    prog = Provider.of<GlobalNotifier>(context).progress.toString();
+    prog = Provider.of<GlobalNotifier>(context).progress;
+    duration = Provider.of<GlobalNotifier>(context).duration;
 
-    return Text(prog);
+    return Text(prog.toString() + '/' + duration.toString());
   }
 }

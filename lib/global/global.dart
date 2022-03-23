@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:music_pool_app/spotify/spotify_controller.dart';
 
 class GlobalNotifier extends ChangeNotifier {
   int playing = -1;
@@ -7,6 +6,12 @@ class GlobalNotifier extends ChangeNotifier {
   bool playState = false;
   int playlistSize = 0;
   int progress = 0;
+  int duration = 0;
+
+  setDuration(duration) {
+    this.duration = duration;
+    notifyListeners();
+  }
 
   setProgress(progress) {
     this.progress = progress;

@@ -42,7 +42,8 @@ class _SecondPage extends State<SecondPage> {
                       ),
                     ),
                     const SongPlayer(),
-                    const SizedBox(height: 100),
+                    const SizedBox(
+                        height: 50), // ISSUE ON HEIGHT WITH FIXED MEASURES
                     const LinearProgressIndicator(
                       value: 1,
                     ),
