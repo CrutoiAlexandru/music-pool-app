@@ -1,14 +1,19 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
 import 'package:music_pool_app/ui/config.dart';
+import 'package:music_pool_app/ui/secondPage/player/player_state.dart';
 import 'package:music_pool_app/ui/secondPage/secondPage.dart';
 import 'package:provider/provider.dart';
 import 'package:music_pool_app/global/session/session.dart';
+import 'package:http/http.dart' as http;
 
 class SongBottomAppBar extends StatefulWidget {
   const SongBottomAppBar({Key? key}) : super(key: key);
@@ -19,12 +24,33 @@ class SongBottomAppBar extends StatefulWidget {
 
 class _SongBottomAppBar extends State<SongBottomAppBar> {
   var database;
+  late Timer timer;
   int index = -1;
 
   @override
   void initState() {
+    // VERY BAD WAY OF GETTING PLAYTIME
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      var url = Uri.https('api.spotify.com', '/v1/me/player');
+      final res = await http.get(url,
+          headers: {'Authorization': 'Bearer ${LiveSpotifyController.token}'});
+
+      var body = jsonDecode(res.body);
+      if (body['progress_ms'].runtimeType == int) {
+        int progress = body['progress_ms'];
+
+        Provider.of<GlobalNotifier>(context, listen: false)
+            .setProgress((progress / 1000).floor());
+      }
+    });
     database = FirebaseFirestore.instance.collection('default').snapshots();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   @override
@@ -196,6 +222,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                   ],
                 ),
               ),
+              const BuildPlayerStateWidget(),
             ],
           );
         },

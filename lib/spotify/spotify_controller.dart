@@ -113,7 +113,7 @@ class LiveSpotifyController extends State<SpotifyController> {
           getOAuthToken: (cb) {
             cb(token);
           },
-          volume: 100),
+          volume: 30),
     );
 
     player.addListener("not_ready", (e) {
@@ -174,7 +174,7 @@ class LiveSpotifyController extends State<SpotifyController> {
 
   static Future<void> play(String spotifyUri) async {
     try {
-      await SpotifySdk.play(spotifyUri: spotifyUri, asRadio: true);
+      await SpotifySdk.play(spotifyUri: spotifyUri);
     } on PlatformException catch (e) {
       setStatus(e.code, message: e.message);
     } on MissingPluginException {

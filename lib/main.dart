@@ -10,6 +10,7 @@ import 'package:music_pool_app/global/session/session.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
 import 'package:music_pool_app/ui/body/bottom_app_bar.dart';
 import 'package:music_pool_app/ui/body/song_list.dart';
+import 'package:music_pool_app/ui/secondPage/player/player.dart';
 import 'ui/drawer/drawer.dart';
 import 'ui/body/platform_buttons.dart';
 import 'package:provider/provider.dart';

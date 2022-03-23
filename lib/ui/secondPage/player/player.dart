@@ -1,5 +1,4 @@
-import 'dart:async';
-import 'dart:convert';
+// ignore_for_file: prefer_typing_uninitialized_variables
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +6,8 @@ import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/global/session/session.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
 import 'package:music_pool_app/ui/config.dart';
+import 'package:music_pool_app/ui/secondPage/player/player_state.dart';
 import 'package:provider/provider.dart';
-import 'package:spotify_sdk/models/player_state.dart';
-import 'package:spotify_sdk/spotify_sdk.dart';
-import 'package:spotify_sdk/spotify_sdk_web.dart';
-import 'package:http/http.dart' as http;
 
 class SongPlayer extends StatefulWidget {
   const SongPlayer({Key? key}) : super(key: key);
@@ -225,64 +221,4 @@ class _SongPlayer extends State<SongPlayer> {
       },
     );
   }
-}
-
-class BuildPlayerStateWidget extends StatefulWidget {
-  const BuildPlayerStateWidget({Key? key}) : super(key: key);
-
-  @override
-  State<BuildPlayerStateWidget> createState() => _BuildPlayerStateWidget();
-}
-
-class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
-  var stream;
-
-  @override
-  void initState() {
-    stream = SpotifySdk.subscribePlayerState();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: stream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        var playerState = snapshot.data;
-        var track = snapshot.data?.track;
-
-        if (snapshot.hasError) {
-          return const Center(child: Text('Something went wrong'));
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (Provider.of<GlobalNotifier>(context).playState) {
-          Timer.periodic(const Duration(seconds: 1), (Timer t) {
-            getProgress();
-          });
-        }
-
-        return //text;
-            Text(
-                'Progress: ${(playerState.playbackPosition / 1000).floor()}s/${(track.duration / 1000).floor()}s');
-      },
-    );
-  }
-}
-
-Future<int> getProgress() async {
-  var url = Uri.https('api.spotify.com', '/v1/me/player');
-  final res = await http.get(url,
-      headers: {'Authorization': 'Bearer ${LiveSpotifyController.token}'});
-
-  var body = jsonDecode(res.body);
-
-  int progress = body['progress_ms'];
-
-  print(progress);
-
-  return 1;
 }

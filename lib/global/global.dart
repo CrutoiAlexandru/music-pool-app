@@ -5,6 +5,12 @@ class GlobalNotifier extends ChangeNotifier {
   bool connected = false;
   bool playState = false;
   int playlistSize = 0;
+  int progress = 0;
+
+  setProgress(progress) {
+    this.progress = progress;
+    notifyListeners();
+  }
 
   playingNumber(int index) {
     playing = index;
