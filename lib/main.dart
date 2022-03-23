@@ -14,10 +14,13 @@ import 'package:music_pool_app/ui/secondPage/player/player.dart';
 import 'ui/drawer/drawer.dart';
 import 'ui/body/platform_buttons.dart';
 import 'package:provider/provider.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     MultiProvider(
       providers: [
