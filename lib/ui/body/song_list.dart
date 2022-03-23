@@ -75,31 +75,37 @@ class LiveSongList extends State<SongList> {
                   margin: const EdgeInsets.only(top: 10),
                   child: TextButton(
                     onPressed: () {
-                      if (!Provider.of<GlobalNotifier>(context, listen: false)
-                              .playState ||
-                          Provider.of<GlobalNotifier>(context, listen: false)
-                                  .playing !=
+                      if (Provider.of<GlobalNotifier>(context, listen: false)
+                          .connected) {
+                        if (!Provider.of<GlobalNotifier>(context, listen: false)
+                                .playState ||
+                            Provider.of<GlobalNotifier>(context, listen: false)
+                                    .playing !=
+                                index) {
+                          if (Provider.of<GlobalNotifier>(context,
+                                      listen: false)
+                                  .playing ==
                               index) {
-                        if (Provider.of<GlobalNotifier>(context, listen: false)
-                                .playing ==
-                            index) {
-                          LiveSpotifyController.resume();
-                        } else {
-                          LiveSpotifyController.play(snapshot.data!.docs
-                              .toList()[index]
-                              .data()['playback_uri']);
-                        }
-                        Provider.of<GlobalNotifier>(context, listen: false)
-                            .playingNumber(index);
+                            LiveSpotifyController.resume();
+                          } else {
+                            // SHOULD CHECK FOR PLATFORM
 
-                        Provider.of<GlobalNotifier>(context, listen: false)
-                            .setPlayingState(true);
-                      } else {
-                        Provider.of<GlobalNotifier>(context, listen: false)
-                            .playingNumber(index);
-                        LiveSpotifyController.pause();
-                        Provider.of<GlobalNotifier>(context, listen: false)
-                            .setPlayingState(false);
+                            LiveSpotifyController.play(snapshot.data!.docs
+                                .toList()[index]
+                                .data()['playback_uri']);
+                          }
+                          Provider.of<GlobalNotifier>(context, listen: false)
+                              .playingNumber(index);
+
+                          Provider.of<GlobalNotifier>(context, listen: false)
+                              .setPlayingState(true);
+                        } else {
+                          Provider.of<GlobalNotifier>(context, listen: false)
+                              .playingNumber(index);
+                          LiveSpotifyController.pause();
+                          Provider.of<GlobalNotifier>(context, listen: false)
+                              .setPlayingState(false);
+                        }
                       }
                     },
                     style: TextButton.styleFrom(

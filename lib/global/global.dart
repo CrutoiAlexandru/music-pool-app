@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:music_pool_app/spotify/spotify_controller.dart';
 
 class GlobalNotifier extends ChangeNotifier {
   int playing = -1;
@@ -24,6 +25,8 @@ class GlobalNotifier extends ChangeNotifier {
 
   setConnection(bool input) {
     connected = input;
+    playing = -1;
+    playState = false;
     notifyListeners();
   }
 

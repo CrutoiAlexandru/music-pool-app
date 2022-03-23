@@ -49,6 +49,7 @@ class LiveSpotifyController extends State<SpotifyController> {
                   disconnect();
                   Provider.of<GlobalNotifier>(context, listen: false)
                       .setConnection(connected);
+                  LiveSpotifyController.pause();
                 }
               : () async {
                   token = await auth();
