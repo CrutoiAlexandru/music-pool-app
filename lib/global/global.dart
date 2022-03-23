@@ -7,6 +7,11 @@ class GlobalNotifier extends ChangeNotifier {
   int playlistSize = 0;
   int progress = 0;
   int duration = 0;
+  bool over = false;
+
+  setOver(over) {
+    this.over = over;
+  }
 
   setDuration(duration) {
     this.duration = duration;
@@ -20,6 +25,10 @@ class GlobalNotifier extends ChangeNotifier {
 
   playingNumber(int index) {
     playing = index;
+    if (playing == playlistSize) {
+      playing = 0;
+    }
+
     notifyListeners();
   }
 

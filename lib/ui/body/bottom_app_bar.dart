@@ -195,10 +195,6 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                               ),
                       ],
                     ),
-                    const LinearProgressIndicator(
-                      value: 1,
-                    ),
-                    if (kIsWeb) const SizedBox(height: 10),
                   ],
                 ),
               ),

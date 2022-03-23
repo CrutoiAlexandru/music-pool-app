@@ -13,10 +13,10 @@ class SongPlayer extends StatefulWidget {
   const SongPlayer({Key? key}) : super(key: key);
 
   @override
-  State<SongPlayer> createState() => _SongPlayer();
+  State<SongPlayer> createState() => LiveSongPlayer();
 }
 
-class _SongPlayer extends State<SongPlayer> {
+class LiveSongPlayer extends State<SongPlayer> {
   var database;
   int index = -1;
 
@@ -54,6 +54,31 @@ class _SongPlayer extends State<SongPlayer> {
         if (snapshot.data.docs.isEmpty ||
             Provider.of<GlobalNotifier>(context).playing == -1) {
           return const SizedBox();
+        }
+
+        playNext() {
+          if (Provider.of<GlobalNotifier>(context, listen: false).playing <
+              Provider.of<GlobalNotifier>(context, listen: false).playlistSize -
+                  1) {
+            Provider.of<GlobalNotifier>(context, listen: false).playingNumber(
+                Provider.of<GlobalNotifier>(context, listen: false).playing +
+                    1);
+            LiveSpotifyController.play(snapshot.data!.docs
+                .toList()[
+                    Provider.of<GlobalNotifier>(context, listen: false).playing]
+                .data()['playback_uri']);
+            Provider.of<GlobalNotifier>(context, listen: false)
+                .setPlayingState(true);
+          } else {
+            Provider.of<GlobalNotifier>(context, listen: false)
+                .playingNumber(0);
+            LiveSpotifyController.play(snapshot.data!.docs
+                .toList()[
+                    Provider.of<GlobalNotifier>(context, listen: false).playing]
+                .data()['playback_uri']);
+            Provider.of<GlobalNotifier>(context, listen: false)
+                .setPlayingState(true);
+          }
         }
 
         return Column(
@@ -178,36 +203,37 @@ class _SongPlayer extends State<SongPlayer> {
                   style: TextButton.styleFrom(
                     primary: Config.colorStyle,
                   ),
-                  onPressed: () {
-                    if (Provider.of<GlobalNotifier>(context, listen: false)
-                            .playing <
-                        Provider.of<GlobalNotifier>(context, listen: false)
-                                .playlistSize -
-                            1) {
-                      Provider.of<GlobalNotifier>(context, listen: false)
-                          .playingNumber(Provider.of<GlobalNotifier>(context,
-                                      listen: false)
-                                  .playing +
-                              1);
-                      LiveSpotifyController.play(snapshot.data!.docs
-                          .toList()[Provider.of<GlobalNotifier>(context,
-                                  listen: false)
-                              .playing]
-                          .data()['playback_uri']);
-                      Provider.of<GlobalNotifier>(context, listen: false)
-                          .setPlayingState(true);
-                    } else {
-                      Provider.of<GlobalNotifier>(context, listen: false)
-                          .playingNumber(0);
-                      LiveSpotifyController.play(snapshot.data!.docs
-                          .toList()[Provider.of<GlobalNotifier>(context,
-                                  listen: false)
-                              .playing]
-                          .data()['playback_uri']);
-                      Provider.of<GlobalNotifier>(context, listen: false)
-                          .setPlayingState(true);
-                    }
-                  },
+                  onPressed: playNext,
+                  // () {
+                  //   if (Provider.of<GlobalNotifier>(context, listen: false)
+                  //           .playing <
+                  //       Provider.of<GlobalNotifier>(context, listen: false)
+                  //               .playlistSize -
+                  //           1) {
+                  //     Provider.of<GlobalNotifier>(context, listen: false)
+                  //         .playingNumber(Provider.of<GlobalNotifier>(context,
+                  //                     listen: false)
+                  //                 .playing +
+                  //             1);
+                  //     LiveSpotifyController.play(snapshot.data!.docs
+                  //         .toList()[Provider.of<GlobalNotifier>(context,
+                  //                 listen: false)
+                  //             .playing]
+                  //         .data()['playback_uri']);
+                  //     Provider.of<GlobalNotifier>(context, listen: false)
+                  //         .setPlayingState(true);
+                  //   } else {
+                  //     Provider.of<GlobalNotifier>(context, listen: false)
+                  //         .playingNumber(0);
+                  //     LiveSpotifyController.play(snapshot.data!.docs
+                  //         .toList()[Provider.of<GlobalNotifier>(context,
+                  //                 listen: false)
+                  //             .playing]
+                  //         .data()['playback_uri']);
+                  //     Provider.of<GlobalNotifier>(context, listen: false)
+                  //         .setPlayingState(true);
+                  //   }
+                  // },
                   child: const Icon(
                     Icons.skip_next,
                     color: Colors.white,

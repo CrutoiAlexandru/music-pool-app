@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, avoid_web_libraries_in_flutter
+// ignore_for_file: avoid_print, avoid_web_libraries_in_flutter, prefer_typing_uninitialized_variables
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
