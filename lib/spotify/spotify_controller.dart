@@ -80,6 +80,19 @@ class LiveSpotifyController extends State<SpotifyController> {
     return res.body.toString();
   }
 
+  static Future<void> seekTo(position) async {
+    try {
+      var url = Uri.https('api.spotify.com', '/v1/me/player/seek', {
+        'position_ms': '${position.floor()}',
+      });
+      await http.put(url, headers: {'Authorization': 'Bearer $token'});
+    } on PlatformException catch (e) {
+      setStatus(e.code, message: e.message);
+    } on MissingPluginException {
+      setStatus('not implemented');
+    }
+  }
+
   static Future<String> auth() async {
     try {
       var authenticationToken = await SpotifySdk.getAuthenticationToken(

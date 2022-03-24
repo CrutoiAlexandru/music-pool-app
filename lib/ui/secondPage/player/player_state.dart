@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/global/session/session.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
+import 'package:music_pool_app/ui/config.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
@@ -37,7 +38,6 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
   }
 
   getSongLength() async {
-    print('length');
     var url = Uri.https('api.spotify.com', '/v1/me/player');
     final res = await http.get(url,
         headers: {'Authorization': 'Bearer ${LiveSpotifyController.token}'});
@@ -86,6 +86,8 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     }
 
     // everytime the song changes get its length
+    // executes too many times because of the way functions() and providers work
+    // not sure !?
     if (Provider.of<GlobalNotifier>(context).progress == 0) {
       getSongLength();
     }
@@ -103,7 +105,6 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     if (Provider.of<GlobalNotifier>(context).progress ==
             Provider.of<GlobalNotifier>(context).duration - 1 &&
         Provider.of<GlobalNotifier>(context).progress != 0) {
-      print('DONE');
       Provider.of<GlobalNotifier>(context, listen: false).setOver(true);
     }
 
@@ -149,11 +150,23 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
               Text(Provider.of<GlobalNotifier>(context).progress.toString() +
                   ' / ' +
                   Provider.of<GlobalNotifier>(context).duration.toString()),
-              LinearProgressIndicator(
+              Slider(
                 value: Provider.of<GlobalNotifier>(context).duration != 0
                     ? Provider.of<GlobalNotifier>(context).progress /
                         Provider.of<GlobalNotifier>(context).duration
                     : 0,
+                min: 0,
+                max: 1,
+                onChanged: (double value) {},
+                onChangeEnd: (double value) {
+                  LiveSpotifyController.seekTo(value *
+                      Provider.of<GlobalNotifier>(context, listen: false)
+                          .duration *
+                      1000);
+                },
+                inactiveColor: Config
+                    .colorStyleDark, //const Color.fromARGB(255, 59, 59, 59),
+                activeColor: Config.colorStyle,
               ),
             ],
           ),

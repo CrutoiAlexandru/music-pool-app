@@ -204,11 +204,22 @@ class LiveSongPlayer extends State<SongPlayer> {
                           .toString() +
                       ' / ' +
                       Provider.of<GlobalNotifier>(context).duration.toString()),
-                  LinearProgressIndicator(
+                  Slider(
                     value: Provider.of<GlobalNotifier>(context).duration != 0
                         ? Provider.of<GlobalNotifier>(context).progress /
                             Provider.of<GlobalNotifier>(context).duration
                         : 0,
+                    min: 0,
+                    max: 1,
+                    onChanged: (double value) {},
+                    onChangeEnd: (double value) {
+                      LiveSpotifyController.seekTo(value *
+                          Provider.of<GlobalNotifier>(context, listen: false)
+                              .duration *
+                          1000);
+                    },
+                    inactiveColor: Config.colorStyleDark,
+                    activeColor: Config.colorStyle,
                   ),
                 ],
               ),
