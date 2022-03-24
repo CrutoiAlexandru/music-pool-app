@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, prefer_typing_uninitialized_variables, avoid_print
+// ignore_for_file: deprecated_member_use, prefer_typing_uninitialized_variables,
 // ignore_for_file: import_of_legacy_library_into_null_safe
 
 import 'dart:async';
@@ -10,7 +10,6 @@ import 'package:music_pool_app/global/session/session.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
 import 'package:music_pool_app/ui/body/bottom_app_bar.dart';
 import 'package:music_pool_app/ui/body/song_list.dart';
-import 'package:music_pool_app/ui/secondPage/player/player.dart';
 import 'ui/drawer/drawer.dart';
 import 'ui/body/platform_buttons.dart';
 import 'package:provider/provider.dart';

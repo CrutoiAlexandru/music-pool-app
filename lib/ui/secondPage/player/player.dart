@@ -6,7 +6,6 @@ import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/global/session/session.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
 import 'package:music_pool_app/ui/config.dart';
-import 'package:music_pool_app/ui/secondPage/player/player_state.dart';
 import 'package:provider/provider.dart';
 
 class SongPlayer extends StatefulWidget {

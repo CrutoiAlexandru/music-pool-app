@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, avoid_web_libraries_in_flutter, prefer_typing_uninitialized_variables
+// ignore_for_file: , avoid_web_libraries_in_flutter, prefer_typing_uninitialized_variables
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +22,6 @@ class SpotifyController extends StatefulWidget {
 }
 
 class LiveSpotifyController extends State<SpotifyController> {
-  // remove _loading if not usefull for future
-  bool _loading = false;
   static bool connected = false;
   final endpoint = 'accounts.spotify.com';
   static const redirectUrl = 'https://music-pool-app-50127.web.app/auth.html';
@@ -138,9 +136,6 @@ class LiveSpotifyController extends State<SpotifyController> {
 
   Future<void> connectToSpotifyRemote() async {
     try {
-      setState(() {
-        _loading = true;
-      });
       var result = await SpotifySdk.connectToSpotifyRemote(
         clientId: SpotifyConfig.clientID,
         redirectUrl: redirectUrl,
@@ -150,18 +145,9 @@ class LiveSpotifyController extends State<SpotifyController> {
       setStatus(result
           ? 'connect to spotify successful'
           : 'connect to spotify failed');
-      setState(() {
-        _loading = false;
-      });
     } on PlatformException catch (e) {
-      setState(() {
-        _loading = false;
-      });
       setStatus(e.code, message: e.message);
     } on MissingPluginException {
-      setState(() {
-        _loading = false;
-      });
       setStatus('not implemented');
     }
   }

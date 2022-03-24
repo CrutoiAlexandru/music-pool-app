@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
+import 'package:music_pool_app/spotify/spotify_controller.dart';
 import 'package:provider/provider.dart';
 
 import 'package:music_pool_app/ui/config.dart';
@@ -46,6 +47,7 @@ class SessionNotifier extends ChangeNotifier {
 
   leaveSession() {
     session = '';
+    LiveSpotifyController.pause();
     notifyListeners();
   }
 }

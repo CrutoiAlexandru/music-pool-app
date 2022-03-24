@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -50,19 +52,23 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
   }
 
   setTimer() {
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-      var url = Uri.https('api.spotify.com', '/v1/me/player');
-      final res = await http.get(url,
-          headers: {'Authorization': 'Bearer ${LiveSpotifyController.token}'});
+    timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) async {
+        var url = Uri.https('api.spotify.com', '/v1/me/player');
+        final res = await http.get(url, headers: {
+          'Authorization': 'Bearer ${LiveSpotifyController.token}'
+        });
 
-      var body = jsonDecode(res.body);
-      if (body['progress_ms'].runtimeType == int) {
-        int progress = body['progress_ms'];
+        var body = jsonDecode(res.body);
+        if (body['progress_ms'].runtimeType == int) {
+          int progress = body['progress_ms'];
 
-        Provider.of<GlobalNotifier>(context, listen: false)
-            .setProgress((progress / 1000).floor());
-      }
-    });
+          Provider.of<GlobalNotifier>(context, listen: false)
+              .setProgress((progress / 1000).floor());
+        }
+      },
+    );
   }
 
   cancelTimer() {
@@ -112,45 +118,47 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
         Provider.of<GlobalNotifier>(context, listen: false)
             .setPlayingState(true);
         Provider.of<GlobalNotifier>(context, listen: false).setOver(false);
+      } else {
+        return const CircularProgressIndicator();
       }
-      return const CircularProgressIndicator();
     }
 
     return StreamBuilder(
-        stream: database,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasError) {
-            return const Text('Something went wrong',
-                textAlign: TextAlign.center);
-          }
+      stream: database,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasError) {
+          return const Text('Something went wrong',
+              textAlign: TextAlign.center);
+        }
 
-          if (snapshot.connectionState != ConnectionState.waiting &&
-                  snapshot.data.docs.isEmpty ||
-              Provider.of<GlobalNotifier>(context).playing == -1) {
-            return const SizedBox();
-          }
+        if (snapshot.connectionState != ConnectionState.waiting &&
+                snapshot.data.docs.isEmpty ||
+            Provider.of<GlobalNotifier>(context).playing == -1) {
+          return const SizedBox();
+        }
 
-          if (Provider.of<GlobalNotifier>(context).over) {
-            // currently the method gets executed while building, not ok but works in case of not being able to wrok around it
-            autoPlayNext(snapshot);
-          }
+        if (Provider.of<GlobalNotifier>(context).over) {
+          // currently the method gets executed while building, not ok but works in case of not being able to wrok around it
+          autoPlayNext(snapshot);
+        }
 
-          return Hero(
-            tag: 'playerState',
-            child: Column(
-              children: [
-                Text(Provider.of<GlobalNotifier>(context).progress.toString() +
-                    ' / ' +
-                    Provider.of<GlobalNotifier>(context).duration.toString()),
-                LinearProgressIndicator(
-                  value: Provider.of<GlobalNotifier>(context).duration != 0
-                      ? Provider.of<GlobalNotifier>(context).progress /
-                          Provider.of<GlobalNotifier>(context).duration
-                      : 0,
-                ),
-              ],
-            ),
-          );
-        });
+        return Hero(
+          tag: 'playerState',
+          child: Column(
+            children: [
+              Text(Provider.of<GlobalNotifier>(context).progress.toString() +
+                  ' / ' +
+                  Provider.of<GlobalNotifier>(context).duration.toString()),
+              LinearProgressIndicator(
+                value: Provider.of<GlobalNotifier>(context).duration != 0
+                    ? Provider.of<GlobalNotifier>(context).progress /
+                        Provider.of<GlobalNotifier>(context).duration
+                    : 0,
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
