@@ -198,7 +198,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                   ],
                 ),
               ),
-              const BuildPlayerStateWidget(),
+              const BuildPlayerStateWidget()
             ],
           );
         },
