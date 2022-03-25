@@ -5,12 +5,13 @@ class GlobalNotifier extends ChangeNotifier {
   bool connected = false;
   bool playState = false;
   int playlistSize = 0;
-  int progress = 0;
-  int duration = 0;
+  double progress = 0;
+  double duration = 0;
   bool over = false;
 
   setOver(over) {
     this.over = over;
+    notifyListeners();
   }
 
   setDuration(duration) {
@@ -51,5 +52,6 @@ class GlobalNotifier extends ChangeNotifier {
 
   setPlaylistSize(int input) {
     playlistSize = input;
+    notifyListeners();
   }
 }

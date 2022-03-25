@@ -83,7 +83,7 @@ class LiveSpotifyController extends State<SpotifyController> {
   static Future<void> seekTo(position) async {
     try {
       var url = Uri.https('api.spotify.com', '/v1/me/player/seek', {
-        'position_ms': '${position.floor()}',
+        'position_ms': '${(position / 1000).floor()}',
       });
       await http.put(url, headers: {'Authorization': 'Bearer $token'});
     } on PlatformException catch (e) {

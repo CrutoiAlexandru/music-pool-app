@@ -22,6 +22,7 @@ class BuildPlayerStateWidget extends StatefulWidget {
 class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
   late Timer timer;
   var database;
+  var spotifyState;
 
   @override
   void initState() {
@@ -46,8 +47,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     if (body['item']['duration_ms'].runtimeType == int) {
       int duration = body['item']['duration_ms'];
 
-      Provider.of<GlobalNotifier>(context, listen: false)
-          .setDuration((duration / 1000).floor());
+      Provider.of<GlobalNotifier>(context, listen: false).setDuration(duration);
     }
   }
 
@@ -55,6 +55,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     timer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) async {
+        getSpotifyState();
         var url = Uri.https('api.spotify.com', '/v1/me/player');
         final res = await http.get(url, headers: {
           'Authorization': 'Bearer ${LiveSpotifyController.token}'
@@ -62,10 +63,12 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
 
         var body = jsonDecode(res.body);
         if (body['progress_ms'].runtimeType == int) {
-          int progress = body['progress_ms'];
+          if (body['progress_ms'] != 0) {
+            int progress = body['progress_ms'];
 
-          Provider.of<GlobalNotifier>(context, listen: false)
-              .setProgress((progress / 1000).floor());
+            Provider.of<GlobalNotifier>(context, listen: false)
+                .setProgress(progress);
+          }
         }
       },
     );
@@ -73,6 +76,10 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
 
   cancelTimer() {
     timer.cancel();
+  }
+
+  getSpotifyState() async {
+    spotifyState = await LiveSpotifyController.getPlayerState();
   }
 
   @override
@@ -88,7 +95,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     // everytime the song changes get its length
     // executes too many times because of the way functions() and providers work
     // not sure !?
-    if (Provider.of<GlobalNotifier>(context).progress == 0) {
+    if ((Provider.of<GlobalNotifier>(context).progress / 1000).floor() == 0) {
       getSongLength();
     }
 
@@ -102,26 +109,25 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
       }
     }
 
-    if (Provider.of<GlobalNotifier>(context).progress ==
-            Provider.of<GlobalNotifier>(context).duration - 1 &&
-        Provider.of<GlobalNotifier>(context).progress != 0) {
+    // need better autoplay methods
+    if ((Provider.of<GlobalNotifier>(context).progress / 1000).floor() ==
+            (Provider.of<GlobalNotifier>(context).duration / 1000).floor() &&
+        Provider.of<GlobalNotifier>(context).duration != 0) {
       Provider.of<GlobalNotifier>(context, listen: false).setOver(true);
     }
 
     autoPlayNext(snapshot) {
-      if (snapshot.connectionState != ConnectionState.waiting) {
-        Provider.of<GlobalNotifier>(context, listen: false).playingNumber(
-            Provider.of<GlobalNotifier>(context, listen: false).playing + 1);
-        LiveSpotifyController.play(snapshot.data!.docs
-            .toList()[
-                Provider.of<GlobalNotifier>(context, listen: false).playing]
-            .data()['playback_uri']);
-        Provider.of<GlobalNotifier>(context, listen: false)
-            .setPlayingState(true);
-        Provider.of<GlobalNotifier>(context, listen: false).setOver(false);
-      } else {
-        return const CircularProgressIndicator();
-      }
+      // if (snapshot.connectionState != ConnectionState.waiting) {
+      Provider.of<GlobalNotifier>(context, listen: false).playingNumber(
+          Provider.of<GlobalNotifier>(context, listen: false).playing + 1);
+      LiveSpotifyController.play(snapshot.data!.docs
+          .toList()[Provider.of<GlobalNotifier>(context, listen: false).playing]
+          .data()['playback_uri']);
+      Provider.of<GlobalNotifier>(context, listen: false).setPlayingState(true);
+      Provider.of<GlobalNotifier>(context, listen: false).setOver(false);
+      // } else {
+      // return const CircularProgressIndicator();
+      // }
     }
 
     return StreamBuilder(
@@ -138,10 +144,43 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
           return const SizedBox();
         }
 
-        if (Provider.of<GlobalNotifier>(context).over) {
-          // currently the method gets executed while building, not ok but works in case of not being able to wrok around it
-          autoPlayNext(snapshot);
+        // IN CASE DOUBLE TO INT TRANSLATION RESULTS THE END PROGRESS TO BE LESS THAN THE DURATION VALUE
+        // WOULD WORK
+        // NEED TO UPDATE PLAY STATE MORE OFTEN
+        if (spotifyState.isPaused &&
+            !Provider.of<GlobalNotifier>(context).over &&
+            Provider.of<GlobalNotifier>(context).playState) {
+          Provider.of<GlobalNotifier>(context, listen: false).setProgress(
+              Provider.of<GlobalNotifier>(context, listen: false).duration);
+          print('LINE 139');
         }
+
+        // THIS DOESN'T WORK
+        if (Provider.of<GlobalNotifier>(context).over) {
+          // timer =
+          // Timer.periodic(
+          //   const Duration(seconds: 1),
+          //   (timer) async {
+          if (spotifyState != null) {
+            // if (spotifyState.isPaused) {
+            getSpotifyState();
+
+            // currently the method gets executed while building, not ok but works in case of not being able to wrok around it
+            autoPlayNext(snapshot);
+            print('GOT SOMETHING');
+
+            Provider.of<GlobalNotifier>(context, listen: false).setOver(false);
+            spotifyState = null;
+            // }
+          } else {
+            print('EMPTY');
+          }
+          // },
+          // );
+        }
+        // else {
+        // timer.cancel();
+        // }
 
         return Hero(
           tag: 'playerState',
@@ -152,17 +191,18 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
                   Provider.of<GlobalNotifier>(context).duration.toString()),
               Slider(
                 value: Provider.of<GlobalNotifier>(context).duration != 0
-                    ? Provider.of<GlobalNotifier>(context).progress /
-                        Provider.of<GlobalNotifier>(context).duration
+                    ? (Provider.of<GlobalNotifier>(context).progress /
+                            Provider.of<GlobalNotifier>(context).duration) *
+                        1000
                     : 0,
                 min: 0,
-                max: 1,
+                max: 1000,
                 onChanged: (double value) {},
                 onChangeEnd: (double value) {
                   LiveSpotifyController.seekTo(value *
                       Provider.of<GlobalNotifier>(context, listen: false)
-                          .duration *
-                      1000);
+                          .duration);
+                  LiveSpotifyController.resume();
                 },
                 inactiveColor: Config
                     .colorStyleDark, //const Color.fromARGB(255, 59, 59, 59),

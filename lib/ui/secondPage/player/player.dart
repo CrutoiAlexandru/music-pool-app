@@ -206,17 +206,18 @@ class LiveSongPlayer extends State<SongPlayer> {
                       Provider.of<GlobalNotifier>(context).duration.toString()),
                   Slider(
                     value: Provider.of<GlobalNotifier>(context).duration != 0
-                        ? Provider.of<GlobalNotifier>(context).progress /
-                            Provider.of<GlobalNotifier>(context).duration
+                        ? (Provider.of<GlobalNotifier>(context).progress /
+                                Provider.of<GlobalNotifier>(context).duration) *
+                            1000
                         : 0,
                     min: 0,
-                    max: 1,
+                    max: 1000,
                     onChanged: (double value) {},
                     onChangeEnd: (double value) {
                       LiveSpotifyController.seekTo(value *
                           Provider.of<GlobalNotifier>(context, listen: false)
-                              .duration *
-                          1000);
+                              .duration);
+                      LiveSpotifyController.resume();
                     },
                     inactiveColor: Config.colorStyleDark,
                     activeColor: Config.colorStyle,
