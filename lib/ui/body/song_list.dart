@@ -120,9 +120,17 @@ class LiveSongList extends State<SongList> {
                     }
                   },
                   childWhenDragging: Container(
-                      height: 50,
-                      width: MediaQuery.of(context).size.width,
-                      color: Colors.red),
+                    height: 25,
+                    width: MediaQuery.of(context).size.width,
+                    child: const Center(
+                      child: Text(
+                        '<-- Remove song? -->',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 104, 104, 104),
+                        ),
+                      ),
+                    ),
+                  ),
                 );
               },
             ),
