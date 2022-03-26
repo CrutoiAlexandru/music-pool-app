@@ -56,7 +56,7 @@ class LiveSongPlayer extends State<SongPlayer> {
         }
 
         playNext() {
-          Provider.of<GlobalNotifier>(context, listen: false).playingNumber(
+          Provider.of<GlobalNotifier>(context, listen: false).setPlaying(
               Provider.of<GlobalNotifier>(context, listen: false).playing + 1);
           LiveSpotifyController.play(snapshot.data!.docs
               .toList()[
@@ -69,13 +69,18 @@ class LiveSongPlayer extends State<SongPlayer> {
         playPrevious() {
           if (Provider.of<GlobalNotifier>(context, listen: false).playing !=
               0) {
-            Provider.of<GlobalNotifier>(context, listen: false).playingNumber(
+            Provider.of<GlobalNotifier>(context, listen: false).setPlaying(
                 Provider.of<GlobalNotifier>(context, listen: false).playing -
                     1);
             LiveSpotifyController.play(snapshot.data!.docs
                 .toList()[
                     Provider.of<GlobalNotifier>(context, listen: false).playing]
                 .data()['playback_uri']);
+            Provider.of<GlobalNotifier>(context, listen: false)
+                .setPlayingState(true);
+          } else {
+            LiveSpotifyController.seekTo(0);
+            LiveSpotifyController.resume();
             Provider.of<GlobalNotifier>(context, listen: false)
                 .setPlayingState(true);
           }

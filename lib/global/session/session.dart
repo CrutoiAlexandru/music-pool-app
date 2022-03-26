@@ -42,6 +42,7 @@ class SessionNotifier extends ChangeNotifier {
         ds.reference.delete();
       }
     });
+    LiveSpotifyController.pause();
     notifyListeners();
   }
 
@@ -120,6 +121,7 @@ class _SessionWidget extends State<Session> {
                             .setSession(input);
                         Provider.of<GlobalNotifier>(context, listen: false)
                             .resetNumber();
+                        LiveSpotifyController.pause();
                         Navigator.pop(context, 'Connect');
                       },
                       child: const Text('Connect'),

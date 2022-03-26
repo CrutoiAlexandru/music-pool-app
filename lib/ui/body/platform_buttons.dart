@@ -119,12 +119,32 @@ class _SpotifyButton extends State<SpotifyButton> {
 
   Future<void> addData(
       String artist, String name, String playbackUri, String icon) async {
-    return songslist
-        .add({
+    // if playlist has objects get the last object id
+    if (Provider.of<GlobalNotifier>(context, listen: false).playlistSize > 0) {
+      var aux = await songslist.get();
+      var lastId = await aux.docs[
+          Provider.of<GlobalNotifier>(context, listen: false).playlistSize - 1];
+      Provider.of<GlobalNotifier>(context, listen: false)
+          .setOrder(int.parse(lastId.id));
+    }
+
+    // increment the last id
+    Provider.of<GlobalNotifier>(context, listen: false).setOrder(
+        Provider.of<GlobalNotifier>(context, listen: false).order + 1);
+
+    // set another object with the id^
+    // we do this in order to keep the objects in order inside our firestore
+    songslist
+        .doc(Provider.of<GlobalNotifier>(context, listen: false)
+            .order
+            .toString())
+        .set({
           'track': name,
           'artist': artist,
           'playback_uri': playbackUri,
-          'icon': icon
+          'icon': icon,
+          'order':
+              Provider.of<GlobalNotifier>(context, listen: false).playlistSize,
         })
         .then((value) => print('Added song'))
         .catchError((error) => print("Failed to add data: $error"));

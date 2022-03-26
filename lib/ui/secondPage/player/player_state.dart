@@ -124,7 +124,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
 
     // autoplay method to skip to next song
     autoPlayNext(snapshot) {
-      Provider.of<GlobalNotifier>(context, listen: false).playingNumber(
+      Provider.of<GlobalNotifier>(context, listen: false).setPlaying(
           Provider.of<GlobalNotifier>(context, listen: false).playing + 1);
       LiveSpotifyController.play(snapshot.data!.docs
           .toList()[Provider.of<GlobalNotifier>(context, listen: false).playing]

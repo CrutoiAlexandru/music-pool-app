@@ -15,6 +15,12 @@ class GlobalNotifier extends ChangeNotifier {
   double duration = 0;
   // state of over or not of playing song
   bool over = false;
+  // keep order of the added objects
+  int order = 0;
+
+  setOrder(order) {
+    this.order = order;
+  }
 
   setOver(over) {
     this.over = over;
@@ -31,7 +37,7 @@ class GlobalNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  playingNumber(int index) {
+  setPlaying(int index) {
     playing = index;
     if (playing == playlistSize) {
       playing = 0;
