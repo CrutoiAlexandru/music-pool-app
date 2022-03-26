@@ -22,7 +22,6 @@ class BuildPlayerStateWidget extends StatefulWidget {
 class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
   late Timer timer;
   var database;
-  var spotifyState;
 
   @override
   void initState() {
@@ -38,6 +37,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     super.dispose();
   }
 
+  // gets the song length everytime the song changes
   getSongLength() async {
     var url = Uri.https('api.spotify.com', '/v1/me/player');
     final res = await http.get(url,
@@ -51,11 +51,14 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     }
   }
 
+  // this way we get the progress of our song every second
+  // we do it this way because the stream from spotify sdk about playerstate does not currently update
+  // even though there will be a lot of calls to spotify api
+  // more precise it would be for even more often calls?
   setTimer() {
     timer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) async {
-        getSpotifyState();
         var url = Uri.https('api.spotify.com', '/v1/me/player');
         final res = await http.get(url, headers: {
           'Authorization': 'Bearer ${LiveSpotifyController.token}'
@@ -78,12 +81,9 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     timer.cancel();
   }
 
-  getSpotifyState() async {
-    spotifyState = await LiveSpotifyController.getPlayerState();
-  }
-
   @override
   Widget build(BuildContext context) {
+    // database connection (firestore)
     if (Provider.of<SessionNotifier>(context).session.isNotEmpty) {
       database = FirebaseFirestore.instance
           .collection(Provider.of<SessionNotifier>(context).session)
@@ -99,6 +99,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
       getSongLength();
     }
 
+    // updating method for our progress bar
     if (Provider.of<GlobalNotifier>(context).playState) {
       if (!timer.isActive) {
         setTimer();
@@ -109,15 +110,18 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
       }
     }
 
-    // need better autoplay methods
+    // if the progress and duration are equal it means the song is over
+    // if so we tell our player state that over = true in order to play the next song in queue
+    // we have to do it manually because we use a separate queue held in firestore
+    // we do not use the automatic queues given by our playing services
     if ((Provider.of<GlobalNotifier>(context).progress / 1000).floor() ==
             (Provider.of<GlobalNotifier>(context).duration / 1000).floor() &&
         Provider.of<GlobalNotifier>(context).duration != 0) {
       Provider.of<GlobalNotifier>(context, listen: false).setOver(true);
     }
 
+    // autoplay method to skip to next song
     autoPlayNext(snapshot) {
-      // if (snapshot.connectionState != ConnectionState.waiting) {
       Provider.of<GlobalNotifier>(context, listen: false).playingNumber(
           Provider.of<GlobalNotifier>(context, listen: false).playing + 1);
       LiveSpotifyController.play(snapshot.data!.docs
@@ -125,9 +129,6 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
           .data()['playback_uri']);
       Provider.of<GlobalNotifier>(context, listen: false).setPlayingState(true);
       Provider.of<GlobalNotifier>(context, listen: false).setOver(false);
-      // } else {
-      // return const CircularProgressIndicator();
-      // }
     }
 
     return StreamBuilder(
@@ -144,43 +145,12 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
           return const SizedBox();
         }
 
-        // IN CASE DOUBLE TO INT TRANSLATION RESULTS THE END PROGRESS TO BE LESS THAN THE DURATION VALUE
-        // WOULD WORK
-        // NEED TO UPDATE PLAY STATE MORE OFTEN
-        if (spotifyState.isPaused &&
-            !Provider.of<GlobalNotifier>(context).over &&
-            Provider.of<GlobalNotifier>(context).playState) {
-          Provider.of<GlobalNotifier>(context, listen: false).setProgress(
-              Provider.of<GlobalNotifier>(context, listen: false).duration);
-          print('LINE 139');
-        }
-
-        // THIS DOESN'T WORK
+        // when song is over play next song in queue
         if (Provider.of<GlobalNotifier>(context).over) {
-          // timer =
-          // Timer.periodic(
-          //   const Duration(seconds: 1),
-          //   (timer) async {
-          if (spotifyState != null) {
-            // if (spotifyState.isPaused) {
-            getSpotifyState();
-
-            // currently the method gets executed while building, not ok but works in case of not being able to wrok around it
-            autoPlayNext(snapshot);
-            print('GOT SOMETHING');
-
-            Provider.of<GlobalNotifier>(context, listen: false).setOver(false);
-            spotifyState = null;
-            // }
-          } else {
-            print('EMPTY');
-          }
-          // },
-          // );
+          // currently the method gets executed while building, not ok but works in case of not being able to wrok around it
+          autoPlayNext(snapshot);
+          Provider.of<GlobalNotifier>(context, listen: false).setOver(false);
         }
-        // else {
-        // timer.cancel();
-        // }
 
         return Hero(
           tag: 'playerState',
@@ -191,17 +161,13 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
                   Provider.of<GlobalNotifier>(context).duration.toString()),
               Slider(
                 value: Provider.of<GlobalNotifier>(context).duration != 0
-                    ? (Provider.of<GlobalNotifier>(context).progress /
-                            Provider.of<GlobalNotifier>(context).duration) *
-                        1000
+                    ? Provider.of<GlobalNotifier>(context).progress
                     : 0,
                 min: 0,
-                max: 1000,
+                max: Provider.of<GlobalNotifier>(context).duration,
                 onChanged: (double value) {},
                 onChangeEnd: (double value) {
-                  LiveSpotifyController.seekTo(value *
-                      Provider.of<GlobalNotifier>(context, listen: false)
-                          .duration);
+                  LiveSpotifyController.seekTo(value * 1000);
                   LiveSpotifyController.resume();
                 },
                 inactiveColor: Config
