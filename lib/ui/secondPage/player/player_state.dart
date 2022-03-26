@@ -59,12 +59,14 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     timer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) async {
+        var body;
         var url = Uri.https('api.spotify.com', '/v1/me/player');
         final res = await http.get(url, headers: {
           'Authorization': 'Bearer ${LiveSpotifyController.token}'
         });
 
-        var body = jsonDecode(res.body);
+        body = jsonDecode(res.body);
+
         if (body['progress_ms'].runtimeType == int) {
           if (body['progress_ms'] != 0) {
             int progress = body['progress_ms'];
