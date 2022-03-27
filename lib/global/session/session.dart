@@ -76,6 +76,13 @@ class _SessionWidget extends State<Session> {
             showDialog(
               context: context,
               builder: (BuildContext context) => AlertDialog(
+                  backgroundColor: Config.back2,
+                  shape: const RoundedRectangleBorder(
+                    side: BorderSide(color: Config.colorStyle1),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
                   title: const Text('Connect to a session!'),
                   content: SingleChildScrollView(
                     child: Column(
