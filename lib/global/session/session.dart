@@ -37,7 +37,11 @@ class SessionNotifier extends ChangeNotifier {
 
   emptySession() {
     // ON EXIT DELETE ALL DOCS, SHOULD BE IN EMPTY SESSION
-    FirebaseFirestore.instance.collection(session).get().then((snapshot) {
+    FirebaseFirestore.instance
+        .collection(session)
+        .orderBy('order')
+        .get()
+        .then((snapshot) {
       for (DocumentSnapshot ds in snapshot.docs) {
         ds.reference.delete();
       }

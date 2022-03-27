@@ -21,7 +21,10 @@ class _SongPlayer extends State<SongPlayer> {
 
   @override
   void initState() {
-    database = FirebaseFirestore.instance.collection('default').snapshots();
+    database = FirebaseFirestore.instance
+        .collection('default')
+        .orderBy('order')
+        .snapshots();
     super.initState();
   }
 
@@ -30,9 +33,13 @@ class _SongPlayer extends State<SongPlayer> {
     if (Provider.of<SessionNotifier>(context).session.isNotEmpty) {
       database = FirebaseFirestore.instance
           .collection(Provider.of<SessionNotifier>(context).session)
+          .orderBy('order')
           .snapshots();
     } else {
-      database = FirebaseFirestore.instance.collection('default').snapshots();
+      database = FirebaseFirestore.instance
+          .collection('default')
+          .orderBy('order')
+          .snapshots();
     }
 
     return StreamBuilder(
@@ -58,12 +65,18 @@ class _SongPlayer extends State<SongPlayer> {
         playNext() {
           Provider.of<GlobalNotifier>(context, listen: false).setPlaying(
               Provider.of<GlobalNotifier>(context, listen: false).playing + 1);
-          LiveSpotifyController.play(snapshot.data!.docs
-              .toList()[
-                  Provider.of<GlobalNotifier>(context, listen: false).playing]
-              .data()['playback_uri']);
-          Provider.of<GlobalNotifier>(context, listen: false)
-              .setPlayingState(true);
+          if (snapshot.data!.docs
+                  .toList()[Provider.of<GlobalNotifier>(context, listen: false)
+                      .playing]
+                  .data()['platform'] ==
+              'spotify') {
+            LiveSpotifyController.play(snapshot.data!.docs
+                .toList()[
+                    Provider.of<GlobalNotifier>(context, listen: false).playing]
+                .data()['playback_uri']);
+            Provider.of<GlobalNotifier>(context, listen: false)
+                .setPlayingState(true);
+          }
         }
 
         playPrevious() {
@@ -72,12 +85,19 @@ class _SongPlayer extends State<SongPlayer> {
             Provider.of<GlobalNotifier>(context, listen: false).setPlaying(
                 Provider.of<GlobalNotifier>(context, listen: false).playing -
                     1);
-            LiveSpotifyController.play(snapshot.data!.docs
-                .toList()[
-                    Provider.of<GlobalNotifier>(context, listen: false).playing]
-                .data()['playback_uri']);
-            Provider.of<GlobalNotifier>(context, listen: false)
-                .setPlayingState(true);
+            if (snapshot.data!.docs
+                    .toList()[
+                        Provider.of<GlobalNotifier>(context, listen: false)
+                            .playing]
+                    .data()['platform'] ==
+                'spotify') {
+              LiveSpotifyController.play(snapshot.data!.docs
+                  .toList()[Provider.of<GlobalNotifier>(context, listen: false)
+                      .playing]
+                  .data()['playback_uri']);
+              Provider.of<GlobalNotifier>(context, listen: false)
+                  .setPlayingState(true);
+            }
           } else {
             LiveSpotifyController.seekTo(0);
             LiveSpotifyController.resume();

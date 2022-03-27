@@ -25,7 +25,10 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
 
   @override
   void initState() {
-    database = FirebaseFirestore.instance.collection('default').snapshots();
+    database = FirebaseFirestore.instance
+        .collection('default')
+        .orderBy('order')
+        .snapshots();
     getSongLength();
     setTimer();
     super.initState();
@@ -89,9 +92,13 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     if (Provider.of<SessionNotifier>(context).session.isNotEmpty) {
       database = FirebaseFirestore.instance
           .collection(Provider.of<SessionNotifier>(context).session)
+          .orderBy('order')
           .snapshots();
     } else {
-      database = FirebaseFirestore.instance.collection('default').snapshots();
+      database = FirebaseFirestore.instance
+          .collection('default')
+          .orderBy('order')
+          .snapshots();
     }
 
     // everytime the song changes get its length
@@ -126,11 +133,19 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     autoPlayNext(snapshot) {
       Provider.of<GlobalNotifier>(context, listen: false).setPlaying(
           Provider.of<GlobalNotifier>(context, listen: false).playing + 1);
-      LiveSpotifyController.play(snapshot.data!.docs
-          .toList()[Provider.of<GlobalNotifier>(context, listen: false).playing]
-          .data()['playback_uri']);
-      Provider.of<GlobalNotifier>(context, listen: false).setPlayingState(true);
-      Provider.of<GlobalNotifier>(context, listen: false).setOver(false);
+      if (snapshot.data!.docs
+              .toList()[
+                  Provider.of<GlobalNotifier>(context, listen: false).playing]
+              .data()['platform'] ==
+          'spotify') {
+        LiveSpotifyController.play(snapshot.data!.docs
+            .toList()[
+                Provider.of<GlobalNotifier>(context, listen: false).playing]
+            .data()['playback_uri']);
+        Provider.of<GlobalNotifier>(context, listen: false)
+            .setPlayingState(true);
+        Provider.of<GlobalNotifier>(context, listen: false).setOver(false);
+      }
     }
 
     return StreamBuilder(

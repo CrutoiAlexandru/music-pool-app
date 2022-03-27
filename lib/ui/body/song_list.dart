@@ -23,7 +23,10 @@ class LiveSongList extends State<SongList> {
 
   @override
   void initState() {
-    database = FirebaseFirestore.instance.collection('default').snapshots();
+    database = FirebaseFirestore.instance
+        .collection('default')
+        .orderBy('order')
+        .snapshots();
     super.initState();
   }
 
@@ -32,9 +35,13 @@ class LiveSongList extends State<SongList> {
     if (Provider.of<SessionNotifier>(context).session.isNotEmpty) {
       database = FirebaseFirestore.instance
           .collection(Provider.of<SessionNotifier>(context).session)
+          .orderBy('order')
           .snapshots();
     } else {
-      database = FirebaseFirestore.instance.collection('default').snapshots();
+      database = FirebaseFirestore.instance
+          .collection('default')
+          .orderBy('order')
+          .snapshots();
     }
 
     return StreamBuilder(
@@ -51,10 +58,8 @@ class LiveSongList extends State<SongList> {
         // set state exception thrown by foundation
         // called during build
         // no drawbacks?
-        if (snapshot.requireData.size > 0) {
-          Provider.of<GlobalNotifier>(context, listen: false)
-              .setPlaylistSize(snapshot.requireData.size);
-        }
+        Provider.of<GlobalNotifier>(context, listen: false)
+            .setPlaylistSize(snapshot.requireData.size);
 
         return ListView(
           shrinkWrap: true,
@@ -71,6 +76,18 @@ class LiveSongList extends State<SongList> {
                   axis: Axis.horizontal,
                   feedback: listItem(snapshot, context, index),
                   child: listItem(snapshot, context, index),
+                  childWhenDragging: SizedBox(
+                    height: 60,
+                    width: MediaQuery.of(context).size.width,
+                    child: const Center(
+                      child: Text(
+                        '<-- Remove song? -->',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 104, 104, 104),
+                        ),
+                      ),
+                    ),
+                  ),
                   onDragEnd: (details) {
                     // if dragged to more than half the screen
                     // remove from queue (delete from db)
@@ -112,6 +129,7 @@ class LiveSongList extends State<SongList> {
                           .collection(Provider.of<SessionNotifier>(context,
                                   listen: false)
                               .session)
+                          .orderBy('order')
                           .get()
                           .then(
                         (snapshot) {
@@ -121,18 +139,6 @@ class LiveSongList extends State<SongList> {
                       );
                     }
                   },
-                  childWhenDragging: Container(
-                    height: 25,
-                    width: MediaQuery.of(context).size.width,
-                    child: const Center(
-                      child: Text(
-                        '<-- Remove song? -->',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 104, 104, 104),
-                        ),
-                      ),
-                    ),
-                  ),
                 );
               },
             ),
@@ -145,6 +151,7 @@ class LiveSongList extends State<SongList> {
 
 Widget listItem(snapshot, context, index) {
   return Container(
+    height: 50,
     color: Colors.transparent,
     margin: const EdgeInsets.only(top: 10),
     child: TextButton(
@@ -157,10 +164,13 @@ Widget listItem(snapshot, context, index) {
                 index) {
               LiveSpotifyController.resume();
             } else {
-              // SHOULD CHECK FOR PLATFORM
-
-              LiveSpotifyController.play(
-                  snapshot.data!.docs.toList()[index].data()['playback_uri']);
+              // everytime a song is played we need to check for the platform to play from
+              // this is set when we add the song to our queue/databasecd
+              if (snapshot.data!.docs.toList()[index].data()['platform'] ==
+                  'spotify') {
+                LiveSpotifyController.play(
+                    snapshot.data!.docs.toList()[index].data()['playback_uri']);
+              }
             }
             Provider.of<GlobalNotifier>(context, listen: false)
                 .setPlaying(index);

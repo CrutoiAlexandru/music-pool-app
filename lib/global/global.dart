@@ -17,6 +17,13 @@ class GlobalNotifier extends ChangeNotifier {
   bool over = false;
   // keep order of the added objects
   int order = 0;
+  // keep the last platform the user used to add a song from
+  String platform = 'Spotify';
+
+  setPlatform(platform) {
+    this.platform = platform;
+    notifyListeners();
+  }
 
   setOrder(order) {
     this.order = order;

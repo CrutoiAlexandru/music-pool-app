@@ -24,7 +24,10 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
 
   @override
   void initState() {
-    database = FirebaseFirestore.instance.collection('default').snapshots();
+    database = FirebaseFirestore.instance
+        .collection('default')
+        .orderBy('order')
+        .snapshots();
     super.initState();
   }
 
@@ -38,6 +41,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
     if (Provider.of<SessionNotifier>(context).session.isNotEmpty) {
       database = FirebaseFirestore.instance
           .collection(Provider.of<SessionNotifier>(context).session)
+          .orderBy('order')
           .snapshots();
     } else {
       database = FirebaseFirestore.instance.collection('default').snapshots();
