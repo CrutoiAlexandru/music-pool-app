@@ -11,8 +11,8 @@ import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:http/http.dart' as http;
 
 // WEB ONLY LIBRARIES MUST BE REMOVED BEFORE ANDROID BUILD
-import 'dart:js' as js;
-import 'package:spotify_sdk/spotify_sdk_web.dart';
+// import 'dart:js' as js;
+// import 'package:spotify_sdk/spotify_sdk_web.dart';
 
 class SpotifyController extends StatefulWidget {
   const SpotifyController({Key? key}) : super(key: key);
@@ -58,8 +58,8 @@ class LiveSpotifyController extends State<SpotifyController> {
                   setState(() {});
 
                   if (kIsWeb) {
-                    js.allowInterop(createWebPlayer);
-                    connectToSpotifyRemote();
+                    // js.allowInterop(createWebPlayer);
+                    // connectToSpotifyRemote();
                   } else {
                     connectToSpotifyRemote();
                   }
@@ -118,34 +118,34 @@ class LiveSpotifyController extends State<SpotifyController> {
     }
   }
 
-  void createWebPlayer() {
-    player = Player(
-      PlayerOptions(
-          name: 'WebPlayer',
-          getOAuthToken: (cb) {
-            cb(token);
-          },
-          volume: 30),
-    );
+  // void createWebPlayer() {
+  //   player = Player(
+  //     PlayerOptions(
+  //         name: 'WebPlayer',
+  //         getOAuthToken: (cb) {
+  //           cb(token);
+  //         },
+  //         volume: 30),
+  //   );
 
-    player.addListener("not_ready", (e) {
-      print("Device ID has gone offline $e");
-    });
+  //   player.addListener("not_ready", (e) {
+  //     print("Device ID has gone offline $e");
+  //   });
 
-    player.addListener("initialization_error", (message) {
-      print(message);
-    });
+  //   player.addListener("initialization_error", (message) {
+  //     print(message);
+  //   });
 
-    player.addListener("authentication_error", (message) {
-      print(message);
-    });
+  //   player.addListener("authentication_error", (message) {
+  //     print(message);
+  //   });
 
-    player.addListener("account_error", (message) {
-      print(message);
-    });
+  //   player.addListener("account_error", (message) {
+  //     print(message);
+  //   });
 
-    player.connect();
-  }
+  //   player.connect();
+  // }
 
   Future<void> connectToSpotifyRemote() async {
     try {
