@@ -158,9 +158,13 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
           tag: 'playerState',
           child: Column(
             children: [
-              Text(Provider.of<GlobalNotifier>(context).progress.toString() +
+              Text(GlobalNotifier.secondsToMinutes(
+                      (Provider.of<GlobalNotifier>(context).progress / 1000)
+                          .floor()) +
                   ' / ' +
-                  Provider.of<GlobalNotifier>(context).duration.toString()),
+                  GlobalNotifier.secondsToMinutes(
+                      (Provider.of<GlobalNotifier>(context).duration / 1000)
+                          .floor())),
               Slider(
                 value: Provider.of<GlobalNotifier>(context).duration != 0
                     ? Provider.of<GlobalNotifier>(context).progress

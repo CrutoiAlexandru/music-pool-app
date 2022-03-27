@@ -177,12 +177,6 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                                 ),
                                 onPressed: () {
                                   LiveSpotifyController.resume();
-                                  // (snapshot.data!.docs
-                                  //   .toList()[Provider.of<GlobalNotifier>(
-                                  //           context,
-                                  //           listen: false)
-                                  //       .playing]
-                                  //   .data()['playback_uri']);
                                   Provider.of<GlobalNotifier>(context,
                                           listen: false)
                                       .setPlayingState(true);

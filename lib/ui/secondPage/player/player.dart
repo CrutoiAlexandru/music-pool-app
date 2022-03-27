@@ -12,10 +12,10 @@ class SongPlayer extends StatefulWidget {
   const SongPlayer({Key? key}) : super(key: key);
 
   @override
-  State<SongPlayer> createState() => LiveSongPlayer();
+  State<SongPlayer> createState() => _SongPlayer();
 }
 
-class LiveSongPlayer extends State<SongPlayer> {
+class _SongPlayer extends State<SongPlayer> {
   var database;
   int index = -1;
 
@@ -95,9 +95,6 @@ class LiveSongPlayer extends State<SongPlayer> {
                   snapshot.data!.docs
                       .toList()[Provider.of<GlobalNotifier>(context).playing]
                       .data()['icon'],
-                  // width: MediaQuery.of(context).size.width < 600
-                  //     ? MediaQuery.of(context).size.width - 20
-                  //     : 580,
                   height: MediaQuery.of(context).size.height * .4,
                   loadingBuilder: (BuildContext context, Widget child,
                       ImageChunkEvent? loadingProgress) {
@@ -204,11 +201,13 @@ class LiveSongPlayer extends State<SongPlayer> {
               tag: 'playerState',
               child: Column(
                 children: [
-                  Text(Provider.of<GlobalNotifier>(context)
-                          .progress
-                          .toString() +
+                  Text(GlobalNotifier.secondsToMinutes(
+                          (Provider.of<GlobalNotifier>(context).progress / 1000)
+                              .floor()) +
                       ' / ' +
-                      Provider.of<GlobalNotifier>(context).duration.toString()),
+                      GlobalNotifier.secondsToMinutes(
+                          (Provider.of<GlobalNotifier>(context).duration / 1000)
+                              .floor())),
                   Slider(
                     value: Provider.of<GlobalNotifier>(context).duration != 0
                         ? Provider.of<GlobalNotifier>(context).progress

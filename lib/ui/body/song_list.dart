@@ -51,8 +51,10 @@ class LiveSongList extends State<SongList> {
         // set state exception thrown by foundation
         // called during build
         // no drawbacks?
-        Provider.of<GlobalNotifier>(context, listen: false)
-            .setPlaylistSize(snapshot.requireData.size);
+        if (snapshot.requireData.size > 0) {
+          Provider.of<GlobalNotifier>(context, listen: false)
+              .setPlaylistSize(snapshot.requireData.size);
+        }
 
         return ListView(
           shrinkWrap: true,

@@ -67,4 +67,14 @@ class GlobalNotifier extends ChangeNotifier {
     playlistSize = input;
     notifyListeners();
   }
+
+  // method for converting our progress and duration from seconds to minutes format 00:00
+  static secondsToMinutes(seconds) {
+    var converted =
+        '${Duration(seconds: seconds)}'.split('.')[0].split(':')[1] +
+            ':' +
+            '${Duration(seconds: seconds)}'.split('.')[0].split(':')[2];
+
+    return converted;
+  }
 }
