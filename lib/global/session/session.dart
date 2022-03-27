@@ -93,11 +93,11 @@ class _SessionWidget extends State<Session> {
                                 .resetNumber();
                             Navigator.pop(context);
                           },
-                          cursorColor: Config.colorStyle,
+                          cursorColor: Config.colorStyle1,
                           decoration: const InputDecoration(
                             focusedBorder: OutlineInputBorder(
                                 borderSide:
-                                    BorderSide(color: Config.colorStyle)),
+                                    BorderSide(color: Config.colorStyle1)),
                             border: OutlineInputBorder(),
                             hintText: 'Enter a code',
                           ),
@@ -111,7 +111,7 @@ class _SessionWidget extends State<Session> {
                       style: TextButton.styleFrom(
                           primary: Colors.white,
                           elevation: 2,
-                          backgroundColor: Config.colorStyle),
+                          backgroundColor: Config.colorStyle1),
                       onPressed: () => Navigator.pop(context, 'Cancel'),
                       child: const Text('Cancel'),
                     ),
@@ -119,7 +119,7 @@ class _SessionWidget extends State<Session> {
                       style: TextButton.styleFrom(
                           primary: Colors.white,
                           elevation: 2,
-                          backgroundColor: Config.colorStyle),
+                          backgroundColor: Config.colorStyle1),
                       onPressed: () {
                         Provider.of<SessionNotifier>(context, listen: false)
                             .setSession(input);

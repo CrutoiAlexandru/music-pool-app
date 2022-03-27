@@ -191,9 +191,22 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
                   LiveSpotifyController.seekTo(value * 1000);
                   LiveSpotifyController.resume();
                 },
-                inactiveColor: Config
-                    .colorStyleDark, //const Color.fromARGB(255, 59, 59, 59),
-                activeColor: Config.colorStyle,
+                inactiveColor: snapshot.data!.docs
+                            .toList()[Provider.of<GlobalNotifier>(context,
+                                    listen: false)
+                                .playing]
+                            .data()['platform'] ==
+                        'spotify'
+                    ? Config.colorStyle1Dark
+                    : Config.colorStyle2Dark,
+                activeColor: snapshot.data!.docs
+                            .toList()[Provider.of<GlobalNotifier>(context,
+                                    listen: false)
+                                .playing]
+                            .data()['platform'] ==
+                        'spotify'
+                    ? Config.colorStyle1
+                    : Config.colorStyle2,
               ),
             ],
           ),

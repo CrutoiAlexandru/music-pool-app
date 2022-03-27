@@ -221,8 +221,14 @@ Widget listItem(snapshot, context, index) {
                 snapshot.data!.docs.toList()[index].data()['track'],
                 textScaleFactor: 1.25,
                 style: index == Provider.of<GlobalNotifier>(context).playing
-                    ? const TextStyle(
-                        color: Config.colorStyle, overflow: TextOverflow.clip)
+                    ? snapshot.data!.docs.toList()[index].data()['platform'] ==
+                            'spotify'
+                        ? const TextStyle(
+                            color: Config.colorStyle1,
+                            overflow: TextOverflow.clip)
+                        : const TextStyle(
+                            color: Config.colorStyle2,
+                            overflow: TextOverflow.clip)
                     : const TextStyle(
                         color: Color.fromARGB(200, 255, 255, 255),
                         overflow: TextOverflow.clip,
@@ -233,7 +239,10 @@ Widget listItem(snapshot, context, index) {
                 snapshot.data!.docs.toList()[index].data()['artist'],
                 textScaleFactor: 0.9,
                 style: index == Provider.of<GlobalNotifier>(context).playing
-                    ? const TextStyle(color: Config.colorStyleDark)
+                    ? snapshot.data!.docs.toList()[index].data()['platform'] ==
+                            'spotify'
+                        ? const TextStyle(color: Config.colorStyle1Dark)
+                        : const TextStyle(color: Config.colorStyle2Dark)
                     : const TextStyle(
                         color: Color.fromARGB(150, 255, 255, 255),
                       ),

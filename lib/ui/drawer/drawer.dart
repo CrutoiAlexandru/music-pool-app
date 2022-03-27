@@ -11,6 +11,7 @@ class DrawerAdder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: Config.back2,
       child: Column(
         // Important: Remove any padding from the ListView.
         // padding: EdgeInsets.zero,
@@ -20,7 +21,7 @@ class DrawerAdder extends StatelessWidget {
             children: const [
               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Config.colorStyle,
+                  color: Config.colorStyle1,
                 ),
                 child: Text('Options'),
               ),

@@ -40,7 +40,7 @@ class LiveSpotifyController extends State<SpotifyController> {
                 )
               : const Text(
                   'Log in to Spotify',
-                  style: TextStyle(color: Config.colorStyle),
+                  style: TextStyle(color: Config.colorStyle1),
                 ),
           onTap: connected
               ? () {

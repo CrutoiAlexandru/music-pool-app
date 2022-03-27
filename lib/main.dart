@@ -10,6 +10,7 @@ import 'package:music_pool_app/global/session/session.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
 import 'package:music_pool_app/ui/body/bottom_app_bar.dart';
 import 'package:music_pool_app/ui/body/song_list.dart';
+import 'package:music_pool_app/ui/config.dart';
 import 'ui/drawer/drawer.dart';
 import 'ui/body/platform_buttons.dart';
 import 'package:provider/provider.dart';
@@ -112,17 +113,24 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
     return Scaffold(
       drawer: const DrawerAdder(),
       appBar: AppBar(
+        backgroundColor: Config.back1,
         toolbarHeight: 160,
         title: Provider.of<SessionNotifier>(context).session.isEmpty
             ? const Text('MusicPool')
             : Text('Session: ' + Provider.of<SessionNotifier>(context).session),
       ),
-      bottomNavigationBar: const SongBottomAppBar(),
-      body: ListView(
-        children: const [
-          MusicAddButtons(),
-          SongList(),
-        ],
+      bottomNavigationBar: Container(
+        color: Config.back2,
+        child: const SongBottomAppBar(),
+      ),
+      body: Container(
+        color: Config.back2,
+        child: ListView(
+          children: const [
+            MusicAddButtons(),
+            SongList(),
+          ],
+        ),
       ),
     );
   }

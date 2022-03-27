@@ -54,7 +54,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
               topRight: Radius.circular(25), topLeft: Radius.circular(25)),
         ),
       ),
-      color: Colors.black,
+      color: Config.back1,
       child: StreamBuilder(
         stream: database,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -161,7 +161,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                         Provider.of<GlobalNotifier>(context).playState
                             ? TextButton(
                                 style: TextButton.styleFrom(
-                                  primary: Config.colorStyle,
+                                  primary: Config.colorStyle1,
                                 ),
                                 onPressed: () {
                                   LiveSpotifyController.pause();
@@ -177,7 +177,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                               )
                             : TextButton(
                                 style: TextButton.styleFrom(
-                                  primary: Config.colorStyle,
+                                  primary: Config.colorStyle1,
                                 ),
                                 onPressed: () {
                                   LiveSpotifyController.resume();

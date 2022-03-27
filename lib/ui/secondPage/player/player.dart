@@ -162,7 +162,7 @@ class _SongPlayer extends State<SongPlayer> {
               children: [
                 TextButton(
                   style: TextButton.styleFrom(
-                    primary: Config.colorStyle,
+                    primary: Config.colorStyle1,
                   ),
                   onPressed: playPrevious,
                   child: const Icon(
@@ -175,7 +175,7 @@ class _SongPlayer extends State<SongPlayer> {
                 Provider.of<GlobalNotifier>(context).playState
                     ? TextButton(
                         style: TextButton.styleFrom(
-                          primary: Config.colorStyle,
+                          primary: Config.colorStyle1,
                         ),
                         onPressed: () {
                           LiveSpotifyController.pause();
@@ -190,7 +190,7 @@ class _SongPlayer extends State<SongPlayer> {
                       )
                     : TextButton(
                         style: TextButton.styleFrom(
-                          primary: Config.colorStyle,
+                          primary: Config.colorStyle1,
                         ),
                         onPressed: () {
                           LiveSpotifyController.resume();
@@ -206,7 +206,7 @@ class _SongPlayer extends State<SongPlayer> {
                 const SizedBox(width: 40),
                 TextButton(
                   style: TextButton.styleFrom(
-                    primary: Config.colorStyle,
+                    primary: Config.colorStyle1,
                   ),
                   onPressed: playNext,
                   child: const Icon(
@@ -239,8 +239,22 @@ class _SongPlayer extends State<SongPlayer> {
                       LiveSpotifyController.seekTo(value * 1000);
                       LiveSpotifyController.resume();
                     },
-                    inactiveColor: Config.colorStyleDark,
-                    activeColor: Config.colorStyle,
+                    inactiveColor: snapshot.data!.docs
+                                .toList()[Provider.of<GlobalNotifier>(context,
+                                        listen: false)
+                                    .playing]
+                                .data()['platform'] ==
+                            'spotify'
+                        ? Config.colorStyle1Dark
+                        : Config.colorStyle2Dark,
+                    activeColor: snapshot.data!.docs
+                                .toList()[Provider.of<GlobalNotifier>(context,
+                                        listen: false)
+                                    .playing]
+                                .data()['platform'] ==
+                            'spotify'
+                        ? Config.colorStyle1
+                        : Config.colorStyle2,
                   ),
                 ],
               ),

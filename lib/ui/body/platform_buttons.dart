@@ -3,6 +3,8 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe, prefer_typing_uninitialized_variables
 
 import 'dart:convert';
+import 'dart:html';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
@@ -56,9 +58,16 @@ class _AddSongButton extends State<AddSongButton> {
           onPressed: () => showDialog(
             context: context,
             builder: (BuildContext context) => AlertDialog(
+              shape: const RoundedRectangleBorder(
+                side: BorderSide(color: Config.colorStyle1),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+              backgroundColor: Config.back2,
               title: const Text(
                 'Add a song from your favorite platform',
-                style: TextStyle(color: Config.colorStyle),
+                style: TextStyle(color: Config.colorStyle1),
               ),
               content: SingleChildScrollView(
                 child: Column(
@@ -67,10 +76,22 @@ class _AddSongButton extends State<AddSongButton> {
                       style: TextButton.styleFrom(
                           minimumSize: const Size(double.maxFinite, 0),
                           primary: Colors.white,
-                          backgroundColor: Config.colorStyle),
+                          backgroundColor: Provider.of<GlobalNotifier>(context)
+                                      .platform
+                                      .toLowerCase() ==
+                                  'spotify'
+                              ? Config.colorStyle1
+                              : Config.colorStyle2),
                       onPressed: () => showDialog(
                         context: context,
                         builder: (BuildContext context) => AlertDialog(
+                          shape: const RoundedRectangleBorder(
+                            side: BorderSide(color: Config.colorStyle1),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                          ),
+                          backgroundColor: Config.back2,
                           content: SingleChildScrollView(
                             child: Column(
                               children: [
@@ -79,7 +100,7 @@ class _AddSongButton extends State<AddSongButton> {
                                       minimumSize:
                                           const Size(double.maxFinite, 0),
                                       primary: Colors.white,
-                                      backgroundColor: Config.colorStyle),
+                                      backgroundColor: Config.colorStyle1),
                                   onPressed: () {
                                     Provider.of<GlobalNotifier>(context,
                                             listen: false)
@@ -97,7 +118,7 @@ class _AddSongButton extends State<AddSongButton> {
                                       minimumSize:
                                           const Size(double.maxFinite, 0),
                                       primary: Colors.white,
-                                      backgroundColor: Config.colorStyle),
+                                      backgroundColor: Config.colorStyle2),
                                   onPressed: () {
                                     Provider.of<GlobalNotifier>(context,
                                             listen: false)
@@ -126,10 +147,10 @@ class _AddSongButton extends State<AddSongButton> {
                         input = text;
                       },
                       onEditingComplete: isEntered,
-                      cursorColor: Config.colorStyle,
+                      cursorColor: Config.colorStyle1,
                       decoration: const InputDecoration(
                         focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Config.colorStyle)),
+                            borderSide: BorderSide(color: Config.colorStyle1)),
                         border: OutlineInputBorder(),
                         hintText: 'Enter a song',
                       ),
@@ -151,7 +172,7 @@ class _AddSongButton extends State<AddSongButton> {
                   style: TextButton.styleFrom(
                       primary: Colors.white,
                       elevation: 2,
-                      backgroundColor: Config.colorStyle),
+                      backgroundColor: Config.colorStyle1),
                   onPressed: isEntered,
                   child: const Text('Add song'),
                 ),
@@ -160,7 +181,7 @@ class _AddSongButton extends State<AddSongButton> {
           ),
           child: const Icon(
             Icons.add,
-            color: Config.colorStyle,
+            color: Config.colorStyle1,
             size: 40,
           ),
         )
