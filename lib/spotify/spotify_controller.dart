@@ -11,8 +11,8 @@ import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:http/http.dart' as http;
 
 // WEB ONLY LIBRARIES MUST BE REMOVED BEFORE ANDROID BUILD
-// import 'dart:js' as js;
-// import 'package:spotify_sdk/spotify_sdk_web.dart';
+import 'dart:js' as js;
+import 'package:spotify_sdk/spotify_sdk_web.dart';
 
 class SpotifyController extends StatefulWidget {
   const SpotifyController({Key? key}) : super(key: key);
@@ -32,37 +32,121 @@ class LiveSpotifyController extends State<SpotifyController> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ListTile(
-          title: connected
+        TextButton(
+          style: !connected
+              ? TextButton.styleFrom(
+                  minimumSize: const Size(double.maxFinite, 0),
+                  backgroundColor: Config.colorStyle,
+                )
+              : TextButton.styleFrom(
+                  minimumSize: const Size(double.maxFinite, 0),
+                  backgroundColor: Config.colorStyle2,
+                ),
+          child: connected
               ? const Text(
-                  'Log out of Spotify',
-                  style: TextStyle(color: Colors.red),
+                  'Log out',
+                  style: TextStyle(
+                    color: Config.back1,
+                    fontSize: 15,
+                  ),
                 )
               : const Text(
-                  'Log in to Spotify',
-                  style: TextStyle(color: Config.colorStyle1),
+                  'Log in',
+                  style: TextStyle(
+                    color: Config.back1,
+                    fontSize: 15,
+                  ),
                 ),
-          onTap: connected
+          onPressed: connected
               ? () {
+                  // open disconnect medium for multiple platforms
                   disconnect();
                   Provider.of<GlobalNotifier>(context, listen: false)
                       .setConnection(connected);
                   LiveSpotifyController.pause();
                 }
               : () async {
-                  token = await auth();
-                  if (connected) {
-                    Provider.of<GlobalNotifier>(context, listen: false)
-                        .setConnection(connected);
-                  }
-                  setState(() {});
+                  // open second window to connect to multiple platforms
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      shape: const RoundedRectangleBorder(
+                        side: BorderSide(color: Config.colorStyle1),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      backgroundColor: Config.back2,
+                      title: const Text(
+                        'Log in to your favorite platforms',
+                        style: TextStyle(color: Config.colorStyle1),
+                      ),
+                      content: SingleChildScrollView(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                primary: Colors.white,
+                                backgroundColor: Config.colorStyle1,
+                              ),
+                              onPressed: () async {
+                                // SPOTIFY AUTH MEDIUM
+                                token = await auth();
+                                if (connected) {
+                                  Provider.of<GlobalNotifier>(context,
+                                          listen: false)
+                                      .setConnection(connected);
+                                }
+                                setState(() {});
 
-                  if (kIsWeb) {
-                    // js.allowInterop(createWebPlayer);
-                    // connectToSpotifyRemote();
-                  } else {
-                    connectToSpotifyRemote();
-                  }
+                                if (kIsWeb) {
+                                  js.allowInterop(createWebPlayer);
+                                  connectToSpotifyRemote();
+                                } else {
+                                  connectToSpotifyRemote();
+                                }
+
+                                Navigator.pop(context);
+                              },
+                              child: const Text(
+                                'Login to Spotify',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                primary: Colors.white,
+                                backgroundColor: Config.colorStyle2,
+                              ),
+                              onPressed: () async {
+                                // SOUNDCLOUD AUTH MEDIUM
+                                // token = await auth();
+                                // if (connected) {
+                                //   Provider.of<GlobalNotifier>(context,
+                                //           listen: false)
+                                //       .setConnection(connected);
+                                // }
+                                // setState(() {});
+
+                                // if (kIsWeb) {
+                                //   // js.allowInterop(createWebPlayer);
+                                //   // connectToSpotifyRemote();
+                                // } else {
+                                //   connectToSpotifyRemote();
+                                // }
+                                Navigator.pop(context);
+                              },
+                              child: const Text(
+                                'Login to SoundCloud',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
                 },
         ),
       ],
@@ -118,34 +202,34 @@ class LiveSpotifyController extends State<SpotifyController> {
     }
   }
 
-  // void createWebPlayer() {
-  //   player = Player(
-  //     PlayerOptions(
-  //         name: 'WebPlayer',
-  //         getOAuthToken: (cb) {
-  //           cb(token);
-  //         },
-  //         volume: 30),
-  //   );
+  void createWebPlayer() {
+    player = Player(
+      PlayerOptions(
+          name: 'WebPlayer',
+          getOAuthToken: (cb) {
+            cb(token);
+          },
+          volume: 30),
+    );
 
-  //   player.addListener("not_ready", (e) {
-  //     print("Device ID has gone offline $e");
-  //   });
+    player.addListener("not_ready", (e) {
+      print("Device ID has gone offline $e");
+    });
 
-  //   player.addListener("initialization_error", (message) {
-  //     print(message);
-  //   });
+    player.addListener("initialization_error", (message) {
+      print(message);
+    });
 
-  //   player.addListener("authentication_error", (message) {
-  //     print(message);
-  //   });
+    player.addListener("authentication_error", (message) {
+      print(message);
+    });
 
-  //   player.addListener("account_error", (message) {
-  //     print(message);
-  //   });
+    player.addListener("account_error", (message) {
+      print(message);
+    });
 
-  //   player.connect();
-  // }
+    player.connect();
+  }
 
   Future<void> connectToSpotifyRemote() async {
     try {
