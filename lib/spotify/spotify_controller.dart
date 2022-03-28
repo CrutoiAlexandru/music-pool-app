@@ -60,10 +60,64 @@ class LiveSpotifyController extends State<SpotifyController> {
           onPressed: connected
               ? () {
                   // open disconnect medium for multiple platforms
-                  disconnect();
-                  Provider.of<GlobalNotifier>(context, listen: false)
-                      .setConnection(connected);
-                  LiveSpotifyController.pause();
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      shape: const RoundedRectangleBorder(
+                        side: BorderSide(color: Config.colorStyle1),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      backgroundColor: Config.back2,
+                      title: const Text(
+                        'Log out of these platforms',
+                        style: TextStyle(color: Config.colorStyle1),
+                      ),
+                      content: SingleChildScrollView(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                primary: Colors.white,
+                                backgroundColor: Config.colorStyle1,
+                              ),
+                              onPressed: () async {
+                                // SPOTIFY DISCONNECT MEDIUM
+                                disconnect();
+                                Provider.of<GlobalNotifier>(context,
+                                        listen: false)
+                                    .setConnection(connected);
+                                LiveSpotifyController.pause();
+
+                                Navigator.pop(context);
+                              },
+                              child: const Text(
+                                'Log out of Spotify',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                primary: Colors.white,
+                                backgroundColor: Config.colorStyle2,
+                              ),
+                              onPressed: () async {
+                                // SOUNDCLOUD DISCONNECT MEDIUM
+
+                                Navigator.pop(context);
+                              },
+                              child: const Text(
+                                'Log out of SoundCloud',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
                 }
               : () async {
                   // open second window to connect to multiple platforms
@@ -110,7 +164,7 @@ class LiveSpotifyController extends State<SpotifyController> {
                                 Navigator.pop(context);
                               },
                               child: const Text(
-                                'Login to Spotify',
+                                'Log in to Spotify',
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
@@ -138,7 +192,7 @@ class LiveSpotifyController extends State<SpotifyController> {
                                 Navigator.pop(context);
                               },
                               child: const Text(
-                                'Login to SoundCloud',
+                                'Log in to SoundCloud',
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
