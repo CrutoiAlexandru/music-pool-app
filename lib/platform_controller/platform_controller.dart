@@ -37,7 +37,7 @@ class _PlatformController extends State<PlatformController> {
                 )
               : TextButton.styleFrom(
                   minimumSize: const Size(280, 40),
-                  backgroundColor: Config.colorStyle2,
+                  backgroundColor: Config.colorStyleOposite,
                 ),
           child: SpotifyController.connected
               ? const Text(
@@ -61,7 +61,7 @@ class _PlatformController extends State<PlatformController> {
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
                       shape: const RoundedRectangleBorder(
-                        side: BorderSide(color: Config.colorStyle1),
+                        side: BorderSide(color: Config.colorStyle),
                         borderRadius: BorderRadius.all(
                           Radius.circular(10),
                         ),
@@ -70,7 +70,7 @@ class _PlatformController extends State<PlatformController> {
                       title: const Center(
                         child: Text(
                           'Log out of these platforms',
-                          style: TextStyle(color: Config.colorStyle1),
+                          style: TextStyle(color: Config.colorStyle),
                         ),
                       ),
                       content: SingleChildScrollView(
@@ -130,7 +130,7 @@ class _PlatformController extends State<PlatformController> {
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
                       shape: const RoundedRectangleBorder(
-                        side: BorderSide(color: Config.colorStyle1),
+                        side: BorderSide(color: Config.colorStyle),
                         borderRadius: BorderRadius.all(
                           Radius.circular(10),
                         ),
@@ -139,7 +139,7 @@ class _PlatformController extends State<PlatformController> {
                       title: const Center(
                         child: Text(
                           'Log in to your favorite platforms',
-                          style: TextStyle(color: Config.colorStyle1),
+                          style: TextStyle(color: Config.colorStyle),
                         ),
                       ),
                       content: SingleChildScrollView(

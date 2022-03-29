@@ -162,7 +162,7 @@ class _SongPlayer extends State<SongPlayer> {
               children: [
                 TextButton(
                   style: TextButton.styleFrom(
-                    primary: Config.colorStyle1,
+                    primary: Config.colorStyle,
                   ),
                   onPressed: playPrevious,
                   child: const Icon(
@@ -175,7 +175,7 @@ class _SongPlayer extends State<SongPlayer> {
                 Provider.of<GlobalNotifier>(context).playState
                     ? TextButton(
                         style: TextButton.styleFrom(
-                          primary: Config.colorStyle1,
+                          primary: Config.colorStyle,
                         ),
                         onPressed: () {
                           SpotifyController.pause();
@@ -190,7 +190,7 @@ class _SongPlayer extends State<SongPlayer> {
                       )
                     : TextButton(
                         style: TextButton.styleFrom(
-                          primary: Config.colorStyle1,
+                          primary: Config.colorStyle,
                         ),
                         onPressed: () {
                           SpotifyController.resume();
@@ -206,7 +206,7 @@ class _SongPlayer extends State<SongPlayer> {
                 const SizedBox(width: 40),
                 TextButton(
                   style: TextButton.styleFrom(
-                    primary: Config.colorStyle1,
+                    primary: Config.colorStyle,
                   ),
                   onPressed: playNext,
                   child: const Icon(

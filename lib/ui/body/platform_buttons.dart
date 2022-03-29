@@ -57,7 +57,7 @@ class _AddSongButton extends State<AddSongButton> {
             context: context,
             builder: (BuildContext context) => AlertDialog(
               shape: const RoundedRectangleBorder(
-                side: BorderSide(color: Config.colorStyle1),
+                side: BorderSide(color: Config.colorStyle),
                 borderRadius: BorderRadius.all(
                   Radius.circular(10),
                 ),
@@ -65,7 +65,7 @@ class _AddSongButton extends State<AddSongButton> {
               backgroundColor: Config.back2,
               title: const Text(
                 'Add a song from your favorite platform',
-                style: TextStyle(color: Config.colorStyle1),
+                style: TextStyle(color: Config.colorStyle),
               ),
               content: SingleChildScrollView(
                 child: Column(
@@ -84,7 +84,7 @@ class _AddSongButton extends State<AddSongButton> {
                         context: context,
                         builder: (BuildContext context) => AlertDialog(
                           shape: const RoundedRectangleBorder(
-                            side: BorderSide(color: Config.colorStyle1),
+                            side: BorderSide(color: Config.colorStyle),
                             borderRadius: BorderRadius.all(
                               Radius.circular(10),
                             ),
@@ -145,10 +145,10 @@ class _AddSongButton extends State<AddSongButton> {
                         input = text;
                         isEntered();
                       },
-                      cursorColor: Config.colorStyle1,
+                      cursorColor: Config.colorStyle,
                       decoration: const InputDecoration(
                         focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Config.colorStyle1)),
+                            borderSide: BorderSide(color: Config.colorStyle)),
                         border: OutlineInputBorder(),
                         hintText: 'Enter a song',
                       ),
@@ -183,7 +183,7 @@ class _AddSongButton extends State<AddSongButton> {
                   style: TextButton.styleFrom(
                       primary: Colors.white,
                       elevation: 2,
-                      backgroundColor: Colors.red),
+                      backgroundColor: Config.colorStyleOposite),
                   onPressed: () => Navigator.pop(context, 'Cancel'),
                   child: const Text('Cancel'),
                 ),
@@ -192,7 +192,7 @@ class _AddSongButton extends State<AddSongButton> {
           ),
           child: const Icon(
             Icons.add,
-            color: Config.colorStyle1,
+            color: Config.colorStyle,
             size: 40,
           ),
         )

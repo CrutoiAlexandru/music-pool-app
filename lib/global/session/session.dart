@@ -78,7 +78,7 @@ class _SessionWidget extends State<Session> {
               builder: (BuildContext context) => AlertDialog(
                   backgroundColor: Config.back2,
                   shape: const RoundedRectangleBorder(
-                    side: BorderSide(color: Config.colorStyle1),
+                    side: BorderSide(color: Config.colorStyle),
                     borderRadius: BorderRadius.all(
                       Radius.circular(10),
                     ),
@@ -100,11 +100,11 @@ class _SessionWidget extends State<Session> {
                                 .resetNumber();
                             Navigator.pop(context);
                           },
-                          cursorColor: Config.colorStyle1,
+                          cursorColor: Config.colorStyle,
                           decoration: const InputDecoration(
                             focusedBorder: OutlineInputBorder(
                                 borderSide:
-                                    BorderSide(color: Config.colorStyle1)),
+                                    BorderSide(color: Config.colorStyle)),
                             border: OutlineInputBorder(),
                             hintText: 'Enter a code',
                           ),
@@ -118,7 +118,7 @@ class _SessionWidget extends State<Session> {
                       style: TextButton.styleFrom(
                           primary: Colors.white,
                           elevation: 2,
-                          backgroundColor: Config.colorStyle1),
+                          backgroundColor: Config.colorStyleOposite),
                       onPressed: () => Navigator.pop(context, 'Cancel'),
                       child: const Text('Cancel'),
                     ),
@@ -126,7 +126,7 @@ class _SessionWidget extends State<Session> {
                       style: TextButton.styleFrom(
                           primary: Colors.white,
                           elevation: 2,
-                          backgroundColor: Config.colorStyle1),
+                          backgroundColor: Config.colorStyle),
                       onPressed: () {
                         Provider.of<SessionNotifier>(context, listen: false)
                             .setSession(input);
@@ -144,7 +144,7 @@ class _SessionWidget extends State<Session> {
         if (Provider.of<SessionNotifier>(context).session.isNotEmpty)
           ListTile(
             title: const Text('Empty session',
-                style: TextStyle(color: Color.fromARGB(255, 255, 81, 0))),
+                style: TextStyle(color: Config.colorStyleOpositeDim)),
             onTap: () {
               Provider.of<SessionNotifier>(context, listen: false)
                   .emptySession();
@@ -155,7 +155,7 @@ class _SessionWidget extends State<Session> {
           ListTile(
             title: const Text(
               'Leave session',
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(color: Config.colorStyleOposite),
             ),
             onTap: () {
               Provider.of<SessionNotifier>(context, listen: false)

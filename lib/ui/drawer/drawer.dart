@@ -21,7 +21,7 @@ class DrawerAdder extends StatelessWidget {
             children: const [
               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Config.colorStyle1,
+                  color: Config.colorStyle,
                 ),
                 child: Text('Options'),
               ),
@@ -35,7 +35,7 @@ class DrawerAdder extends StatelessWidget {
               onTap: () => SystemNavigator.pop(),
               title: const Icon(
                 Icons.exit_to_app,
-                color: Colors.red,
+                color: Config.colorStyleOposite,
               ),
             ),
         ],

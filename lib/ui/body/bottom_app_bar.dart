@@ -161,7 +161,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                         Provider.of<GlobalNotifier>(context).playState
                             ? TextButton(
                                 style: TextButton.styleFrom(
-                                  primary: Config.colorStyle1,
+                                  primary: Config.colorStyle,
                                 ),
                                 onPressed: () {
                                   SpotifyController.pause();
@@ -177,7 +177,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                               )
                             : TextButton(
                                 style: TextButton.styleFrom(
-                                  primary: Config.colorStyle1,
+                                  primary: Config.colorStyle,
                                 ),
                                 onPressed: () {
                                   SpotifyController.resume();
