@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
@@ -21,12 +22,13 @@ class AddSongButton extends StatefulWidget {
 
 class _AddSongButton extends State<AddSongButton> {
   String input = '';
-  var songslist;
+  var songsList;
   String session = 'default';
+  var requiredSongList = <Map>[];
 
   @override
   void initState() {
-    songslist = FirebaseFirestore.instance.collection('default');
+    songsList = FirebaseFirestore.instance.collection('default');
     super.initState();
   }
 
@@ -34,11 +36,11 @@ class _AddSongButton extends State<AddSongButton> {
   Widget build(BuildContext context) {
     if (Provider.of<SessionNotifier>(context).session.isNotEmpty) {
       session = Provider.of<SessionNotifier>(context).session;
-      songslist = FirebaseFirestore.instance
+      songsList = FirebaseFirestore.instance
           .collection(Provider.of<SessionNotifier>(context).session);
     } else {
       session = 'default';
-      songslist = FirebaseFirestore.instance.collection('default');
+      songsList = FirebaseFirestore.instance.collection('default');
     }
 
     if (!Provider.of<GlobalNotifier>(context).connected) {
@@ -68,6 +70,7 @@ class _AddSongButton extends State<AddSongButton> {
                 style: TextStyle(color: Config.colorStyle1),
               ),
               content: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
                 child: Column(
                   children: [
                     TextButton(
@@ -154,6 +157,28 @@ class _AddSongButton extends State<AddSongButton> {
                       ),
                     ),
                     // maybe implement a list of songs found on the platform !?
+                    // LIST TOP 5 SONG RESULTS
+                    if (Provider.of<GlobalNotifier>(context)
+                        .requiredSongList
+                        .isNotEmpty)
+                      SizedBox(
+                        width: double.maxFinite,
+                        height: double.maxFinite,
+                        child: ListView.builder(
+                          physics: const ClampingScrollPhysics(),
+                          itemCount: 5,
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return listItem(
+                                Provider.of<GlobalNotifier>(
+                                  context,
+                                ).requiredSongList,
+                                context,
+                                index);
+                          },
+                        ),
+                      )
                   ],
                 ),
               ),
@@ -172,7 +197,7 @@ class _AddSongButton extends State<AddSongButton> {
                       elevation: 2,
                       backgroundColor: Config.colorStyle1),
                   onPressed: isEntered,
-                  child: const Text('Add song'),
+                  child: const Text('Search'),
                 ),
               ],
             ),
@@ -192,7 +217,7 @@ class _AddSongButton extends State<AddSongButton> {
     // if playlist has objects get the last object order
     // if we set to order by order and the id to order it somehow fixes the order in the db?
     if (Provider.of<GlobalNotifier>(context, listen: false).playlistSize > 0) {
-      var aux = await songslist.orderBy('order').get();
+      var aux = await songsList.orderBy('order').get();
       var lastId = await aux.docs[
           Provider.of<GlobalNotifier>(context, listen: false).playlistSize - 1];
       Provider.of<GlobalNotifier>(context, listen: false)
@@ -205,7 +230,7 @@ class _AddSongButton extends State<AddSongButton> {
 
     // set another object with the id^
     // we do this in order to keep the objects in order inside our firestore
-    songslist
+    songsList
         .doc(Provider.of<GlobalNotifier>(context, listen: false)
             .order
             .toString())
@@ -240,20 +265,114 @@ class _AddSongButton extends State<AddSongButton> {
 
       final json = jsonDecode(res);
       print(res);
-      addData(
-        json['tracks']['items'][0]['artists'][0]['name'],
-        json['tracks']['items'][0]['name'],
-        json['tracks']['items'][0]['uri'],
-        json['tracks']['items'][0]['album']['images'][0]['url'],
-        Provider.of<GlobalNotifier>(context, listen: false)
-            .platform
-            .toLowerCase(),
-      );
+
+      // populate requiredSongList with top 5 songs
+      // list has also 5 items
+      for (int i = 0; i < 5; i++) {
+        requiredSongList.add(
+          {
+            'track': json['tracks']['items'][i]['artists'][0]['name'],
+            'artist': json['tracks']['items'][i]['name'],
+            'playback_uri': json['tracks']['items'][i]['uri'],
+            'icon': json['tracks']['items'][i]['album']['images'][0]['url'],
+            'platform': Provider.of<GlobalNotifier>(context, listen: false)
+                .platform
+                .toLowerCase(),
+          },
+        );
+      }
+
+      Provider.of<GlobalNotifier>(context, listen: false)
+          .setRequiredSongList(requiredSongList);
+
+      setState(() {
+        requiredSongList.clear();
+      });
     }
+  }
 
-    input = '';
-
-    Navigator.pop(context, 'Add song');
+  Widget listItem(snapshot, context, index) {
+    return Container(
+      height: 50,
+      color: Colors.transparent,
+      margin: const EdgeInsets.only(top: 10),
+      child: TextButton(
+        onPressed: () {
+          addData(
+              snapshot[index]['artist'],
+              snapshot[index]['track'],
+              snapshot[index]['playback_uri'],
+              snapshot[index]['icon'],
+              snapshot[index]['platform']);
+          Provider.of<GlobalNotifier>(context, listen: false)
+              .clearRequiredSongList();
+          Navigator.pop(context);
+        },
+        style: TextButton.styleFrom(
+          primary: Colors.white,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
+        child: Row(
+          children: [
+            if (kIsWeb)
+              Image.network(
+                snapshot[index]['icon'],
+                height: 40,
+                loadingBuilder: (BuildContext context, Widget child,
+                    ImageChunkEvent? loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                          : null,
+                    ),
+                  );
+                },
+              ),
+            const SizedBox(
+              width: 10,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  snapshot[index]['track'],
+                  textScaleFactor: 1.25,
+                  style: index == Provider.of<GlobalNotifier>(context).playing
+                      ? snapshot[index]['platform'] == 'spotify'
+                          ? const TextStyle(
+                              color: Config.colorStyle1,
+                              overflow: TextOverflow.clip)
+                          : const TextStyle(
+                              color: Config.colorStyle2,
+                              overflow: TextOverflow.clip)
+                      : const TextStyle(
+                          color: Color.fromARGB(200, 255, 255, 255),
+                          overflow: TextOverflow.clip,
+                        ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  snapshot[index]['artist'],
+                  textScaleFactor: 0.9,
+                  style: index == Provider.of<GlobalNotifier>(context).playing
+                      ? snapshot[index]['platform'] == 'spotify'
+                          ? const TextStyle(color: Config.colorStyle1Dark)
+                          : const TextStyle(color: Config.colorStyle2Dark)
+                      : const TextStyle(
+                          color: Color.fromARGB(150, 255, 255, 255),
+                        ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

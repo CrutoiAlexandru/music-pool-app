@@ -19,6 +19,18 @@ class GlobalNotifier extends ChangeNotifier {
   int order = 0;
   // keep the last platform the user used to add a song from
   String platform = 'Spotify';
+  // keep all the songs received by our search
+  var requiredSongList = <Map>[];
+
+  setRequiredSongList(requiredSongList) {
+    this.requiredSongList = List.from(requiredSongList);
+    notifyListeners();
+  }
+
+  clearRequiredSongList() {
+    this.requiredSongList.clear();
+    notifyListeners();
+  }
 
   setPlatform(platform) {
     this.platform = platform;

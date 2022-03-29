@@ -21,6 +21,8 @@ class SpotifyController extends StatefulWidget {
   LiveSpotifyController createState() => LiveSpotifyController();
 }
 
+// NEED TO MAKE ONE CONTROLLER FOR MULTIPLE PLATFORMS
+// AND ONE EACH WITH SPECIFIC CONTROLS
 class LiveSpotifyController extends State<SpotifyController> {
   static bool connected = false;
   final endpoint = 'accounts.spotify.com';
@@ -35,11 +37,11 @@ class LiveSpotifyController extends State<SpotifyController> {
         TextButton(
           style: !connected
               ? TextButton.styleFrom(
-                  minimumSize: const Size(double.maxFinite, 0),
+                  minimumSize: const Size(double.maxFinite, 40),
                   backgroundColor: Config.colorStyle,
                 )
               : TextButton.styleFrom(
-                  minimumSize: const Size(double.maxFinite, 0),
+                  minimumSize: const Size(double.maxFinite, 40),
                   backgroundColor: Config.colorStyle2,
                 ),
           child: connected
@@ -203,6 +205,7 @@ class LiveSpotifyController extends State<SpotifyController> {
                   );
                 },
         ),
+        if (kIsWeb) const SizedBox(height: 10),
       ],
     );
   }
@@ -211,7 +214,7 @@ class LiveSpotifyController extends State<SpotifyController> {
     var url = Uri.https('api.spotify.com', '/v1/search', {
       'q': song,
       'type': ['track'],
-      'limit': '1',
+      'limit': '5',
     });
     final res =
         await http.get(url, headers: {'Authorization': 'Bearer $token'});
