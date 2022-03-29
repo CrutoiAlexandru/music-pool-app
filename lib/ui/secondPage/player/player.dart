@@ -115,7 +115,7 @@ class _SongPlayer extends State<SongPlayer> {
                   snapshot.data!.docs
                       .toList()[Provider.of<GlobalNotifier>(context).playing]
                       .data()['icon'],
-                  height: MediaQuery.of(context).size.height * .4,
+                  height: MediaQuery.of(context).size.height * .5,
                   loadingBuilder: (BuildContext context, Widget child,
                       ImageChunkEvent? loadingProgress) {
                     if (loadingProgress == null) return child;
@@ -157,6 +157,34 @@ class _SongPlayer extends State<SongPlayer> {
               ),
             ),
             const SizedBox(height: 20),
+            Hero(
+              tag: 'playerState',
+              child: Column(
+                children: [
+                  Text(GlobalNotifier.secondsToMinutes(
+                          (Provider.of<GlobalNotifier>(context).progress / 1000)
+                              .floor()) +
+                      ' / ' +
+                      GlobalNotifier.secondsToMinutes(
+                          (Provider.of<GlobalNotifier>(context).duration / 1000)
+                              .floor())),
+                  Slider(
+                    value: Provider.of<GlobalNotifier>(context).duration != 0
+                        ? Provider.of<GlobalNotifier>(context).progress
+                        : 0,
+                    min: 0,
+                    max: Provider.of<GlobalNotifier>(context).duration,
+                    onChanged: (double value) {},
+                    onChangeEnd: (double value) {
+                      SpotifyController.seekTo(value * 1000);
+                      SpotifyController.resume();
+                    },
+                    inactiveColor: Config.colorStyleDark,
+                    activeColor: Config.colorStyle,
+                  ),
+                ],
+              ),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -217,48 +245,6 @@ class _SongPlayer extends State<SongPlayer> {
                 )
               ],
             ),
-            Hero(
-              tag: 'playerState',
-              child: Column(
-                children: [
-                  Text(GlobalNotifier.secondsToMinutes(
-                          (Provider.of<GlobalNotifier>(context).progress / 1000)
-                              .floor()) +
-                      ' / ' +
-                      GlobalNotifier.secondsToMinutes(
-                          (Provider.of<GlobalNotifier>(context).duration / 1000)
-                              .floor())),
-                  Slider(
-                    value: Provider.of<GlobalNotifier>(context).duration != 0
-                        ? Provider.of<GlobalNotifier>(context).progress
-                        : 0,
-                    min: 0,
-                    max: Provider.of<GlobalNotifier>(context).duration,
-                    onChanged: (double value) {},
-                    onChangeEnd: (double value) {
-                      SpotifyController.seekTo(value * 1000);
-                      SpotifyController.resume();
-                    },
-                    inactiveColor: snapshot.data!.docs
-                                .toList()[Provider.of<GlobalNotifier>(context,
-                                        listen: false)
-                                    .playing]
-                                .data()['platform'] ==
-                            'spotify'
-                        ? Config.colorStyle1Dark
-                        : Config.colorStyle2Dark,
-                    activeColor: snapshot.data!.docs
-                                .toList()[Provider.of<GlobalNotifier>(context,
-                                        listen: false)
-                                    .playing]
-                                .data()['platform'] ==
-                            'spotify'
-                        ? Config.colorStyle1
-                        : Config.colorStyle2,
-                  ),
-                ],
-              ),
-            )
           ],
         );
       },

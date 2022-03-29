@@ -180,32 +180,20 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
                       (Provider.of<GlobalNotifier>(context).duration / 1000)
                           .floor())),
               Slider(
-                value: Provider.of<GlobalNotifier>(context).duration != 0
+                value: Provider.of<GlobalNotifier>(context).duration > 0
                     ? Provider.of<GlobalNotifier>(context).progress
                     : 0,
                 min: 0,
-                max: Provider.of<GlobalNotifier>(context).duration,
+                max: Provider.of<GlobalNotifier>(context).duration > 0
+                    ? Provider.of<GlobalNotifier>(context).duration
+                    : 0,
                 onChanged: (double value) {},
                 onChangeEnd: (double value) {
                   SpotifyController.seekTo(value * 1000);
                   SpotifyController.resume();
                 },
-                inactiveColor: snapshot.data!.docs
-                            .toList()[Provider.of<GlobalNotifier>(context,
-                                    listen: false)
-                                .playing]
-                            .data()['platform'] ==
-                        'spotify'
-                    ? Config.colorStyle1Dark
-                    : Config.colorStyle2Dark,
-                activeColor: snapshot.data!.docs
-                            .toList()[Provider.of<GlobalNotifier>(context,
-                                    listen: false)
-                                .playing]
-                            .data()['platform'] ==
-                        'spotify'
-                    ? Config.colorStyle1
-                    : Config.colorStyle2,
+                inactiveColor: Config.colorStyleDark,
+                activeColor: Config.colorStyle,
               ),
             ],
           ),

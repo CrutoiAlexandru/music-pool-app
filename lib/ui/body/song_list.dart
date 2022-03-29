@@ -80,12 +80,8 @@ class LiveSongList extends State<SongList> {
                     height: 60,
                     width: MediaQuery.of(context).size.width,
                     child: const Center(
-                      child: Text(
-                        '<-- Remove song? -->',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 104, 104, 104),
-                        ),
-                      ),
+                      child: Icon(Icons.playlist_remove,
+                          color: Config.colorStyleDark),
                     ),
                   ),
                   onDragEnd: (details) {

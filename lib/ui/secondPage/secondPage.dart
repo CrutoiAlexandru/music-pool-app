@@ -1,6 +1,7 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
+import 'package:music_pool_app/ui/config.dart';
 import 'package:music_pool_app/ui/secondPage/player/player.dart';
 
 class SecondPage extends StatefulWidget {
@@ -14,6 +15,7 @@ class _SecondPage extends State<SecondPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Config.back1,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
