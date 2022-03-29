@@ -1,19 +1,13 @@
 // ignore_for_file: , avoid_web_libraries_in_flutter, prefer_typing_uninitialized_variables
-import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
 import 'package:music_pool_app/ui/config.dart';
 import 'package:provider/provider.dart';
-import 'package:music_pool_app/.config_for_app.dart';
-import 'package:spotify_sdk/spotify_sdk.dart';
-import 'package:http/http.dart' as http;
 
 // WEB ONLY LIBRARIES MUST BE REMOVED BEFORE ANDROID BUILD
 import 'dart:js' as js;
-import 'package:spotify_sdk/spotify_sdk_web.dart';
 
 class PlatformController extends StatefulWidget {
   const PlatformController({Key? key}) : super(key: key);

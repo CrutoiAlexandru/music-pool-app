@@ -28,7 +28,7 @@ class GlobalNotifier extends ChangeNotifier {
   }
 
   clearRequiredSongList() {
-    this.requiredSongList.clear();
+    requiredSongList.clear();
     notifyListeners();
   }
 
