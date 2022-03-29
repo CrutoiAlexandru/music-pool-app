@@ -303,23 +303,22 @@ class _AddSongButton extends State<AddSongButton> {
         ),
         child: Row(
           children: [
-            if (kIsWeb)
-              Image.network(
-                snapshot[index]['icon'],
-                height: 40,
-                loadingBuilder: (BuildContext context, Widget child,
-                    ImageChunkEvent? loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                          : null,
-                    ),
-                  );
-                },
-              ),
+            Image.network(
+              snapshot[index]['icon'],
+              height: 40,
+              loadingBuilder: (BuildContext context, Widget child,
+                  ImageChunkEvent? loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              },
+            ),
             const SizedBox(
               width: 10,
             ),
@@ -330,30 +329,11 @@ class _AddSongButton extends State<AddSongButton> {
                 Text(
                   snapshot[index]['track'],
                   textScaleFactor: 1.25,
-                  style: index == Provider.of<GlobalNotifier>(context).playing
-                      ? snapshot[index]['platform'] == 'spotify'
-                          ? const TextStyle(
-                              color: Config.colorStyle1,
-                              overflow: TextOverflow.clip)
-                          : const TextStyle(
-                              color: Config.colorStyle2,
-                              overflow: TextOverflow.clip)
-                      : const TextStyle(
-                          color: Color.fromARGB(200, 255, 255, 255),
-                          overflow: TextOverflow.clip,
-                        ),
                 ),
                 const SizedBox(height: 5),
                 Text(
                   snapshot[index]['artist'],
                   textScaleFactor: 0.9,
-                  style: index == Provider.of<GlobalNotifier>(context).playing
-                      ? snapshot[index]['platform'] == 'spotify'
-                          ? const TextStyle(color: Config.colorStyle1Dark)
-                          : const TextStyle(color: Config.colorStyle2Dark)
-                      : const TextStyle(
-                          color: Color.fromARGB(150, 255, 255, 255),
-                        ),
                 ),
               ],
             ),

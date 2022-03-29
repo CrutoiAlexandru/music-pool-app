@@ -189,23 +189,22 @@ Widget listItem(snapshot, context, index) {
       ),
       child: Row(
         children: [
-          if (kIsWeb)
-            Image.network(
-              snapshot.data!.docs.toList()[index].data()['icon'],
-              height: 40,
-              loadingBuilder: (BuildContext context, Widget child,
-                  ImageChunkEvent? loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                        : null,
-                  ),
-                );
-              },
-            ),
+          Image.network(
+            snapshot.data!.docs.toList()[index].data()['icon'],
+            height: 40,
+            loadingBuilder: (BuildContext context, Widget child,
+                ImageChunkEvent? loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              );
+            },
+          ),
           const SizedBox(
             width: 10,
           ),
