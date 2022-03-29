@@ -41,9 +41,9 @@ class _AddSongButton extends State<AddSongButton> {
       songsList = FirebaseFirestore.instance.collection('default');
     }
 
-    if (!Provider.of<GlobalNotifier>(context).connected) {
-      return const SizedBox();
-    }
+    // if (!Provider.of<GlobalNotifier>(context).connected) {
+    //   return const SizedBox();
+    // }
 
     return Column(
       children: [
@@ -202,6 +202,10 @@ class _AddSongButton extends State<AddSongButton> {
 
   Future<void> addData(String artist, String name, String playbackUri,
       String icon, String platform) async {
+    if (session == 'default') {
+      print('no session');
+      return;
+    }
     // if playlist has objects get the last object order
     // if we set to order by order and the id to order it somehow fixes the order in the db?
     if (Provider.of<GlobalNotifier>(context, listen: false).playlistSize > 0) {
@@ -237,11 +241,11 @@ class _AddSongButton extends State<AddSongButton> {
   void isEntered() async {
     if (input.isEmpty) {
       print('No input');
-      return;
-    }
-
-    if (session == 'default') {
-      print('no session');
+      setState(() {
+        requiredSongList.clear();
+      });
+      Provider.of<GlobalNotifier>(context, listen: false)
+          .clearRequiredSongList();
       return;
     }
 
@@ -249,6 +253,11 @@ class _AddSongButton extends State<AddSongButton> {
             .platform
             .toLowerCase() ==
         'spotify') {
+      if (!Provider.of<GlobalNotifier>(context, listen: false).connected) {
+        print('Not connected to spotify');
+        return;
+      }
+
       final res = await SpotifyController.search(input);
 
       final json = jsonDecode(res);
