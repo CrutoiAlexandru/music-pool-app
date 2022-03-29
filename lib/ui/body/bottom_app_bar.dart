@@ -164,7 +164,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                                   primary: Config.colorStyle1,
                                 ),
                                 onPressed: () {
-                                  LiveSpotifyController.pause();
+                                  SpotifyController.pause();
                                   Provider.of<GlobalNotifier>(context,
                                           listen: false)
                                       .setPlayingState(false);
@@ -180,7 +180,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                                   primary: Config.colorStyle1,
                                 ),
                                 onPressed: () {
-                                  LiveSpotifyController.resume();
+                                  SpotifyController.resume();
                                   Provider.of<GlobalNotifier>(context,
                                           listen: false)
                                       .setPlayingState(true);

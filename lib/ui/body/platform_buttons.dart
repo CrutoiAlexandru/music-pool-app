@@ -1,5 +1,3 @@
-// music platform buttons builder methods
-// needs to contain search bar to search songs on each platform
 // ignore_for_file: import_of_legacy_library_into_null_safe, prefer_typing_uninitialized_variables
 
 import 'dart:convert';
@@ -70,7 +68,6 @@ class _AddSongButton extends State<AddSongButton> {
                 style: TextStyle(color: Config.colorStyle1),
               ),
               content: SingleChildScrollView(
-                physics: const ClampingScrollPhysics(),
                 child: Column(
                   children: [
                     TextButton(
@@ -146,8 +143,8 @@ class _AddSongButton extends State<AddSongButton> {
                       maxLength: 50,
                       onChanged: (text) {
                         input = text;
+                        isEntered();
                       },
-                      onEditingComplete: isEntered,
                       cursorColor: Config.colorStyle1,
                       decoration: const InputDecoration(
                         focusedBorder: OutlineInputBorder(
@@ -156,7 +153,6 @@ class _AddSongButton extends State<AddSongButton> {
                         hintText: 'Enter a song',
                       ),
                     ),
-                    // maybe implement a list of songs found on the platform !?
                     // LIST TOP 5 SONG RESULTS
                     if (Provider.of<GlobalNotifier>(context)
                         .requiredSongList
@@ -182,7 +178,7 @@ class _AddSongButton extends State<AddSongButton> {
                   ],
                 ),
               ),
-              actions: <Widget>[
+              actions: [
                 TextButton(
                   style: TextButton.styleFrom(
                       primary: Colors.white,
@@ -190,14 +186,6 @@ class _AddSongButton extends State<AddSongButton> {
                       backgroundColor: Colors.red),
                   onPressed: () => Navigator.pop(context, 'Cancel'),
                   child: const Text('Cancel'),
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                      primary: Colors.white,
-                      elevation: 2,
-                      backgroundColor: Config.colorStyle1),
-                  onPressed: isEntered,
-                  child: const Text('Search'),
                 ),
               ],
             ),
@@ -261,7 +249,7 @@ class _AddSongButton extends State<AddSongButton> {
             .platform
             .toLowerCase() ==
         'spotify') {
-      final res = await LiveSpotifyController().search(input);
+      final res = await SpotifyController.search(input);
 
       final json = jsonDecode(res);
       print(res);

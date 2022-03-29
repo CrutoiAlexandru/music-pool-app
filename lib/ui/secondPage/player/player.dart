@@ -70,7 +70,7 @@ class _SongPlayer extends State<SongPlayer> {
                       .playing]
                   .data()['platform'] ==
               'spotify') {
-            LiveSpotifyController.play(snapshot.data!.docs
+            SpotifyController.play(snapshot.data!.docs
                 .toList()[
                     Provider.of<GlobalNotifier>(context, listen: false).playing]
                 .data()['playback_uri']);
@@ -91,7 +91,7 @@ class _SongPlayer extends State<SongPlayer> {
                             .playing]
                     .data()['platform'] ==
                 'spotify') {
-              LiveSpotifyController.play(snapshot.data!.docs
+              SpotifyController.play(snapshot.data!.docs
                   .toList()[Provider.of<GlobalNotifier>(context, listen: false)
                       .playing]
                   .data()['playback_uri']);
@@ -99,8 +99,8 @@ class _SongPlayer extends State<SongPlayer> {
                   .setPlayingState(true);
             }
           } else {
-            LiveSpotifyController.seekTo(0);
-            LiveSpotifyController.resume();
+            SpotifyController.seekTo(0);
+            SpotifyController.resume();
             Provider.of<GlobalNotifier>(context, listen: false)
                 .setPlayingState(true);
           }
@@ -178,7 +178,7 @@ class _SongPlayer extends State<SongPlayer> {
                           primary: Config.colorStyle1,
                         ),
                         onPressed: () {
-                          LiveSpotifyController.pause();
+                          SpotifyController.pause();
                           Provider.of<GlobalNotifier>(context, listen: false)
                               .setPlayingState(false);
                         },
@@ -193,7 +193,7 @@ class _SongPlayer extends State<SongPlayer> {
                           primary: Config.colorStyle1,
                         ),
                         onPressed: () {
-                          LiveSpotifyController.resume();
+                          SpotifyController.resume();
                           Provider.of<GlobalNotifier>(context, listen: false)
                               .setPlayingState(true);
                         },
@@ -236,8 +236,8 @@ class _SongPlayer extends State<SongPlayer> {
                     max: Provider.of<GlobalNotifier>(context).duration,
                     onChanged: (double value) {},
                     onChangeEnd: (double value) {
-                      LiveSpotifyController.seekTo(value * 1000);
-                      LiveSpotifyController.resume();
+                      SpotifyController.seekTo(value * 1000);
+                      SpotifyController.resume();
                     },
                     inactiveColor: snapshot.data!.docs
                                 .toList()[Provider.of<GlobalNotifier>(context,

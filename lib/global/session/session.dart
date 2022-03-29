@@ -46,13 +46,13 @@ class SessionNotifier extends ChangeNotifier {
         ds.reference.delete();
       }
     });
-    LiveSpotifyController.pause();
+    SpotifyController.pause();
     notifyListeners();
   }
 
   leaveSession() {
     session = '';
-    LiveSpotifyController.pause();
+    SpotifyController.pause();
     notifyListeners();
   }
 }
@@ -132,7 +132,7 @@ class _SessionWidget extends State<Session> {
                             .setSession(input);
                         Provider.of<GlobalNotifier>(context, listen: false)
                             .resetNumber();
-                        LiveSpotifyController.pause();
+                        SpotifyController.pause();
                         Navigator.pop(context, 'Connect');
                       },
                       child: const Text('Connect'),

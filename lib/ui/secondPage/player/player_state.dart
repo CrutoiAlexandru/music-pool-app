@@ -44,7 +44,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
   getSongLength() async {
     var url = Uri.https('api.spotify.com', '/v1/me/player');
     final res = await http.get(url,
-        headers: {'Authorization': 'Bearer ${LiveSpotifyController.token}'});
+        headers: {'Authorization': 'Bearer ${SpotifyController.token}'});
 
     var body = jsonDecode(res.body);
     if (body['item']['duration_ms'].runtimeType == int) {
@@ -64,9 +64,8 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
       (timer) async {
         var body;
         var url = Uri.https('api.spotify.com', '/v1/me/player');
-        final res = await http.get(url, headers: {
-          'Authorization': 'Bearer ${LiveSpotifyController.token}'
-        });
+        final res = await http.get(url,
+            headers: {'Authorization': 'Bearer ${SpotifyController.token}'});
 
         body = jsonDecode(res.body);
 
@@ -138,7 +137,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
                   Provider.of<GlobalNotifier>(context, listen: false).playing]
               .data()['platform'] ==
           'spotify') {
-        LiveSpotifyController.play(snapshot.data!.docs
+        SpotifyController.play(snapshot.data!.docs
             .toList()[
                 Provider.of<GlobalNotifier>(context, listen: false).playing]
             .data()['playback_uri']);
@@ -188,8 +187,8 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
                 max: Provider.of<GlobalNotifier>(context).duration,
                 onChanged: (double value) {},
                 onChangeEnd: (double value) {
-                  LiveSpotifyController.seekTo(value * 1000);
-                  LiveSpotifyController.resume();
+                  SpotifyController.seekTo(value * 1000);
+                  SpotifyController.resume();
                 },
                 inactiveColor: snapshot.data!.docs
                             .toList()[Provider.of<GlobalNotifier>(context,

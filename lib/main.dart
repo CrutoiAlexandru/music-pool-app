@@ -93,8 +93,8 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
     // probably not good
     timer = Timer.periodic(const Duration(seconds: 3600), (Timer t) {
       try {
-        if (LiveSpotifyController.connected) {
-          LiveSpotifyController.auth();
+        if (SpotifyController.connected) {
+          SpotifyController.auth();
         }
       } on Exception catch (e) {
         print(e);

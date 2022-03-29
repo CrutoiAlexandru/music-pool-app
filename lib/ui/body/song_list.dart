@@ -98,7 +98,7 @@ class LiveSongList extends State<SongList> {
                       if (Provider.of<GlobalNotifier>(context, listen: false)
                               .playing ==
                           index) {
-                        LiveSpotifyController.pause();
+                        SpotifyController.pause();
                         Provider.of<GlobalNotifier>(context, listen: false)
                             .setPlayingState(false);
                         Provider.of<GlobalNotifier>(context, listen: false)
@@ -162,13 +162,13 @@ Widget listItem(snapshot, context, index) {
                   index) {
             if (Provider.of<GlobalNotifier>(context, listen: false).playing ==
                 index) {
-              LiveSpotifyController.resume();
+              SpotifyController.resume();
             } else {
               // everytime a song is played we need to check for the platform to play from
               // this is set when we add the song to our queue/databasecd
               if (snapshot.data!.docs.toList()[index].data()['platform'] ==
                   'spotify') {
-                LiveSpotifyController.play(
+                SpotifyController.play(
                     snapshot.data!.docs.toList()[index].data()['playback_uri']);
               }
             }
@@ -180,7 +180,7 @@ Widget listItem(snapshot, context, index) {
           } else {
             Provider.of<GlobalNotifier>(context, listen: false)
                 .setPlaying(index);
-            LiveSpotifyController.pause();
+            SpotifyController.pause();
             Provider.of<GlobalNotifier>(context, listen: false)
                 .setPlayingState(false);
           }
