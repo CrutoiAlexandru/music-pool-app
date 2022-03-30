@@ -19,11 +19,14 @@ class DrawerAdder extends StatelessWidget {
           ListView(
             shrinkWrap: true,
             children: const [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Config.colorStyle,
+              SizedBox(
+                height: 100,
+                child: DrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Config.colorStyle,
+                  ),
+                  child: Text('Options'),
                 ),
-                child: Text('Options'),
               ),
             ],
           ),

@@ -115,10 +115,22 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
       drawer: const DrawerAdder(),
       appBar: AppBar(
         backgroundColor: Config.back1,
-        toolbarHeight: 160,
+        toolbarHeight: 80,
         title: Provider.of<SessionNotifier>(context).session.isEmpty
             ? const Text('MusicPool')
-            : Text('Session: ' + Provider.of<SessionNotifier>(context).session),
+            : RichText(
+                textScaleFactor: 1.5,
+                text: TextSpan(
+                  text: 'Session: ',
+                  style: const TextStyle(color: Colors.white),
+                  children: [
+                    TextSpan(
+                      text: Provider.of<SessionNotifier>(context).session,
+                      style: const TextStyle(color: Config.colorStyle),
+                    )
+                  ],
+                ),
+              ),
       ),
       bottomNavigationBar: Container(
         color: Config.back2,
