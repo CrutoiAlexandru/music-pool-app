@@ -48,7 +48,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
         headers: {'Authorization': 'Bearer ${SpotifyController.token}'});
 
     var body = jsonDecode(res.body);
-    if (body['item']['duration_ms'] != null) {
+    if (body['item']['duration_ms'].runtimeType == int) {
       double duration = body['item']['duration_ms'].toDouble();
 
       Provider.of<GlobalNotifier>(context, listen: false).setDuration(duration);
@@ -70,7 +70,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
 
         body = jsonDecode(res.body);
 
-        if (body['progress_ms'] != null) {
+        if (body['progress_ms'].runtimeType == int) {
           if (body['progress_ms'] != 0) {
             double progress = body['progress_ms'].toDouble();
 
@@ -104,7 +104,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     // everytime the song changes get its length
     // executes too many times because of the way functions() and providers work
     // not sure !?
-    if ((Provider.of<GlobalNotifier>(context).progress / 1000).floor() == 0) {
+    if ((Provider.of<GlobalNotifier>(context).progress / 1000).floor() <= 1) {
       getSongLength();
     }
 
@@ -123,8 +123,10 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     // if so we tell our player state that over = true in order to play the next song in queue
     // we have to do it manually because we use a separate queue held in firestore
     // we do not use the automatic queues given by our playing services
-    if ((Provider.of<GlobalNotifier>(context).progress / 1000).floor() ==
-            (Provider.of<GlobalNotifier>(context).duration / 1000).floor() &&
+    // should >= with duration - 1 in case of mistakes or timing induced errors
+    if ((Provider.of<GlobalNotifier>(context).progress / 1000).floor() >=
+            (Provider.of<GlobalNotifier>(context).duration / 1000).floor() -
+                1 &&
         Provider.of<GlobalNotifier>(context).duration != 0) {
       Provider.of<GlobalNotifier>(context, listen: false).setOver(true);
     }
@@ -144,7 +146,6 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
             .data()['playback_uri']);
         Provider.of<GlobalNotifier>(context, listen: false)
             .setPlayingState(true);
-        Provider.of<GlobalNotifier>(context, listen: false).setOver(false);
       }
     }
 
@@ -164,6 +165,8 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
 
         // when song is over play next song in queue
         if (Provider.of<GlobalNotifier>(context).over) {
+          // pause every platform in case of autoplay?
+          SpotifyController.pause();
           // currently the method gets executed while building, not ok but works in case of not being able to wrok around it
           autoPlayNext(snapshot);
           Provider.of<GlobalNotifier>(context, listen: false).setOver(false);
@@ -173,14 +176,6 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
           tag: 'playerState',
           child: Column(
             children: [
-              if (kIsWeb) // timer on the bottom player bar only looks good on web
-                Text(GlobalNotifier.secondsToMinutes(
-                        (Provider.of<GlobalNotifier>(context).progress / 1000)
-                            .floor()) +
-                    ' / ' +
-                    GlobalNotifier.secondsToMinutes(
-                        (Provider.of<GlobalNotifier>(context).duration / 1000)
-                            .floor())),
               Slider(
                 value: Provider.of<GlobalNotifier>(context).duration > 0
                     ? Provider.of<GlobalNotifier>(context).progress

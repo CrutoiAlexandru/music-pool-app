@@ -333,11 +333,19 @@ class _AddSongButton extends State<AddSongButton> {
                 Text(
                   snapshot[index]['track'],
                   textScaleFactor: 1.25,
+                  style: const TextStyle(
+                    color: Color.fromARGB(200, 255, 255, 255),
+                    overflow: TextOverflow.clip,
+                  ),
                 ),
                 const SizedBox(height: 5),
                 Text(
                   snapshot[index]['artist'],
                   textScaleFactor: 0.9,
+                  style: const TextStyle(
+                    color: Color.fromARGB(150, 255, 255, 255),
+                    overflow: TextOverflow.clip,
+                  ),
                 ),
               ],
             ),
