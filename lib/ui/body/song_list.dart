@@ -1,7 +1,6 @@
 // ignore_for_file: import_of_legacy_library_into_null_safe, prefer_typing_uninitialized_variables
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/global/session/session.dart';
@@ -71,13 +70,13 @@ class LiveSongList extends State<SongList> {
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                return Draggable(
+                return LongPressDraggable(
                   data: 'yes',
                   axis: Axis.horizontal,
                   feedback: listItem(snapshot, context, index),
                   child: listItem(snapshot, context, index),
                   childWhenDragging: SizedBox(
-                    height: 60,
+                    // height: 60,
                     width: MediaQuery.of(context).size.width,
                     child: const Center(
                       child: Icon(Icons.playlist_remove,
@@ -147,7 +146,6 @@ class LiveSongList extends State<SongList> {
 
 Widget listItem(snapshot, context, index) {
   return Container(
-    height: 50,
     color: Colors.transparent,
     margin: const EdgeInsets.only(top: 10),
     child: TextButton(

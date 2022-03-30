@@ -115,7 +115,7 @@ class _SongPlayer extends State<SongPlayer> {
                   snapshot.data!.docs
                       .toList()[Provider.of<GlobalNotifier>(context).playing]
                       .data()['icon'],
-                  height: MediaQuery.of(context).size.height * .5,
+                  height: MediaQuery.of(context).size.height * .45,
                   loadingBuilder: (BuildContext context, Widget child,
                       ImageChunkEvent? loadingProgress) {
                     if (loadingProgress == null) return child;

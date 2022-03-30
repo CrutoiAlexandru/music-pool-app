@@ -14,23 +14,23 @@ import 'package:music_pool_app/ui/config.dart';
 import 'ui/drawer/drawer.dart';
 import 'ui/body/platform_buttons.dart';
 import 'package:provider/provider.dart';
-import 'firebase_options.dart';
+// leave here in case of errors
+// import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+      // OPTIONS NEED TO BE REMOVED FOR ANDROID
+      // options: DefaultFirebaseOptions.currentPlatform,
+      );
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<SessionNotifier>(
           create: (context) => SessionNotifier(),
-          // child: const MyApp(),
         ),
         ChangeNotifierProvider<GlobalNotifier>(
           create: (context) => GlobalNotifier(),
-          // child: const MyApp(),
         ),
       ],
       child: const MyApp(),
@@ -104,6 +104,7 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
 
   @override
   void dispose() {
+    SpotifyController.pause();
     timer?.cancel();
     super.dispose();
   }

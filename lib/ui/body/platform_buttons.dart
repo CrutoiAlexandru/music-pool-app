@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/spotify/spotify_controller.dart';
@@ -290,7 +289,6 @@ class _AddSongButton extends State<AddSongButton> {
 
   Widget listItem(snapshot, context, index) {
     return Container(
-      height: 50,
       color: Colors.transparent,
       margin: const EdgeInsets.only(top: 10),
       child: TextButton(

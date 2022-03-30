@@ -64,6 +64,7 @@ class SpotifyController {
     }
   }
 
+  // ONLY ON WEB, DISABLE FOR ANDROID BUILD
   static void createWebPlayer() {
     player = Player(
       PlayerOptions(

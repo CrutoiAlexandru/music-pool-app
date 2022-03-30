@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/global/session/session.dart';
@@ -47,8 +48,8 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
         headers: {'Authorization': 'Bearer ${SpotifyController.token}'});
 
     var body = jsonDecode(res.body);
-    if (body['item']['duration_ms'].runtimeType == int) {
-      int duration = body['item']['duration_ms'];
+    if (body['item']['duration_ms'] != null) {
+      double duration = body['item']['duration_ms'].toDouble();
 
       Provider.of<GlobalNotifier>(context, listen: false).setDuration(duration);
     }
@@ -69,9 +70,9 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
 
         body = jsonDecode(res.body);
 
-        if (body['progress_ms'].runtimeType == int) {
+        if (body['progress_ms'] != null) {
           if (body['progress_ms'] != 0) {
-            int progress = body['progress_ms'];
+            double progress = body['progress_ms'].toDouble();
 
             Provider.of<GlobalNotifier>(context, listen: false)
                 .setProgress(progress);
@@ -172,13 +173,14 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
           tag: 'playerState',
           child: Column(
             children: [
-              Text(GlobalNotifier.secondsToMinutes(
-                      (Provider.of<GlobalNotifier>(context).progress / 1000)
-                          .floor()) +
-                  ' / ' +
-                  GlobalNotifier.secondsToMinutes(
-                      (Provider.of<GlobalNotifier>(context).duration / 1000)
-                          .floor())),
+              if (kIsWeb) // timer on the bottom player bar only looks good on web
+                Text(GlobalNotifier.secondsToMinutes(
+                        (Provider.of<GlobalNotifier>(context).progress / 1000)
+                            .floor()) +
+                    ' / ' +
+                    GlobalNotifier.secondsToMinutes(
+                        (Provider.of<GlobalNotifier>(context).duration / 1000)
+                            .floor())),
               Slider(
                 value: Provider.of<GlobalNotifier>(context).duration > 0
                     ? Provider.of<GlobalNotifier>(context).progress

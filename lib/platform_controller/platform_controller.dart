@@ -16,15 +16,7 @@ class PlatformController extends StatefulWidget {
   State<PlatformController> createState() => _PlatformController();
 }
 
-// NEED TO MAKE ONE CONTROLLER FOR MULTIPLE PLATFORMS
-// AND ONE EACH WITH SPECIFIC CONTROLS
 class _PlatformController extends State<PlatformController> {
-  // static bool connected = false;
-  // final endpoint = 'accounts.spotify.com';
-  // static const redirectUrl = 'https://music-pool-app-50127.web.app/auth.html';
-  // static String token = '';
-  // var player;
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -80,40 +72,45 @@ class _PlatformController extends State<PlatformController> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                    primary: Colors.white,
-                                    backgroundColor: Config.colorStyle1,
-                                  ),
-                                  onPressed: () async {
-                                    // SPOTIFY DISCONNECT MEDIUM
-                                    SpotifyController.disconnect();
-                                    Provider.of<GlobalNotifier>(context,
-                                            listen: false)
-                                        .setConnection(
-                                            SpotifyController.connected);
-                                    SpotifyController.pause();
-                                    setState(() {});
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text(
-                                    'Log out of Spotify',
-                                    style: TextStyle(color: Colors.white),
+                                Flexible(
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      primary: Colors.white,
+                                      backgroundColor: Config.colorStyle1,
+                                    ),
+                                    onPressed: () async {
+                                      // SPOTIFY DISCONNECT MEDIUM
+                                      SpotifyController.disconnect();
+                                      Provider.of<GlobalNotifier>(context,
+                                              listen: false)
+                                          .setConnection(
+                                              SpotifyController.connected);
+                                      SpotifyController.pause();
+                                      setState(() {});
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text(
+                                      'Log out of Spotify',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ),
                                 ),
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                    primary: Colors.white,
-                                    backgroundColor: Config.colorStyle2,
-                                  ),
-                                  onPressed: () async {
-                                    // SOUNDCLOUD DISCONNECT MEDIUM
+                                const SizedBox(width: 10),
+                                Flexible(
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      primary: Colors.white,
+                                      backgroundColor: Config.colorStyle2,
+                                    ),
+                                    onPressed: () async {
+                                      // SOUNDCLOUD DISCONNECT MEDIUM
 
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text(
-                                    'Log out of SoundCloud',
-                                    style: TextStyle(color: Colors.white),
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text(
+                                      'Log out of SoundCloud',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -149,66 +146,72 @@ class _PlatformController extends State<PlatformController> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                    primary: Colors.white,
-                                    backgroundColor: Config.colorStyle1,
-                                  ),
-                                  onPressed: () async {
-                                    // SPOTIFY AUTH MEDIUM
-                                    SpotifyController.token =
-                                        await SpotifyController.auth();
-                                    if (SpotifyController.connected) {
-                                      Provider.of<GlobalNotifier>(context,
-                                              listen: false)
-                                          .setConnection(
-                                              SpotifyController.connected);
-                                    }
-                                    setState(() {});
+                                Flexible(
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      primary: Colors.white,
+                                      backgroundColor: Config.colorStyle1,
+                                    ),
+                                    onPressed: () async {
+                                      // SPOTIFY AUTH MEDIUM
+                                      SpotifyController.token =
+                                          await SpotifyController.auth();
+                                      if (SpotifyController.connected) {
+                                        Provider.of<GlobalNotifier>(context,
+                                                listen: false)
+                                            .setConnection(
+                                                SpotifyController.connected);
+                                      }
+                                      setState(() {});
 
-                                    if (kIsWeb) {
-                                      js.allowInterop(
-                                          SpotifyController.createWebPlayer);
-                                      SpotifyController
-                                          .connectToSpotifyRemote();
-                                    } else {
-                                      SpotifyController
-                                          .connectToSpotifyRemote();
-                                    }
+                                      // ONLY FOR WEB, DISABLE FOR ANDROID BUILD
+                                      if (kIsWeb) {
+                                        js.allowInterop(
+                                            SpotifyController.createWebPlayer);
+                                        SpotifyController
+                                            .connectToSpotifyRemote();
+                                      } else {
+                                        SpotifyController
+                                            .connectToSpotifyRemote();
+                                      }
 
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text(
-                                    'Log in to Spotify',
-                                    style: TextStyle(color: Colors.white),
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text(
+                                      'Log in to Spotify',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ),
                                 ),
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                    primary: Colors.white,
-                                    backgroundColor: Config.colorStyle2,
-                                  ),
-                                  onPressed: () async {
-                                    // SOUNDCLOUD AUTH MEDIUM
-                                    // token = await auth();
-                                    // if (connected) {
-                                    //   Provider.of<GlobalNotifier>(context,
-                                    //           listen: false)
-                                    //       .setConnection(connected);
-                                    // }
-                                    // setState(() {});
+                                const SizedBox(width: 10),
+                                Flexible(
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      primary: Colors.white,
+                                      backgroundColor: Config.colorStyle2,
+                                    ),
+                                    onPressed: () async {
+                                      // SOUNDCLOUD AUTH MEDIUM
+                                      // token = await auth();
+                                      // if (connected) {
+                                      //   Provider.of<GlobalNotifier>(context,
+                                      //           listen: false)
+                                      //       .setConnection(connected);
+                                      // }
+                                      // setState(() {});
 
-                                    // if (kIsWeb) {
-                                    //   // js.allowInterop(createWebPlayer);
-                                    //   // connectToSpotifyRemote();
-                                    // } else {
-                                    //   connectToSpotifyRemote();
-                                    // }
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text(
-                                    'Log in to SoundCloud',
-                                    style: TextStyle(color: Colors.white),
+                                      // if (kIsWeb) {
+                                      //   // js.allowInterop(createWebPlayer);
+                                      //   // connectToSpotifyRemote();
+                                      // } else {
+                                      //   connectToSpotifyRemote();
+                                      // }
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text(
+                                      'Log in to SoundCloud',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ),
                                 ),
                               ],
