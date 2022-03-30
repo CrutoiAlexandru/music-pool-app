@@ -181,8 +181,7 @@ Widget listItem(snapshot, context, index) {
         }
       },
       style: TextButton.styleFrom(
-        primary: Colors.white,
-        elevation: 0,
+        primary: Config.colorStyle,
         backgroundColor: Colors.transparent,
       ),
       child: Row(

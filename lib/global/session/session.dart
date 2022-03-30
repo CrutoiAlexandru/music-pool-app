@@ -116,15 +116,14 @@ class _SessionWidget extends State<Session> {
                   actions: [
                     TextButton(
                       style: TextButton.styleFrom(
-                          primary: Colors.white,
-                          elevation: 2,
+                          primary: Config.colorStyle,
                           backgroundColor: Config.colorStyleOposite),
                       onPressed: () => Navigator.pop(context, 'Cancel'),
                       child: const Text('Cancel'),
                     ),
                     TextButton(
                       style: TextButton.styleFrom(
-                          primary: Colors.white,
+                          primary: Config.colorStyle,
                           elevation: 2,
                           backgroundColor: Config.colorStyle),
                       onPressed: () {
@@ -135,7 +134,10 @@ class _SessionWidget extends State<Session> {
                         SpotifyController.pause();
                         Navigator.pop(context, 'Connect');
                       },
-                      child: const Text('Connect'),
+                      child: const Text(
+                        'Connect',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ]),
             );
@@ -144,7 +146,7 @@ class _SessionWidget extends State<Session> {
         if (Provider.of<SessionNotifier>(context).session.isNotEmpty)
           ListTile(
             title: const Text('Empty session',
-                style: TextStyle(color: Config.colorStyleOpositeDim)),
+                style: TextStyle(color: Colors.grey)),
             onTap: () {
               Provider.of<SessionNotifier>(context, listen: false)
                   .emptySession();
@@ -155,7 +157,7 @@ class _SessionWidget extends State<Session> {
           ListTile(
             title: const Text(
               'Leave session',
-              style: TextStyle(color: Config.colorStyleOposite),
+              style: TextStyle(color: Colors.grey),
             ),
             onTap: () {
               Provider.of<SessionNotifier>(context, listen: false)

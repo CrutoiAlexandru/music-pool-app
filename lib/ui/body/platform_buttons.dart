@@ -49,7 +49,7 @@ class _AddSongButton extends State<AddSongButton> {
         const SizedBox(height: 10),
         TextButton(
           style: TextButton.styleFrom(
-            primary: Colors.white,
+            primary: Config.colorStyle,
             elevation: 1,
           ),
           onPressed: () => showDialog(
@@ -72,13 +72,8 @@ class _AddSongButton extends State<AddSongButton> {
                     TextButton(
                       style: TextButton.styleFrom(
                           minimumSize: const Size(double.maxFinite, 0),
-                          primary: Colors.white,
-                          backgroundColor: Provider.of<GlobalNotifier>(context)
-                                      .platform
-                                      .toLowerCase() ==
-                                  'spotify'
-                              ? Config.colorStyle1
-                              : Config.colorStyle2),
+                          primary: Config.colorStyle,
+                          backgroundColor: Config.colorStyle),
                       onPressed: () => showDialog(
                         context: context,
                         builder: (BuildContext context) => AlertDialog(
@@ -96,8 +91,8 @@ class _AddSongButton extends State<AddSongButton> {
                                   style: TextButton.styleFrom(
                                       minimumSize:
                                           const Size(double.maxFinite, 0),
-                                      primary: Colors.white,
-                                      backgroundColor: Config.colorStyle1),
+                                      primary: Config.colorStyle,
+                                      backgroundColor: Colors.transparent),
                                   onPressed: () {
                                     Provider.of<GlobalNotifier>(context,
                                             listen: false)
@@ -114,8 +109,8 @@ class _AddSongButton extends State<AddSongButton> {
                                   style: TextButton.styleFrom(
                                       minimumSize:
                                           const Size(double.maxFinite, 0),
-                                      primary: Colors.white,
-                                      backgroundColor: Config.colorStyle2),
+                                      primary: Config.colorStyle,
+                                      backgroundColor: Colors.transparent),
                                   onPressed: () {
                                     Provider.of<GlobalNotifier>(context,
                                             listen: false)
@@ -134,6 +129,7 @@ class _AddSongButton extends State<AddSongButton> {
                       ),
                       child: Text(
                         Provider.of<GlobalNotifier>(context).platform,
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -180,11 +176,13 @@ class _AddSongButton extends State<AddSongButton> {
               actions: [
                 TextButton(
                   style: TextButton.styleFrom(
-                      primary: Colors.white,
-                      elevation: 2,
+                      primary: Config.colorStyle,
                       backgroundColor: Config.colorStyleOposite),
                   onPressed: () => Navigator.pop(context, 'Cancel'),
-                  child: const Text('Cancel'),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),
@@ -304,8 +302,7 @@ class _AddSongButton extends State<AddSongButton> {
           Navigator.pop(context);
         },
         style: TextButton.styleFrom(
-          primary: Colors.white,
-          elevation: 0,
+          primary: Config.colorStyle,
           backgroundColor: Colors.transparent,
         ),
         child: Row(

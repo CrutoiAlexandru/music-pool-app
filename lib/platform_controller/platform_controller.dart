@@ -24,10 +24,12 @@ class _PlatformController extends State<PlatformController> {
         TextButton(
           style: !SpotifyController.connected
               ? TextButton.styleFrom(
+                  primary: Config.colorStyle,
                   minimumSize: const Size(280, 40),
                   backgroundColor: Config.colorStyle,
                 )
               : TextButton.styleFrom(
+                  primary: Config.colorStyle,
                   minimumSize: const Size(280, 40),
                   backgroundColor: Config.colorStyleOposite,
                 ),
@@ -35,14 +37,14 @@ class _PlatformController extends State<PlatformController> {
               ? const Text(
                   'Log out',
                   style: TextStyle(
-                    color: Config.back1,
+                    color: Colors.white,
                     fontSize: 15,
                   ),
                 )
               : const Text(
                   'Log in',
                   style: TextStyle(
-                    color: Config.back1,
+                    color: Config.back2,
                     fontSize: 15,
                   ),
                 ),
@@ -75,8 +77,8 @@ class _PlatformController extends State<PlatformController> {
                                 Flexible(
                                   child: TextButton(
                                     style: TextButton.styleFrom(
-                                      primary: Colors.white,
-                                      backgroundColor: Config.colorStyle1,
+                                      primary: Config.colorStyle,
+                                      backgroundColor: Colors.transparent,
                                     ),
                                     onPressed: () async {
                                       // SPOTIFY DISCONNECT MEDIUM
@@ -90,7 +92,7 @@ class _PlatformController extends State<PlatformController> {
                                       Navigator.pop(context);
                                     },
                                     child: const Text(
-                                      'Log out of Spotify',
+                                      'Spotify',
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),
@@ -99,8 +101,8 @@ class _PlatformController extends State<PlatformController> {
                                 Flexible(
                                   child: TextButton(
                                     style: TextButton.styleFrom(
-                                      primary: Colors.white,
-                                      backgroundColor: Config.colorStyle2,
+                                      primary: Config.colorStyle,
+                                      backgroundColor: Colors.transparent,
                                     ),
                                     onPressed: () async {
                                       // SOUNDCLOUD DISCONNECT MEDIUM
@@ -108,7 +110,7 @@ class _PlatformController extends State<PlatformController> {
                                       Navigator.pop(context);
                                     },
                                     child: const Text(
-                                      'Log out of SoundCloud',
+                                      'SoundCloud',
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),
@@ -149,8 +151,8 @@ class _PlatformController extends State<PlatformController> {
                                 Flexible(
                                   child: TextButton(
                                     style: TextButton.styleFrom(
-                                      primary: Colors.white,
-                                      backgroundColor: Config.colorStyle1,
+                                      primary: Config.colorStyle,
+                                      backgroundColor: Colors.transparent,
                                     ),
                                     onPressed: () async {
                                       // SPOTIFY AUTH MEDIUM
@@ -178,7 +180,7 @@ class _PlatformController extends State<PlatformController> {
                                       Navigator.pop(context);
                                     },
                                     child: const Text(
-                                      'Log in to Spotify',
+                                      'Spotify',
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),
@@ -187,8 +189,8 @@ class _PlatformController extends State<PlatformController> {
                                 Flexible(
                                   child: TextButton(
                                     style: TextButton.styleFrom(
-                                      primary: Colors.white,
-                                      backgroundColor: Config.colorStyle2,
+                                      primary: Config.colorStyle,
+                                      backgroundColor: Colors.transparent,
                                     ),
                                     onPressed: () async {
                                       // SOUNDCLOUD AUTH MEDIUM
@@ -209,7 +211,7 @@ class _PlatformController extends State<PlatformController> {
                                       Navigator.pop(context);
                                     },
                                     child: const Text(
-                                      'Log in to SoundCloud',
+                                      'SoundCloud',
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),
