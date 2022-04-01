@@ -2,7 +2,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
-import 'package:music_pool_app/spotify/spotify_controller.dart';
+import 'package:music_pool_app/platform_controller/spotify/spotify_controller.dart';
 import 'package:music_pool_app/ui/config.dart';
 import 'package:provider/provider.dart';
 

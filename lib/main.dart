@@ -7,7 +7,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/global/session/session.dart';
-import 'package:music_pool_app/spotify/spotify_controller.dart';
+import 'package:music_pool_app/platform_controller/spotify/spotify_controller.dart';
+import 'package:music_pool_app/platform_controller/youtube/youtube_controller.dart';
 import 'package:music_pool_app/ui/body/bottom_app_bar.dart';
 import 'package:music_pool_app/ui/body/song_list.dart';
 import 'package:music_pool_app/ui/config.dart';
@@ -84,6 +85,7 @@ class MyHomePage extends StatefulWidget {
 class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
   static var sesh = '';
   var timer;
+  var yt = YoutubeController();
 
   @override
   void initState() {
@@ -139,7 +141,12 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
       body: Container(
         color: Config.back2,
         child: ListView(
-          children: const [
+          children: [
+            TextButton(
+                onPressed: () async {
+                  await yt.apiConnect();
+                },
+                child: Text('YOUTUBE')),
             MusicAddButtons(),
             SongList(),
           ],
