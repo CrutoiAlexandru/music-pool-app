@@ -15,6 +15,8 @@ import 'package:music_pool_app/ui/config.dart';
 import 'ui/drawer/drawer.dart';
 import 'ui/body/platform_buttons.dart';
 import 'package:provider/provider.dart';
+
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 // leave here in case of errors
 // import 'firebase_options.dart';
 
@@ -83,9 +85,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
-  static var sesh = '';
   var timer;
   var yt = YoutubeController();
+
+  late YoutubePlayerController _controller;
 
   @override
   void initState() {
@@ -102,6 +105,13 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
         print(e);
       }
     });
+
+    // Create and store the VideoPlayerController. The VideoPlayerController
+    // offers several different constructors to play videos from assets, files,
+    // or the internet.
+    _controller = YoutubePlayerController(
+      initialVideoId: 'znQriFAMBRs',
+    );
   }
 
   @override
@@ -142,11 +152,20 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
         color: Config.back2,
         child: ListView(
           children: [
+            Container(
+              color: Config.back2,
+              height: 100,
+              width: 100,
+              child: YoutubePlayerIFrame(
+                controller: _controller,
+              ),
+            ),
             TextButton(
-                onPressed: () async {
-                  await yt.apiConnect();
-                },
-                child: Text('YOUTUBE')),
+              onPressed: () {
+                _controller.pause();
+              },
+              child: Text('YOUTUBE'),
+            ),
             MusicAddButtons(),
             SongList(),
           ],

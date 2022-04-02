@@ -8,6 +8,10 @@ import 'package:music_pool_app/.config_for_app.dart';
 class YoutubeController {
   var httpClient;
   var youTubeApi;
+
+  // the url from which the video is playing
+  final url = 'https://www.youtube.com/watch?v=';
+  // google sign in requesting wanted scope(api)
   final _googleSignIn = GoogleSignIn(
     scopes: <String>[YouTubeApi.youtubeReadonlyScope],
     clientId: GoogleConfig.clientID,
@@ -29,11 +33,11 @@ class YoutubeController {
 
     for (int i = 0; i < 5; i++) {
       print(list[i].snippet.title);
-      print(list[i].id.videoId);
-
-      var video = await getVideo(list[i].id.videoId);
-      print(video[0].contentDetails.duration);
+      print(url + list[i].id.videoId);
     }
+
+    // _controller = VideoPlayerController.network(url + list[0].id.videoId);
+    // return _controller.initialize();
   }
 
   // get a search list result for our query
@@ -51,10 +55,10 @@ class YoutubeController {
   // get video data for specific videoId got by ^ upper search method
   getVideo(String videoId) async {
     var video = await youTubeApi.videos.list(
-      ['id,snippet,player,contentDetails'],
+      ['id,player,contentDetails'],
       id: [videoId],
     );
 
-    return video.items;
+    return video.items[0].player;
   }
 }
