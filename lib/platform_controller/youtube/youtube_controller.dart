@@ -37,7 +37,6 @@ class YoutubeController {
     }
 
     // _controller = VideoPlayerController.network(url + list[0].id.videoId);
-    // return _controller.initialize();
   }
 
   // get a search list result for our query
@@ -52,13 +51,15 @@ class YoutubeController {
     return list.items;
   }
 
+  // PROBABLY REDUNDANT CONSIDERING THE PLAYING METHOD?!
   // get video data for specific videoId got by ^ upper search method
-  getVideo(String videoId) async {
+  getVideoDuration(String videoId) async {
     var video = await youTubeApi.videos.list(
       ['id,player,contentDetails'],
       id: [videoId],
     );
 
-    return video.items[0].player;
+    // return the duration of the video
+    return video.items[0].contentDetails.duration;
   }
 }

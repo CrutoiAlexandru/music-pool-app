@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/global/session/session.dart';
 import 'package:music_pool_app/platform_controller/spotify/spotify_controller.dart';
+import 'package:music_pool_app/platform_controller/youtube/youtube_player_widget.dart';
 import 'package:provider/provider.dart';
 
 import 'package:music_pool_app/ui/config.dart';
@@ -64,6 +65,7 @@ class LiveSongList extends State<SongList> {
           shrinkWrap: true,
           physics: const ClampingScrollPhysics(),
           children: [
+            YoutubePlayer(),
             ListView.builder(
               physics: const ClampingScrollPhysics(),
               itemCount: snapshot.requireData.size,

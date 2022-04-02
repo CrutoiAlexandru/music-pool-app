@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/global/session/session.dart';
 import 'package:music_pool_app/platform_controller/spotify/spotify_controller.dart';
-import 'package:music_pool_app/platform_controller/youtube/youtube_controller.dart';
 import 'package:music_pool_app/ui/body/bottom_app_bar.dart';
 import 'package:music_pool_app/ui/body/song_list.dart';
 import 'package:music_pool_app/ui/config.dart';
@@ -16,16 +15,15 @@ import 'ui/drawer/drawer.dart';
 import 'ui/body/platform_buttons.dart';
 import 'package:provider/provider.dart';
 
-import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 // leave here in case of errors
-// import 'firebase_options.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-      // OPTIONS NEED TO BE REMOVED FOR ANDROID
-      // options: DefaultFirebaseOptions.currentPlatform,
-      );
+    // OPTIONS NEED TO BE REMOVED FOR ANDROID
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     MultiProvider(
       providers: [
@@ -86,9 +84,6 @@ class MyHomePage extends StatefulWidget {
 
 class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
   var timer;
-  var yt = YoutubeController();
-
-  late YoutubePlayerController _controller;
 
   @override
   void initState() {
@@ -105,13 +100,6 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
         print(e);
       }
     });
-
-    // Create and store the VideoPlayerController. The VideoPlayerController
-    // offers several different constructors to play videos from assets, files,
-    // or the internet.
-    _controller = YoutubePlayerController(
-      initialVideoId: 'znQriFAMBRs',
-    );
   }
 
   @override
@@ -151,21 +139,7 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
       body: Container(
         color: Config.back2,
         child: ListView(
-          children: [
-            Container(
-              color: Config.back2,
-              height: 100,
-              width: 100,
-              child: YoutubePlayerIFrame(
-                controller: _controller,
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                _controller.pause();
-              },
-              child: Text('YOUTUBE'),
-            ),
+          children: const [
             MusicAddButtons(),
             SongList(),
           ],
