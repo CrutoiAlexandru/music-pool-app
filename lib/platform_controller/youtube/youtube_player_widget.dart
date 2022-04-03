@@ -67,7 +67,7 @@ class _YoutubePlayerWidget extends State<YoutubePlayerWidget> {
   }
 }
 
-Widget listItemYT(context, index, this) {
+Widget listItemYT(context, index) {
   YoutubePlayerController _controller = YoutubePlayerController(
     initialVideoId: 'znQriFAMBRs',
     flags: const YoutubePlayerFlags(
