@@ -7,7 +7,7 @@ import 'package:music_pool_app/ui/config.dart';
 import 'package:provider/provider.dart';
 
 // WEB ONLY LIBRARIES MUST BE REMOVED BEFORE ANDROID BUILD
-import 'dart:js' as js;
+// import 'dart:js' as js;
 
 class PlatformController extends StatefulWidget {
   const PlatformController({Key? key}) : super(key: key);
@@ -168,10 +168,10 @@ class _PlatformController extends State<PlatformController> {
 
                                       // ONLY FOR WEB, DISABLE FOR ANDROID BUILD
                                       if (kIsWeb) {
-                                        js.allowInterop(
-                                            SpotifyController.createWebPlayer);
-                                        SpotifyController
-                                            .connectToSpotifyRemote();
+                                        // js.allowInterop(
+                                        //     SpotifyController.createWebPlayer);
+                                        // SpotifyController
+                                        //     .connectToSpotifyRemote();
                                       } else {
                                         SpotifyController
                                             .connectToSpotifyRemote();

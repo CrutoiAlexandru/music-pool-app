@@ -6,7 +6,7 @@ import 'package:spotify_sdk/spotify_sdk.dart';
 import 'package:http/http.dart' as http;
 
 // WEB ONLY LIBRARIES MUST BE REMOVED BEFORE ANDROID BUILD
-import 'package:spotify_sdk/spotify_sdk_web.dart';
+// import 'package:spotify_sdk/spotify_sdk_web.dart';
 
 class SpotifyController {
   static bool connected = false;
@@ -65,34 +65,34 @@ class SpotifyController {
   }
 
   // ONLY ON WEB, DISABLE FOR ANDROID BUILD
-  static void createWebPlayer() {
-    player = Player(
-      PlayerOptions(
-          name: 'WebPlayer',
-          getOAuthToken: (cb) {
-            cb(token);
-          },
-          volume: 30),
-    );
+  // static void createWebPlayer() {
+  //   player = Player(
+  //     PlayerOptions(
+  //         name: 'WebPlayer',
+  //         getOAuthToken: (cb) {
+  //           cb(token);
+  //         },
+  //         volume: 30),
+  //   );
 
-    player.addListener("not_ready", (e) {
-      print("Device ID has gone offline $e");
-    });
+  //   player.addListener("not_ready", (e) {
+  //     print("Device ID has gone offline $e");
+  //   });
 
-    player.addListener("initialization_error", (message) {
-      print(message);
-    });
+  //   player.addListener("initialization_error", (message) {
+  //     print(message);
+  //   });
 
-    player.addListener("authentication_error", (message) {
-      print(message);
-    });
+  //   player.addListener("authentication_error", (message) {
+  //     print(message);
+  //   });
 
-    player.addListener("account_error", (message) {
-      print(message);
-    });
+  //   player.addListener("account_error", (message) {
+  //     print(message);
+  //   });
 
-    player.connect();
-  }
+  //   player.connect();
+  // }
 
   static Future<void> connectToSpotifyRemote() async {
     try {

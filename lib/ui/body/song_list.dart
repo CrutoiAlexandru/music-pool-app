@@ -65,7 +65,7 @@ class LiveSongList extends State<SongList> {
           shrinkWrap: true,
           physics: const ClampingScrollPhysics(),
           children: [
-            YoutubePlayer(),
+            listItemYT(context, 0),
             ListView.builder(
               physics: const ClampingScrollPhysics(),
               itemCount: snapshot.requireData.size,
@@ -162,6 +162,7 @@ Widget listItem(snapshot, context, index) {
             } else {
               // everytime a song is played we need to check for the platform to play from
               // this is set when we add the song to our queue/databasecd
+              // REDUNDANT
               if (snapshot.data!.docs.toList()[index].data()['platform'] ==
                   'spotify') {
                 SpotifyController.play(
