@@ -4,7 +4,9 @@ class GlobalNotifier extends ChangeNotifier {
   // the number in queue of the song playing
   int playing = -1;
   // connection state TO SPOTIFY
-  bool connected = false;
+  bool connectedSpotify = false;
+  // connection state to YOUTUBE
+  bool connectedYouTube = false;
   // playing state of player
   bool playState = false;
   // total queue size
@@ -70,10 +72,22 @@ class GlobalNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  setConnection(bool input) {
-    connected = input;
-    playing = -1;
-    playState = false;
+  setSpotifyConnection(bool input) {
+    connectedSpotify = input;
+    if (connectedSpotify == false) {
+      playing = -1;
+      playState = false;
+    }
+    notifyListeners();
+  }
+
+  setYouTubeConnection(bool input) {
+    connectedYouTube = input;
+    // platform specific
+    if (connectedYouTube == false) {
+      playing = -1;
+      playState = false;
+    }
     notifyListeners();
   }
 

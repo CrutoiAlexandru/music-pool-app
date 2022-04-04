@@ -3,11 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/platform_controller/spotify/spotify_controller.dart';
+import 'package:music_pool_app/platform_controller/youtube/youtube_controller.dart';
 import 'package:music_pool_app/ui/config.dart';
 import 'package:provider/provider.dart';
 
 // WEB ONLY LIBRARIES MUST BE REMOVED BEFORE ANDROID BUILD
-// import 'dart:js' as js;
+import 'dart:js' as js;
 
 class PlatformController extends StatefulWidget {
   const PlatformController({Key? key}) : super(key: key);
@@ -22,7 +23,7 @@ class _PlatformController extends State<PlatformController> {
     return Column(
       children: [
         TextButton(
-          style: !SpotifyController.connected
+          style: !SpotifyController.connectedSpotify
               ? TextButton.styleFrom(
                   primary: Config.colorStyle,
                   minimumSize: const Size(280, 40),
@@ -33,7 +34,7 @@ class _PlatformController extends State<PlatformController> {
                   minimumSize: const Size(280, 40),
                   backgroundColor: Config.colorStyleOposite,
                 ),
-          child: SpotifyController.connected
+          child: SpotifyController.connectedSpotify
               ? const Text(
                   'Log out',
                   style: TextStyle(
@@ -48,7 +49,7 @@ class _PlatformController extends State<PlatformController> {
                     fontSize: 15,
                   ),
                 ),
-          onPressed: SpotifyController.connected
+          onPressed: SpotifyController.connectedSpotify
               ? () {
                   // open disconnect medium for multiple platforms
                   showDialog(
@@ -85,8 +86,9 @@ class _PlatformController extends State<PlatformController> {
                                       SpotifyController.disconnect();
                                       Provider.of<GlobalNotifier>(context,
                                               listen: false)
-                                          .setConnection(
-                                              SpotifyController.connected);
+                                          .setSpotifyConnection(
+                                              SpotifyController
+                                                  .connectedSpotify);
                                       SpotifyController.pause();
                                       setState(() {});
                                       Navigator.pop(context);
@@ -105,12 +107,12 @@ class _PlatformController extends State<PlatformController> {
                                       backgroundColor: Colors.transparent,
                                     ),
                                     onPressed: () async {
-                                      // SOUNDCLOUD DISCONNECT MEDIUM
+                                      // YouTube DISCONNECT MEDIUM
 
                                       Navigator.pop(context);
                                     },
                                     child: const Text(
-                                      'SoundCloud',
+                                      'YouTube',
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),
@@ -158,20 +160,21 @@ class _PlatformController extends State<PlatformController> {
                                       // SPOTIFY AUTH MEDIUM
                                       SpotifyController.token =
                                           await SpotifyController.auth();
-                                      if (SpotifyController.connected) {
+                                      if (SpotifyController.connectedSpotify) {
                                         Provider.of<GlobalNotifier>(context,
                                                 listen: false)
-                                            .setConnection(
-                                                SpotifyController.connected);
+                                            .setSpotifyConnection(
+                                                SpotifyController
+                                                    .connectedSpotify);
                                       }
                                       setState(() {});
 
                                       // ONLY FOR WEB, DISABLE FOR ANDROID BUILD
                                       if (kIsWeb) {
-                                        // js.allowInterop(
-                                        //     SpotifyController.createWebPlayer);
-                                        // SpotifyController
-                                        //     .connectToSpotifyRemote();
+                                        js.allowInterop(
+                                            SpotifyController.createWebPlayer);
+                                        SpotifyController
+                                            .connectToSpotifyRemote();
                                       } else {
                                         SpotifyController
                                             .connectToSpotifyRemote();
@@ -193,25 +196,16 @@ class _PlatformController extends State<PlatformController> {
                                       backgroundColor: Colors.transparent,
                                     ),
                                     onPressed: () async {
-                                      // SOUNDCLOUD AUTH MEDIUM
-                                      // token = await auth();
-                                      // if (connected) {
-                                      //   Provider.of<GlobalNotifier>(context,
-                                      //           listen: false)
-                                      //       .setConnection(connected);
-                                      // }
-                                      // setState(() {});
+                                      // YouTube AUTH MEDIUM
+                                      await YoutubeController.apiConnect();
+                                      Provider.of<GlobalNotifier>(context,
+                                              listen: false)
+                                          .setYouTubeConnection(true);
 
-                                      // if (kIsWeb) {
-                                      //   // js.allowInterop(createWebPlayer);
-                                      //   // connectToSpotifyRemote();
-                                      // } else {
-                                      //   connectToSpotifyRemote();
-                                      // }
                                       Navigator.pop(context);
                                     },
                                     child: const Text(
-                                      'SoundCloud',
+                                      'YouTube',
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),

@@ -1,8 +1,17 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/ui/config.dart';
 import 'package:provider/provider.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+// PREFEREBLY USE _FLUTTER THAN _IFRAME
+// IFRAME SEEMS BROKEN
+// this is for android and ios only
+// import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+// iframe is for web yt playback
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+
+// COULD TRY WEBVIEWX AND BUILD THE WIDGET FROM THE IFRAME THE YT API GIVES?!
 
 class YoutubePlayerWidget extends StatefulWidget {
   const YoutubePlayerWidget({Key? key}) : super(key: key);
@@ -12,6 +21,8 @@ class YoutubePlayerWidget extends StatefulWidget {
 }
 
 class _YoutubePlayerWidget extends State<YoutubePlayerWidget> {
+  // the commented lines regarding _controller are from the youtube_player_flutter
+  // testing libraries
   late YoutubePlayerController _controller;
 
   @override
@@ -22,19 +33,23 @@ class _YoutubePlayerWidget extends State<YoutubePlayerWidget> {
     // or the internet.
     _controller = YoutubePlayerController(
       initialVideoId: 'znQriFAMBRs',
-      flags: const YoutubePlayerFlags(
+      // flags: const YoutubePlayerFlags(
+      params: const YoutubePlayerParams(
         autoPlay: false,
-        hideControls: true,
+        // hideControls: true,
+        showControls: false,
         loop: false,
-        controlsVisibleAtStart: false,
-        hideThumbnail: true,
+        // controlsVisibleAtStart: false,
+        showFullscreenButton: false,
+        showVideoAnnotations: false,
+        // hideThumbnail: true,
       ),
     );
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    // _controller.dispose();
     super.dispose();
   }
 
@@ -56,9 +71,9 @@ class _YoutubePlayerWidget extends State<YoutubePlayerWidget> {
           }
         },
         child: IgnorePointer(
-          child: YoutubePlayer(
-            liveUIColor: Config.colorStyle,
-            width: 50,
+          child: YoutubePlayerIFrame(
+            // liveUIColor: Config.colorStyle,
+            // width: 50,
             controller: _controller,
           ),
         ),
@@ -67,15 +82,20 @@ class _YoutubePlayerWidget extends State<YoutubePlayerWidget> {
   }
 }
 
-Widget listItemYT(context, index) {
+// the ListView item for the youtube player in queue
+Widget listItemYT(snapshot, context, index) {
   YoutubePlayerController _controller = YoutubePlayerController(
-    initialVideoId: 'znQriFAMBRs',
-    flags: const YoutubePlayerFlags(
+    initialVideoId: snapshot.data!.docs.toList()[index].data()['playback_uri'],
+    // flags: const YoutubePlayerFlags(
+    params: const YoutubePlayerParams(
       autoPlay: false,
-      hideControls: true,
+      // hideControls: true,
+      showControls: false,
       loop: false,
-      controlsVisibleAtStart: false,
-      hideThumbnail: true,
+      // controlsVisibleAtStart: false,
+      showFullscreenButton: false,
+      showVideoAnnotations: false,
+      // hideThumbnail: true,
     ),
   );
 
@@ -90,7 +110,9 @@ Widget listItemYT(context, index) {
           if (Provider.of<GlobalNotifier>(context, listen: false).playing ==
               index) {
             _controller.play();
+            _controller.play();
           } else {
+            _controller.play();
             _controller.play();
           }
           Provider.of<GlobalNotifier>(context, listen: false).setPlaying(index);
@@ -110,11 +132,21 @@ Widget listItemYT(context, index) {
       ),
       child: Row(
         children: [
-          IgnorePointer(
-            child: YoutubePlayer(
-              liveUIColor: Config.colorStyle,
-              width: 40,
-              controller: _controller,
+          SizedBox(
+            height: 40,
+            width: 40,
+            child: AbsorbPointer(
+              child: YoutubePlayerIFrame(
+                // liveUIColor: Config.colorStyle,
+                // width: 40,
+                controller: _controller,
+                // i think this is how you ignore the pointer somehow
+                // gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                //   Factory<OneSequenceGestureRecognizer>(
+                //     () => EagerGestureRecognizer(),
+                //   ),
+                // },
+              ),
             ),
           ),
           const SizedBox(
@@ -125,7 +157,7 @@ Widget listItemYT(context, index) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'TITLE',
+                snapshot.data!.docs.toList()[index].data()['track'],
                 textScaleFactor: 1.25,
                 style: index ==
                         Provider.of<GlobalNotifier>(context, listen: false)

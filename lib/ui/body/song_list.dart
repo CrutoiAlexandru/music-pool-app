@@ -65,7 +65,7 @@ class LiveSongList extends State<SongList> {
           shrinkWrap: true,
           physics: const ClampingScrollPhysics(),
           children: [
-            listItemYT(context, 0),
+            listItemYT(snapshot, context, 0),
             ListView.builder(
               physics: const ClampingScrollPhysics(),
               itemCount: snapshot.requireData.size,
@@ -75,8 +75,16 @@ class LiveSongList extends State<SongList> {
                 return LongPressDraggable(
                   data: 'yes',
                   axis: Axis.horizontal,
-                  feedback: listItem(snapshot, context, index),
-                  child: listItem(snapshot, context, index),
+                  feedback:
+                      snapshot.data!.docs.toList()[index].data()['platform'] ==
+                              'spotify'
+                          ? listItemSpot(snapshot, context, index)
+                          : listItemYT(snapshot, context, index),
+                  child:
+                      snapshot.data!.docs.toList()[index].data()['platform'] ==
+                              'spotify'
+                          ? listItemSpot(snapshot, context, index)
+                          : listItemYT(snapshot, context, index),
                   childWhenDragging: SizedBox(
                     // height: 60,
                     width: MediaQuery.of(context).size.width,
@@ -146,13 +154,14 @@ class LiveSongList extends State<SongList> {
   }
 }
 
-Widget listItem(snapshot, context, index) {
+Widget listItemSpot(snapshot, context, index) {
   return Container(
     color: Colors.transparent,
     margin: const EdgeInsets.only(top: 10),
     child: TextButton(
       onPressed: () {
-        if (Provider.of<GlobalNotifier>(context, listen: false).connected) {
+        if (Provider.of<GlobalNotifier>(context, listen: false)
+            .connectedSpotify) {
           if (!Provider.of<GlobalNotifier>(context, listen: false).playState ||
               Provider.of<GlobalNotifier>(context, listen: false).playing !=
                   index) {

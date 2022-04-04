@@ -22,7 +22,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     // OPTIONS NEED TO BE REMOVED FOR ANDROID
-    // options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(
     MultiProvider(
@@ -93,7 +93,7 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
     // probably not good
     timer = Timer.periodic(const Duration(seconds: 3600), (Timer t) {
       try {
-        if (SpotifyController.connected) {
+        if (SpotifyController.connectedSpotify) {
           SpotifyController.auth();
         }
       } on Exception catch (e) {

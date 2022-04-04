@@ -6,19 +6,19 @@ import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sig
 import 'package:music_pool_app/.config_for_app.dart';
 
 class YoutubeController {
-  var httpClient;
-  var youTubeApi;
+  static var httpClient;
+  static var youTubeApi;
 
   // the url from which the video is playing
-  final url = 'https://www.youtube.com/watch?v=';
+  static final url = 'https://www.youtube.com/watch?v=';
   // google sign in requesting wanted scope(api)
-  final _googleSignIn = GoogleSignIn(
+  static final _googleSignIn = GoogleSignIn(
     scopes: <String>[YouTubeApi.youtubeReadonlyScope],
     clientId: GoogleConfig.clientID,
   );
 
   // auth to google and connect to youtube api
-  apiConnect() async {
+  static apiConnect() async {
     try {
       await _googleSignIn.signIn();
     } catch (error) {
@@ -29,18 +29,18 @@ class YoutubeController {
 
     youTubeApi = YouTubeApi(httpClient);
 
-    var list = await searchFor('only you freestyle');
+    // var list = await searchFor('only you freestyle');
 
-    for (int i = 0; i < 5; i++) {
-      print(list[i].snippet.title);
-      print(url + list[i].id.videoId);
-    }
+    // for (int i = 0; i < 5; i++) {
+    //   print(list[i].snippet.title);
+    //   print(url + list[i].id.videoId);
+    // }
 
     // _controller = VideoPlayerController.network(url + list[0].id.videoId);
   }
 
   // get a search list result for our query
-  searchFor(String input) async {
+  static searchFor(String input) async {
     var list = await youTubeApi.search.list(
       ['id,snippet'],
       q: input,

@@ -6,9 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/platform_controller/spotify/spotify_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:music_pool_app/platform_controller/youtube/youtube_controller.dart';
+import 'package:music_pool_app/platform_controller/youtube/youtube_player_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:music_pool_app/global/session/session.dart';
 import 'package:music_pool_app/ui/config.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class AddSongButton extends StatefulWidget {
   const AddSongButton({Key? key}) : super(key: key);
@@ -40,7 +43,7 @@ class _AddSongButton extends State<AddSongButton> {
       songsList = FirebaseFirestore.instance.collection('default');
     }
 
-    // if (!Provider.of<GlobalNotifier>(context).connected) {
+    // if (!Provider.of<GlobalNotifier>(context).connectedSpotify) {
     //   return const SizedBox();
     // }
 
@@ -114,11 +117,11 @@ class _AddSongButton extends State<AddSongButton> {
                                   onPressed: () {
                                     Provider.of<GlobalNotifier>(context,
                                             listen: false)
-                                        .setPlatform('SoundCloud');
+                                        .setPlatform('YouTube');
                                     Navigator.pop(context);
                                   },
                                   child: const Text(
-                                    'SoundCloud',
+                                    'YouTube',
                                     style: TextStyle(fontSize: 30),
                                   ),
                                 ),
@@ -161,12 +164,24 @@ class _AddSongButton extends State<AddSongButton> {
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
-                            return listItem(
-                                Provider.of<GlobalNotifier>(
+                            if (Provider.of<GlobalNotifier>(context)
+                                    .platform
+                                    .toLowerCase() ==
+                                'spotify') {
+                              return listItemSpot(
+                                  Provider.of<GlobalNotifier>(
+                                    context,
+                                  ).requiredSongList,
                                   context,
-                                ).requiredSongList,
-                                context,
-                                index);
+                                  index);
+                            } else {
+                              return listItemYT(
+                                  Provider.of<GlobalNotifier>(
+                                    context,
+                                  ).requiredSongList,
+                                  context,
+                                  index);
+                            }
                           },
                         ),
                       )
@@ -246,12 +261,14 @@ class _AddSongButton extends State<AddSongButton> {
       return;
     }
 
+    // spotify
     if (Provider.of<GlobalNotifier>(context, listen: false)
             .platform
             .toLowerCase() ==
         'spotify') {
-      if (!Provider.of<GlobalNotifier>(context, listen: false).connected) {
-        print('Not connected to spotify');
+      if (!Provider.of<GlobalNotifier>(context, listen: false)
+          .connectedSpotify) {
+        print('Not connectedSpotify to spotify');
         return;
       }
 
@@ -260,7 +277,7 @@ class _AddSongButton extends State<AddSongButton> {
       final json = jsonDecode(res);
       print(res);
 
-      // populate requiredSongList with top 5 songs
+      // populate requiredSongList with top 5 songs from Spotify
       // list has also 5 items
       for (int i = 0; i < 5; i++) {
         requiredSongList.add(
@@ -283,9 +300,46 @@ class _AddSongButton extends State<AddSongButton> {
         requiredSongList.clear();
       });
     }
+
+    // youtube
+    if (Provider.of<GlobalNotifier>(context, listen: false)
+            .platform
+            .toLowerCase() ==
+        'youtube') {
+      if (!Provider.of<GlobalNotifier>(context, listen: false)
+          .connectedYouTube) {
+        print('Not connectedSpotify to youtube');
+        return;
+      }
+
+      final res = await YoutubeController.searchFor(input);
+
+      // populate requiredSongList with top 5 songs from YouTube
+      // list has also 5 items
+      for (int i = 0; i < 5; i++) {
+        requiredSongList.add(
+          {
+            'track': res[i].snippet.title,
+            'artist': '',
+            'playback_uri': res[i].id.videoId,
+            'icon': '', // video thumbnail
+            'platform': Provider.of<GlobalNotifier>(context, listen: false)
+                .platform
+                .toLowerCase(),
+          },
+        );
+      }
+
+      Provider.of<GlobalNotifier>(context, listen: false)
+          .setRequiredSongList(requiredSongList);
+
+      setState(() {
+        requiredSongList.clear();
+      });
+    }
   }
 
-  Widget listItem(snapshot, context, index) {
+  Widget listItemSpot(snapshot, context, index) {
     return Container(
       color: Colors.transparent,
       margin: const EdgeInsets.only(top: 10),
@@ -347,6 +401,92 @@ class _AddSongButton extends State<AddSongButton> {
                     overflow: TextOverflow.clip,
                   ),
                 ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // should not implement twice
+  // the ListView item for the youtube player in queue
+  Widget listItemYT(snapshot, context, index) {
+    YoutubePlayerController _controller = YoutubePlayerController(
+      initialVideoId: snapshot[index]['playback_uri'],
+      // flags: const YoutubePlayerFlags(
+      params: const YoutubePlayerParams(
+        autoPlay: false,
+        // hideControls: true,
+        showControls: false,
+        loop: false,
+        // controlsVisibleAtStart: false,
+        showFullscreenButton: false,
+        showVideoAnnotations: false,
+        // hideThumbnail: true,
+      ),
+    );
+
+    return Container(
+      color: Colors.transparent,
+      margin: const EdgeInsets.only(top: 10),
+      child: TextButton(
+        onPressed: () {
+          addData(
+              snapshot[index]['artist'],
+              snapshot[index]['track'],
+              snapshot[index]['playback_uri'],
+              snapshot[index]['icon'],
+              snapshot[index]['platform']);
+          Provider.of<GlobalNotifier>(context, listen: false)
+              .clearRequiredSongList();
+          Navigator.pop(context);
+        },
+        style: TextButton.styleFrom(
+          primary: Config.colorStyle,
+          backgroundColor: Colors.transparent,
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              height: 40,
+              width: 40,
+              child: AbsorbPointer(
+                child: YoutubePlayerIFrame(
+                  // liveUIColor: Config.colorStyle,
+                  // width: 40,
+                  controller: _controller,
+                  // i think this is how you ignore the pointer somehow
+                  // gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                  //   Factory<OneSequenceGestureRecognizer>(
+                  //     () => EagerGestureRecognizer(),
+                  //   ),
+                  // },
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  snapshot[index]['track'],
+                  textScaleFactor: 1.25,
+                  style: index ==
+                          Provider.of<GlobalNotifier>(context, listen: false)
+                              .playing // not working to listen?
+                      ? const TextStyle(
+                          color: Config.colorStyle1,
+                          overflow: TextOverflow.clip)
+                      : const TextStyle(
+                          color: Color.fromARGB(200, 255, 255, 255),
+                          overflow: TextOverflow.clip,
+                        ),
+                ), // LIVE DATA UPDATE
+                SizedBox(height: 5),
               ],
             ),
           ],
