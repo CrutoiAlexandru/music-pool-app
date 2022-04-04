@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/ui/config.dart';
@@ -10,77 +8,6 @@ import 'package:provider/provider.dart';
 // import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 // iframe is for web yt playback
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
-
-// COULD TRY WEBVIEWX AND BUILD THE WIDGET FROM THE IFRAME THE YT API GIVES?!
-
-class YoutubePlayerWidget extends StatefulWidget {
-  const YoutubePlayerWidget({Key? key}) : super(key: key);
-
-  @override
-  State<YoutubePlayerWidget> createState() => _YoutubePlayerWidget();
-}
-
-class _YoutubePlayerWidget extends State<YoutubePlayerWidget> {
-  // the commented lines regarding _controller are from the youtube_player_flutter
-  // testing libraries
-  late YoutubePlayerController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    // Create and store the VideoPlayerController. The VideoPlayerController
-    // offers several different constructors to play videos from assets, files,
-    // or the internet.
-    _controller = YoutubePlayerController(
-      initialVideoId: 'znQriFAMBRs',
-      // flags: const YoutubePlayerFlags(
-      params: const YoutubePlayerParams(
-        autoPlay: false,
-        // hideControls: true,
-        showControls: false,
-        loop: false,
-        // controlsVisibleAtStart: false,
-        showFullscreenButton: false,
-        showVideoAnnotations: false,
-        // hideThumbnail: true,
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    // _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Config.back2,
-      height: 50,
-      child: TextButton(
-        onPressed: () {
-          if (Provider.of<GlobalNotifier>(context, listen: false).playState) {
-            _controller.pause();
-            Provider.of<GlobalNotifier>(context, listen: false)
-                .setPlayingState(false);
-          } else {
-            _controller.play();
-            Provider.of<GlobalNotifier>(context, listen: false)
-                .setPlayingState(true);
-          }
-        },
-        child: IgnorePointer(
-          child: YoutubePlayerIFrame(
-            // liveUIColor: Config.colorStyle,
-            // width: 50,
-            controller: _controller,
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 // the ListView item for the youtube player in queue
 Widget listItemYT(snapshot, context, index) {
@@ -110,9 +37,7 @@ Widget listItemYT(snapshot, context, index) {
           if (Provider.of<GlobalNotifier>(context, listen: false).playing ==
               index) {
             _controller.play();
-            _controller.play();
           } else {
-            _controller.play();
             _controller.play();
           }
           Provider.of<GlobalNotifier>(context, listen: false).setPlaying(index);

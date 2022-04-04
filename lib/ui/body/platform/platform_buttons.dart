@@ -7,7 +7,6 @@ import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/platform_controller/spotify/spotify_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:music_pool_app/platform_controller/youtube/youtube_controller.dart';
-import 'package:music_pool_app/platform_controller/youtube/youtube_player_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:music_pool_app/global/session/session.dart';
 import 'package:music_pool_app/ui/config.dart';
@@ -339,6 +338,7 @@ class _AddSongButton extends State<AddSongButton> {
     }
   }
 
+  // same player widget made for local kept song list not from db
   Widget listItemSpot(snapshot, context, index) {
     return Container(
       color: Colors.transparent,
@@ -409,8 +409,6 @@ class _AddSongButton extends State<AddSongButton> {
     );
   }
 
-  // should not implement twice
-  // the ListView item for the youtube player in queue
   Widget listItemYT(snapshot, context, index) {
     YoutubePlayerController _controller = YoutubePlayerController(
       initialVideoId: snapshot[index]['playback_uri'],

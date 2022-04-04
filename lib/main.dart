@@ -12,7 +12,7 @@ import 'package:music_pool_app/ui/body/bottom_app_bar.dart';
 import 'package:music_pool_app/ui/body/song_list.dart';
 import 'package:music_pool_app/ui/config.dart';
 import 'ui/drawer/drawer.dart';
-import 'ui/body/platform_buttons.dart';
+import 'ui/body/platform/platform_buttons.dart';
 import 'package:provider/provider.dart';
 
 // leave here in case of errors
