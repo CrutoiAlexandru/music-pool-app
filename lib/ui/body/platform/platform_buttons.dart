@@ -480,7 +480,7 @@ class _AddSongButton extends State<AddSongButton> {
                           overflow: TextOverflow.clip,
                         ),
                 ), // LIVE DATA UPDATE
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
               ],
             ),
           ],

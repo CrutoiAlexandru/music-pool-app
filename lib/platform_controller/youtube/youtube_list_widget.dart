@@ -10,6 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 // the ListView item for the youtube player in queue
+
+// MAKE STATEFUL WIDGET? maybe that is why play pause doesn't work
 Widget listItemYT(snapshot, context, index) {
   YoutubePlayerController _controller = YoutubePlayerController(
     initialVideoId: snapshot.data!.docs.toList()[index].data()['playback_uri'],
@@ -34,14 +36,8 @@ Widget listItemYT(snapshot, context, index) {
         if (!Provider.of<GlobalNotifier>(context, listen: false).playState ||
             Provider.of<GlobalNotifier>(context, listen: false).playing !=
                 index) {
-          if (Provider.of<GlobalNotifier>(context, listen: false).playing ==
-              index) {
-            _controller.play();
-          } else {
-            _controller.play();
-          }
+          _controller.play();
           Provider.of<GlobalNotifier>(context, listen: false).setPlaying(index);
-
           Provider.of<GlobalNotifier>(context, listen: false)
               .setPlayingState(true);
         } else {
@@ -94,7 +90,7 @@ Widget listItemYT(snapshot, context, index) {
                         overflow: TextOverflow.clip,
                       ),
               ), // LIVE DATA UPDATE
-              SizedBox(height: 5),
+              const SizedBox(height: 5),
             ],
           ),
         ],

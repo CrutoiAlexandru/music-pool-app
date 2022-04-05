@@ -1,4 +1,4 @@
-// ignore_for_file: import_of_legacy_library_into_null_safe, prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_typing_uninitialized_variables
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +73,6 @@ class LiveSongList extends State<SongList> {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 return LongPressDraggable(
-                  data: 'yes',
                   axis: Axis.horizontal,
                   feedback:
                       snapshot.data!.docs.toList()[index].data()['platform'] ==
@@ -86,7 +85,6 @@ class LiveSongList extends State<SongList> {
                           ? listItemSpot(snapshot, context, index)
                           : listItemYT(snapshot, context, index),
                   childWhenDragging: SizedBox(
-                    // height: 60,
                     width: MediaQuery.of(context).size.width,
                     child: const Center(
                       child: Icon(Icons.playlist_remove,
@@ -142,6 +140,8 @@ class LiveSongList extends State<SongList> {
                           index--;
                         },
                       );
+
+                      setState(() {});
                     }
                   },
                 );
