@@ -42,10 +42,6 @@ class _AddSongButton extends State<AddSongButton> {
       songsList = FirebaseFirestore.instance.collection('default');
     }
 
-    // if (!Provider.of<GlobalNotifier>(context).connectedSpotify) {
-    //   return const SizedBox();
-    // }
-
     return Column(
       children: [
         const SizedBox(height: 10),

@@ -10,7 +10,7 @@ class YoutubeController {
   static var youTubeApi;
 
   // the url from which the video is playing
-  static final url = 'https://www.youtube.com/watch?v=';
+  static const url = 'https://www.youtube.com/watch?v=';
   // google sign in requesting wanted scope(api)
   static final _googleSignIn = GoogleSignIn(
     scopes: <String>[YouTubeApi.youtubeReadonlyScope],
@@ -28,15 +28,15 @@ class YoutubeController {
     httpClient = (await _googleSignIn.authenticatedClient())!;
 
     youTubeApi = YouTubeApi(httpClient);
+  }
 
-    // var list = await searchFor('only you freestyle');
-
-    // for (int i = 0; i < 5; i++) {
-    //   print(list[i].snippet.title);
-    //   print(url + list[i].id.videoId);
-    // }
-
-    // _controller = VideoPlayerController.network(url + list[0].id.videoId);
+  // disconnect from google and yt api
+  static apiDisconnect() async {
+    try {
+      await _googleSignIn.disconnect();
+    } catch (error) {
+      print(error);
+    }
   }
 
   // get a search list result for our query
