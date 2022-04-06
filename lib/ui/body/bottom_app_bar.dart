@@ -122,36 +122,57 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                         if (kIsWeb) const SizedBox(width: 10),
                         // only build the icon for spotify
                         // for youtube we will show a player to controll the video
-                        if (snapshot.data!.docs
-                                .toList()[Provider.of<GlobalNotifier>(context)
-                                    .playing]
-                                .data()['platform'] ==
-                            'spotify')
-                          Hero(
-                            tag: 'icon',
-                            child: Image.network(
-                              snapshot.data!.docs
-                                  .toList()[Provider.of<GlobalNotifier>(context)
-                                      .playing]
-                                  .data()['icon'],
-                              height: 50,
-                              loadingBuilder: (BuildContext context,
-                                  Widget child,
-                                  ImageChunkEvent? loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes !=
-                                            null
-                                        ? loadingProgress
-                                                .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                        : null,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
+                        snapshot.data!.docs
+                                    .toList()[
+                                        Provider.of<GlobalNotifier>(context)
+                                            .playing]
+                                    .data()['platform'] ==
+                                'spotify'
+                            ? Hero(
+                                tag: 'icon',
+                                child: Image.network(
+                                  snapshot.data!.docs
+                                      .toList()[
+                                          Provider.of<GlobalNotifier>(context)
+                                              .playing]
+                                      .data()['icon'],
+                                  height: 50,
+                                  loadingBuilder: (BuildContext context,
+                                      Widget child,
+                                      ImageChunkEvent? loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress
+                                                    .expectedTotalBytes !=
+                                                null
+                                            ? loadingProgress
+                                                    .cumulativeBytesLoaded /
+                                                loadingProgress
+                                                    .expectedTotalBytes!
+                                            : null,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              )
+                            : SizedBox(
+                                // consider transitioning it to second page
+                                // *hero probably wouldn't work
+                                height: 50,
+                                width: 50,
+                                child: YoutubePlayerIFrame(
+                                  // liveUIColor: Config.colorStyle,
+                                  // width: 40,
+                                  controller: _controller,
+                                  // i think this is how you ignore the pointer somehow
+                                  // gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                                  //   Factory<OneSequenceGestureRecognizer>(
+                                  //     () => EagerGestureRecognizer(),
+                                  //   ),
+                                  // },
+                                ),
+                              ),
                         const SizedBox(width: 10),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -241,33 +262,11 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
               ),
               // the player state widget is only needed by spotify
               // for youtube we must build a player(maybe instead of showing the icon)
-              if (snapshot.data!.docs
-                      .toList()[Provider.of<GlobalNotifier>(context).playing]
-                      .data()['platform'] ==
-                  'spotify')
-                const BuildPlayerStateWidget(),
-              // youtube method for playing a video
-              if (snapshot.data!.docs
-                      .toList()[Provider.of<GlobalNotifier>(context).playing]
-                      .data()['platform'] ==
-                  'youtube')
-                Center(
-                  child: SizedBox(
-                    height: 100,
-                    // width: 40,
-                    child: YoutubePlayerIFrame(
-                      // liveUIColor: Config.colorStyle,
-                      // width: 40,
-                      controller: _controller,
-                      // i think this is how you ignore the pointer somehow
-                      // gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-                      //   Factory<OneSequenceGestureRecognizer>(
-                      //     () => EagerGestureRecognizer(),
-                      //   ),
-                      // },
-                    ),
-                  ),
-                ),
+              // if (snapshot.data!.docs
+              //         .toList()[Provider.of<GlobalNotifier>(context).playing]
+              //         .data()['platform'] ==
+              //     'spotify')
+              const BuildPlayerStateWidget(),
             ],
           );
         },
