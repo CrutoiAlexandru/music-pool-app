@@ -10,6 +10,7 @@ import 'package:music_pool_app/ui/secondPage/player/player_state.dart';
 import 'package:music_pool_app/ui/secondPage/secondPage.dart';
 import 'package:provider/provider.dart';
 import 'package:music_pool_app/global/session/session.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class SongBottomAppBar extends StatefulWidget {
   const SongBottomAppBar({Key? key}) : super(key: key);
@@ -21,6 +22,7 @@ class SongBottomAppBar extends StatefulWidget {
 class _SongBottomAppBar extends State<SongBottomAppBar> {
   var database;
   int index = -1;
+  late YoutubePlayerController _controller;
 
   @override
   void initState() {
@@ -73,6 +75,31 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
           if (snapshot.data.docs.isEmpty ||
               Provider.of<GlobalNotifier>(context).playing == -1) {
             return const SizedBox();
+          }
+
+          // if we are playing from youtube update the controller with actual data
+          if (snapshot.data!.docs
+                  .toList()[Provider.of<GlobalNotifier>(context).playing]
+                  .data()['platform'] ==
+              'youtube') {
+            SpotifyController.pause();
+            _controller = YoutubePlayerController(
+              initialVideoId: snapshot.data!.docs
+                  .toList()[Provider.of<GlobalNotifier>(context, listen: false)
+                      .playing]
+                  .data()['playback_uri'],
+              // flags: const YoutubePlayerFlags(
+              params: const YoutubePlayerParams(
+                autoPlay: true,
+                // hideControls: true,
+                showControls: false,
+                loop: false,
+                // controlsVisibleAtStart: false,
+                showFullscreenButton: false,
+                showVideoAnnotations: false,
+                // hideThumbnail: true,
+              ),
+            );
           }
 
           return Wrap(
@@ -218,7 +245,29 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                       .toList()[Provider.of<GlobalNotifier>(context).playing]
                       .data()['platform'] ==
                   'spotify')
-                const BuildPlayerStateWidget()
+                const BuildPlayerStateWidget(),
+              // youtube method for playing a video
+              if (snapshot.data!.docs
+                      .toList()[Provider.of<GlobalNotifier>(context).playing]
+                      .data()['platform'] ==
+                  'youtube')
+                Center(
+                  child: SizedBox(
+                    height: 100,
+                    // width: 40,
+                    child: YoutubePlayerIFrame(
+                      // liveUIColor: Config.colorStyle,
+                      // width: 40,
+                      controller: _controller,
+                      // i think this is how you ignore the pointer somehow
+                      // gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                      //   Factory<OneSequenceGestureRecognizer>(
+                      //     () => EagerGestureRecognizer(),
+                      //   ),
+                      // },
+                    ),
+                  ),
+                ),
             ],
           );
         },
