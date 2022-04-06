@@ -30,8 +30,8 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
         .orderBy('order')
         .snapshots();
     // ??
-    // getSongLength();
-    setTimer('spotify');
+    getSongLength();
+    setTimer();
     super.initState();
   }
 
@@ -42,19 +42,16 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
   }
 
   // gets the song length everytime the song changes
-  getSongLength(platform) async {
-    if (platform == 'spotify') {
-      var url = Uri.https('api.spotify.com', '/v1/me/player');
-      final res = await http.get(url,
-          headers: {'Authorization': 'Bearer ${SpotifyController.token}'});
+  getSongLength() async {
+    var url = Uri.https('api.spotify.com', '/v1/me/player');
+    final res = await http.get(url,
+        headers: {'Authorization': 'Bearer ${SpotifyController.token}'});
 
-      var body = jsonDecode(res.body);
-      if (body['item']['duration_ms'].runtimeType == int) {
-        double duration = body['item']['duration_ms'].toDouble();
+    var body = jsonDecode(res.body);
+    if (body['item']['duration_ms'].runtimeType == int) {
+      double duration = body['item']['duration_ms'].toDouble();
 
-        Provider.of<GlobalNotifier>(context, listen: false)
-            .setDuration(duration);
-      }
+      Provider.of<GlobalNotifier>(context, listen: false).setDuration(duration);
     }
   }
 
@@ -62,25 +59,23 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
   // we do it this way because the stream from spotify sdk about playerstate does not currently update
   // even though there will be a lot of calls to spotify api
   // more precise it would be for even more often calls?
-  setTimer(platform) {
+  setTimer() {
     timer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) async {
-        if (platform == 'spotify') {
-          var body;
-          var url = Uri.https('api.spotify.com', '/v1/me/player');
-          final res = await http.get(url,
-              headers: {'Authorization': 'Bearer ${SpotifyController.token}'});
+        var body;
+        var url = Uri.https('api.spotify.com', '/v1/me/player');
+        final res = await http.get(url,
+            headers: {'Authorization': 'Bearer ${SpotifyController.token}'});
 
-          body = jsonDecode(res.body);
+        body = jsonDecode(res.body);
 
-          if (body['progress_ms'].runtimeType == int) {
-            if (body['progress_ms'] != 0) {
-              double progress = body['progress_ms'].toDouble();
+        if (body['progress_ms'].runtimeType == int) {
+          if (body['progress_ms'] != 0) {
+            double progress = body['progress_ms'].toDouble();
 
-              Provider.of<GlobalNotifier>(context, listen: false)
-                  .setProgress(progress);
-            }
+            Provider.of<GlobalNotifier>(context, listen: false)
+                .setProgress(progress);
           }
         }
       },
@@ -136,35 +131,28 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
       }
     }
 
+    // updating method for our progress bar
+    if (Provider.of<GlobalNotifier>(context).playState) {
+      if (!timer.isActive) {
+        setTimer();
+      }
+    } else {
+      if (timer.isActive) {
+        cancelTimer();
+      }
+    }
+
+    // everytime the song changes get its length
+    // executes too many times because of the way functions() and providers work
+    // not sure !?
+    if ((Provider.of<GlobalNotifier>(context).progress / 1000).floor() <= 1 &&
+        Provider.of<GlobalNotifier>(context).playState) {
+      getSongLength();
+    }
+
     return StreamBuilder(
       stream: database,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        // updating method for our progress bar
-        if (Provider.of<GlobalNotifier>(context).playState) {
-          if (!timer.isActive) {
-            setTimer(snapshot.data!.docs
-                .toList()[
-                    Provider.of<GlobalNotifier>(context, listen: false).playing]
-                .data()['platform']);
-          }
-        } else {
-          if (timer.isActive) {
-            cancelTimer();
-          }
-        }
-
-        // everytime the song changes get its length
-        // executes too many times because of the way functions() and providers work
-        // not sure !?
-        if ((Provider.of<GlobalNotifier>(context).progress / 1000).floor() <=
-                1 &&
-            Provider.of<GlobalNotifier>(context).playState) {
-          getSongLength(snapshot.data!.docs
-              .toList()[
-                  Provider.of<GlobalNotifier>(context, listen: false).playing]
-              .data()['platform']);
-        }
-
         if (snapshot.hasError) {
           return const Text('Something went wrong',
               textAlign: TextAlign.center);

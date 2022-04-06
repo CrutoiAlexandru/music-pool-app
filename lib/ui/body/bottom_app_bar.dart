@@ -93,29 +93,38 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                     Row(
                       children: [
                         if (kIsWeb) const SizedBox(width: 10),
-                        Hero(
-                          tag: 'icon',
-                          child: Image.network(
-                            snapshot.data!.docs
+                        // only build the icon for spotify
+                        // for youtube we will show a player to controll the video
+                        if (snapshot.data!.docs
                                 .toList()[Provider.of<GlobalNotifier>(context)
                                     .playing]
-                                .data()['icon'],
-                            height: 50,
-                            loadingBuilder: (BuildContext context, Widget child,
-                                ImageChunkEvent? loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                      : null,
-                                ),
-                              );
-                            },
+                                .data()['platform'] ==
+                            'spotify')
+                          Hero(
+                            tag: 'icon',
+                            child: Image.network(
+                              snapshot.data!.docs
+                                  .toList()[Provider.of<GlobalNotifier>(context)
+                                      .playing]
+                                  .data()['icon'],
+                              height: 50,
+                              loadingBuilder: (BuildContext context,
+                                  Widget child,
+                                  ImageChunkEvent? loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                );
+                              },
+                            ),
                           ),
-                        ),
                         const SizedBox(width: 10),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -158,45 +167,58 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                             ),
                           ],
                         ),
-                        Provider.of<GlobalNotifier>(context).playState
-                            ? TextButton(
-                                style: TextButton.styleFrom(
-                                  primary: Config.colorStyle,
+                        // the play pause button is only needed for spotify?
+                        // youtube can just have a video player for controlling the video
+                        if (snapshot.data!.docs
+                                .toList()[Provider.of<GlobalNotifier>(context)
+                                    .playing]
+                                .data()['platform'] ==
+                            'spotify')
+                          Provider.of<GlobalNotifier>(context).playState
+                              ? TextButton(
+                                  style: TextButton.styleFrom(
+                                    primary: Config.colorStyle,
+                                  ),
+                                  onPressed: () {
+                                    SpotifyController.pause();
+                                    Provider.of<GlobalNotifier>(context,
+                                            listen: false)
+                                        .setPlayingState(false);
+                                  },
+                                  child: const Icon(
+                                    Icons.pause,
+                                    color: Colors.white,
+                                    size: 50,
+                                  ),
+                                )
+                              : TextButton(
+                                  style: TextButton.styleFrom(
+                                    primary: Config.colorStyle,
+                                  ),
+                                  onPressed: () {
+                                    SpotifyController.resume();
+                                    Provider.of<GlobalNotifier>(context,
+                                            listen: false)
+                                        .setPlayingState(true);
+                                  },
+                                  child: const Icon(
+                                    Icons.play_arrow,
+                                    color: Colors.white,
+                                    size: 50,
+                                  ),
                                 ),
-                                onPressed: () {
-                                  SpotifyController.pause();
-                                  Provider.of<GlobalNotifier>(context,
-                                          listen: false)
-                                      .setPlayingState(false);
-                                },
-                                child: const Icon(
-                                  Icons.pause,
-                                  color: Colors.white,
-                                  size: 50,
-                                ),
-                              )
-                            : TextButton(
-                                style: TextButton.styleFrom(
-                                  primary: Config.colorStyle,
-                                ),
-                                onPressed: () {
-                                  SpotifyController.resume();
-                                  Provider.of<GlobalNotifier>(context,
-                                          listen: false)
-                                      .setPlayingState(true);
-                                },
-                                child: const Icon(
-                                  Icons.play_arrow,
-                                  color: Colors.white,
-                                  size: 50,
-                                ),
-                              ),
                       ],
                     ),
                   ],
                 ),
               ),
-              const BuildPlayerStateWidget()
+              // the player state widget is only needed by spotify
+              // for youtube we must build a player(maybe instead of showing the icon)
+              if (snapshot.data!.docs
+                      .toList()[Provider.of<GlobalNotifier>(context).playing]
+                      .data()['platform'] ==
+                  'spotify')
+                const BuildPlayerStateWidget()
             ],
           );
         },

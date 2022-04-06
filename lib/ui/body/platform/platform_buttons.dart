@@ -317,7 +317,8 @@ class _AddSongButton extends State<AddSongButton> {
             'track': res[i].snippet.title,
             'artist': '',
             'playback_uri': res[i].id.videoId,
-            'icon': '', // video thumbnail
+            'icon': await YoutubeController.getIcon(
+                res[i].id.videoId), // video thumbnail
             'platform': Provider.of<GlobalNotifier>(context, listen: false)
                 .platform
                 .toLowerCase(),
@@ -406,20 +407,20 @@ class _AddSongButton extends State<AddSongButton> {
   }
 
   Widget listItemYT(snapshot, context, index) {
-    YoutubePlayerController _controller = YoutubePlayerController(
-      initialVideoId: snapshot[index]['playback_uri'],
-      // flags: const YoutubePlayerFlags(
-      params: const YoutubePlayerParams(
-        autoPlay: false,
-        // hideControls: true,
-        showControls: false,
-        loop: false,
-        // controlsVisibleAtStart: false,
-        showFullscreenButton: false,
-        showVideoAnnotations: false,
-        // hideThumbnail: true,
-      ),
-    );
+    // YoutubePlayerController _controller = YoutubePlayerController(
+    //   initialVideoId: snapshot[index]['playback_uri'],
+    //   // flags: const YoutubePlayerFlags(
+    //   params: const YoutubePlayerParams(
+    //     autoPlay: false,
+    //     // hideControls: true,
+    //     showControls: false,
+    //     loop: false,
+    //     // controlsVisibleAtStart: false,
+    //     showFullscreenButton: false,
+    //     showVideoAnnotations: false,
+    //     // hideThumbnail: true,
+    //   ),
+    // );
 
     return Container(
       color: Colors.transparent,
@@ -442,22 +443,43 @@ class _AddSongButton extends State<AddSongButton> {
         ),
         child: Row(
           children: [
-            SizedBox(
+            // SizedBox(
+            //   height: 40,
+            //   width: 40,
+            //   child: AbsorbPointer(
+            //     /**
+            //     INSTEAD OF YOUTUBE PLAYER ADD JUST AN ICON
+            //     WE DON'T NEED A PLAYER JUST AN IMAGE
+            //     */
+            //     child: YoutubePlayerIFrame(
+            //       // liveUIColor: Config.colorStyle,
+            //       // width: 40,
+            //       controller: _controller,
+            //       // i think this is how you ignore the pointer somehow
+            //       // gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+            //       //   Factory<OneSequenceGestureRecognizer>(
+            //       //     () => EagerGestureRecognizer(),
+            //       //   ),
+            //       // },
+            //     ),
+            //   ),
+            // ),
+            Image.network(
+              snapshot[index]['icon'],
               height: 40,
               width: 40,
-              child: AbsorbPointer(
-                child: YoutubePlayerIFrame(
-                  // liveUIColor: Config.colorStyle,
-                  // width: 40,
-                  controller: _controller,
-                  // i think this is how you ignore the pointer somehow
-                  // gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-                  //   Factory<OneSequenceGestureRecognizer>(
-                  //     () => EagerGestureRecognizer(),
-                  //   ),
-                  // },
-                ),
-              ),
+              loadingBuilder: (BuildContext context, Widget child,
+                  ImageChunkEvent? loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes!
+                        : null,
+                  ),
+                );
+              },
             ),
             const SizedBox(
               width: 10,

@@ -13,36 +13,44 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 // MAKE STATEFUL WIDGET? maybe that is why play pause doesn't work
 Widget listItemYT(snapshot, context, index) {
-  YoutubePlayerController _controller = YoutubePlayerController(
-    initialVideoId: snapshot.data!.docs.toList()[index].data()['playback_uri'],
-    // flags: const YoutubePlayerFlags(
-    params: const YoutubePlayerParams(
-      autoPlay: false,
-      // hideControls: true,
-      showControls: false,
-      loop: false,
-      // controlsVisibleAtStart: false,
-      showFullscreenButton: false,
-      showVideoAnnotations: false,
-      // hideThumbnail: true,
-    ),
-  );
+  /** 
+  ADDING A YOUTUBE PLAYER HERE DOES NOT HELP
+  WE SHOULD REPLACE THIS BY AN IMAGE
+  ONLY CREATE A PLAYER WHEN THE VIDEO IS PLAYED
+  MEANING WE REPLACE THE BOTTOM SPOTIFY BAR WITH ONE DESIGNED FOR THE YOUTUBE PLAYER
+  SAME FOR THE PLAYER(MUSIC)
+  */
+  // YoutubePlayerController _controller = YoutubePlayerController(
+  //   initialVideoId: snapshot.data!.docs.toList()[index].data()['playback_uri'],
+  //   // flags: const YoutubePlayerFlags(
+  //   params: const YoutubePlayerParams(
+  //     autoPlay: false,
+  //     // hideControls: true,
+  //     showControls: false,
+  //     loop: false,
+  //     // controlsVisibleAtStart: false,
+  //     showFullscreenButton: false,
+  //     showVideoAnnotations: false,
+  //     // hideThumbnail: true,
+  //   ),
+  // );
 
   return Container(
     color: Colors.transparent,
     margin: const EdgeInsets.only(top: 10),
     child: TextButton(
       onPressed: () {
+        // WHEN PRESSED JUST OPEN THE VIDEO PLAYER WITH AUTOPLAY ON
         if (!Provider.of<GlobalNotifier>(context, listen: false).playState ||
             Provider.of<GlobalNotifier>(context, listen: false).playing !=
                 index) {
-          _controller.play();
+          // _controller.play();
           Provider.of<GlobalNotifier>(context, listen: false).setPlaying(index);
           Provider.of<GlobalNotifier>(context, listen: false)
               .setPlayingState(true);
         } else {
           Provider.of<GlobalNotifier>(context, listen: false).setPlaying(index);
-          _controller.pause();
+          // _controller.pause();
           Provider.of<GlobalNotifier>(context, listen: false)
               .setPlayingState(false);
         }
@@ -53,22 +61,39 @@ Widget listItemYT(snapshot, context, index) {
       ),
       child: Row(
         children: [
-          SizedBox(
+          // SizedBox(
+          //   height: 40,
+          //   width: 40,
+          //   child: AbsorbPointer(
+          //     child: YoutubePlayerIFrame(
+          //       // liveUIColor: Config.colorStyle,
+          //       // width: 40,
+          //       controller: _controller,
+          //       // i think this is how you ignore the pointer somehow
+          //       // gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+          //       //   Factory<OneSequenceGestureRecognizer>(
+          //       //     () => EagerGestureRecognizer(),
+          //       //   ),
+          //       // },
+          //     ),
+          //   ),
+          // ),
+          Image.network(
+            snapshot.data!.docs.toList()[index].data()['icon'],
             height: 40,
             width: 40,
-            child: AbsorbPointer(
-              child: YoutubePlayerIFrame(
-                // liveUIColor: Config.colorStyle,
-                // width: 40,
-                controller: _controller,
-                // i think this is how you ignore the pointer somehow
-                // gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-                //   Factory<OneSequenceGestureRecognizer>(
-                //     () => EagerGestureRecognizer(),
-                //   ),
-                // },
-              ),
-            ),
+            loadingBuilder: (BuildContext context, Widget child,
+                ImageChunkEvent? loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              );
+            },
           ),
           const SizedBox(
             width: 10,

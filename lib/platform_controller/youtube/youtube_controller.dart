@@ -62,4 +62,14 @@ class YoutubeController {
     // return the duration of the video
     return video.items[0].contentDetails.duration;
   }
+
+  static getIcon(String videoId) async {
+    var video = await youTubeApi.videos.list(
+      ['snippet'],
+      id: [videoId],
+    );
+
+    // return the duration of the video
+    return video.items[0].snippet.thumbnails.default_.url;
+  }
 }

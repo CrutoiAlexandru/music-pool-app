@@ -176,8 +176,15 @@ class _SongPlayer extends State<SongPlayer> {
                     max: Provider.of<GlobalNotifier>(context).duration,
                     onChanged: (double value) {},
                     onChangeEnd: (double value) {
-                      SpotifyController.seekTo(value * 1000);
-                      SpotifyController.resume();
+                      if (snapshot.data!.docs
+                              .toList()[Provider.of<GlobalNotifier>(context,
+                                      listen: false)
+                                  .playing]
+                              .data()['platform'] ==
+                          'spotify') {
+                        SpotifyController.seekTo(value * 1000);
+                        SpotifyController.resume();
+                      }
                     },
                     inactiveColor: Config.colorStyleDark,
                     activeColor: Config.colorStyle,
@@ -206,9 +213,16 @@ class _SongPlayer extends State<SongPlayer> {
                           primary: Config.colorStyle,
                         ),
                         onPressed: () {
-                          SpotifyController.pause();
-                          Provider.of<GlobalNotifier>(context, listen: false)
-                              .setPlayingState(false);
+                          if (snapshot.data!.docs
+                                  .toList()[Provider.of<GlobalNotifier>(context,
+                                          listen: false)
+                                      .playing]
+                                  .data()['platform'] ==
+                              'spotify') {
+                            SpotifyController.pause();
+                            Provider.of<GlobalNotifier>(context, listen: false)
+                                .setPlayingState(false);
+                          }
                         },
                         child: const Icon(
                           Icons.pause,
@@ -221,9 +235,16 @@ class _SongPlayer extends State<SongPlayer> {
                           primary: Config.colorStyle,
                         ),
                         onPressed: () {
-                          SpotifyController.resume();
-                          Provider.of<GlobalNotifier>(context, listen: false)
-                              .setPlayingState(true);
+                          if (snapshot.data!.docs
+                                  .toList()[Provider.of<GlobalNotifier>(context,
+                                          listen: false)
+                                      .playing]
+                                  .data()['platform'] ==
+                              'spotify') {
+                            SpotifyController.resume();
+                            Provider.of<GlobalNotifier>(context, listen: false)
+                                .setPlayingState(true);
+                          }
                         },
                         child: const Icon(
                           Icons.play_arrow,
