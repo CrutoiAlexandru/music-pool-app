@@ -47,6 +47,7 @@ class _AddSongButton extends State<AddSongButton> {
         const SizedBox(height: 10),
         TextButton(
           style: TextButton.styleFrom(
+            backgroundColor: Config.back1,
             primary: Config.colorStyle,
             elevation: 1,
           ),

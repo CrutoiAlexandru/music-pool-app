@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/global/session/session.dart';
 import 'package:music_pool_app/platform_controller/spotify/spotify_controller.dart';
+import 'package:music_pool_app/platform_controller/youtube/youtube_controller.dart';
 import 'package:music_pool_app/ui/config.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -21,6 +22,7 @@ class BuildPlayerStateWidget extends StatefulWidget {
 
 class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
   late Timer timer;
+  late Timer timerYT;
   var database;
 
   @override
@@ -30,8 +32,9 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
         .orderBy('order')
         .snapshots();
     // ??
-    getSongLength();
-    setTimer();
+    getSongLengthSpotify();
+    setTimerSpotify();
+    // setTimerYoutube();
     super.initState();
   }
 
@@ -42,7 +45,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
   }
 
   // gets the song length everytime the song changes
-  getSongLength() async {
+  getSongLengthSpotify() async {
     var url = Uri.https('api.spotify.com', '/v1/me/player');
     final res = await http.get(url,
         headers: {'Authorization': 'Bearer ${SpotifyController.token}'});
@@ -55,14 +58,44 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     }
   }
 
+  // method for getting the youtube video duration
+  // converts format PT#M#S to miliseconds
+  getSongLengthYouTube(String videoId) {
+    String durationString =
+        'PT5M40S'; //YoutubeController.getVideoDuration(videoId);
+    String minutes = '', seconds = '';
+    double durationMs = 0;
+
+    for (int i = durationString.lastIndexOf('PT') + 2;
+        i < durationString.lastIndexOf('M');
+        i++) {
+      minutes = minutes + durationString[i];
+    }
+    print(minutes);
+
+    for (int i = durationString.lastIndexOf('M') + 1;
+        i < durationString.lastIndexOf('S');
+        i++) {
+      seconds = seconds + durationString[i];
+    }
+    print(seconds);
+
+    durationMs =
+        double.parse(minutes) * 60 * 1000 + double.parse(seconds) * 1000;
+    print(durationMs);
+
+    Provider.of<GlobalNotifier>(context, listen: false).setDuration(durationMs);
+  }
+
   // this way we get the progress of our song every second
   // we do it this way because the stream from spotify sdk about playerstate does not currently update
   // even though there will be a lot of calls to spotify api
   // more precise it would be for even more often calls?
-  setTimer() {
+  setTimerSpotify() {
     timer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) async {
+        print('timerSP');
         var body;
         var url = Uri.https('api.spotify.com', '/v1/me/player');
         final res = await http.get(url,
@@ -82,8 +115,25 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     );
   }
 
+  setTimerYoutube() {
+    timerYT = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) async {
+        print('timerYT');
+
+        Provider.of<GlobalNotifier>(context, listen: false).setProgress(
+            Provider.of<GlobalNotifier>(context, listen: false).progress +
+                1000);
+      },
+    );
+  }
+
   cancelTimer() {
     timer.cancel();
+  }
+
+  cancelTimerYT() {
+    timerYT.cancel();
   }
 
   @override
@@ -101,11 +151,13 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
           .snapshots();
     }
 
-    // if the progress and duration are equal it means the song is over
-    // if so we tell our player state that over = true in order to play the next song in queue
-    // we have to do it manually because we use a separate queue held in firestore
-    // we do not use the automatic queues given by our playing services
-    // should >= with duration - 1 in case of mistakes or timing induced errors
+    /**
+    if the progress and duration are equal it means the song is over
+    if so we tell our player state that over = true in order to play the next song in queue
+    we have to do it manually because we use a separate queue held in firestore
+    we do not use the automatic queues given by our playing services
+    should >= with duration - 1 in case of mistakes or timing induced errors
+    */
     if ((Provider.of<GlobalNotifier>(context).progress / 1000).floor() >=
             (Provider.of<GlobalNotifier>(context).duration / 1000).floor() -
                 1 &&
@@ -134,20 +186,22 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     // updating method for our progress bar
     if (Provider.of<GlobalNotifier>(context).playState) {
       if (!timer.isActive) {
-        setTimer();
+        // setTimerSpotify();
       }
     } else {
       if (timer.isActive) {
         cancelTimer();
+        // cancelTimerYT();
       }
     }
 
+    // shouldn't execute when playing from yt
+    // should change to duration == 0?
     // everytime the song changes get its length
     // executes too many times because of the way functions() and providers work
-    // not sure !?
     if ((Provider.of<GlobalNotifier>(context).progress / 1000).floor() <= 1 &&
         Provider.of<GlobalNotifier>(context).playState) {
-      getSongLength();
+      getSongLengthSpotify();
     }
 
     return StreamBuilder(
@@ -164,10 +218,48 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
           return const SizedBox();
         }
 
+        // error(probably fine for release)
+        // get youtube video length and start counting progress
+        if (snapshot.data.docs.isNotEmpty) {
+          if (snapshot.data!.docs
+                  .toList()[Provider.of<GlobalNotifier>(context, listen: false)
+                      .playing]
+                  .data()['platform'] ==
+              'youtube') {
+            if (Provider.of<GlobalNotifier>(context).duration == 0 &&
+                Provider.of<GlobalNotifier>(context).playState) {
+              getSongLengthYouTube(snapshot.data!.docs
+                  .toList()[Provider.of<GlobalNotifier>(context, listen: false)
+                      .playing]
+                  .data()['playback_uri']);
+              cancelTimer();
+            }
+          }
+        }
+
+        // updating method for our progress bar
+        if (snapshot.data!.docs
+                .toList()[
+                    Provider.of<GlobalNotifier>(context, listen: false).playing]
+                .data()['platform'] ==
+            'youtube') {
+          if (Provider.of<GlobalNotifier>(context).playState) {
+            if (!timerYT.isActive) {
+              cancelTimer();
+              setTimerYoutube();
+            }
+          } else {
+            if (timer.isActive) {
+              cancelTimerYT();
+              cancelTimer();
+            }
+          }
+        }
+
         // when song is over play next song in queue
         if (Provider.of<GlobalNotifier>(context).over) {
           // pause every platform in case of autoplay?
-          SpotifyController.pause();
+          // SpotifyController.pause(); // ???????
           // currently the method gets executed while building, not ok but works in case of not being able to wrok around it
           autoPlayNext(snapshot);
           Provider.of<GlobalNotifier>(context, listen: false).setOver(false);
@@ -187,8 +279,19 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
                     : 0,
                 onChanged: (double value) {},
                 onChangeEnd: (double value) {
-                  SpotifyController.seekTo(value * 1000);
-                  SpotifyController.resume();
+                  if (snapshot.data!.docs
+                          .toList()[Provider.of<GlobalNotifier>(context,
+                                  listen: false)
+                              .playing]
+                          .data()['platform'] ==
+                      'spotify') {
+                    SpotifyController.seekTo(value * 1000);
+                    SpotifyController.resume();
+                  } else {
+                    Provider.of<GlobalNotifier>(context, listen: false)
+                        .setProgress(value);
+                    // youtube seek to for vid
+                  }
                 },
                 inactiveColor: Config.colorStyleDark,
                 activeColor: Config.colorStyle,

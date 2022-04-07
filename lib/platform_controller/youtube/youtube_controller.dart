@@ -51,11 +51,10 @@ class YoutubeController {
     return list.items;
   }
 
-  // PROBABLY REDUNDANT CONSIDERING THE PLAYING METHOD?!
   // get video data for specific videoId got by ^ upper search method
-  getVideoDuration(String videoId) async {
+  static getVideoDuration(String videoId) async {
     var video = await youTubeApi.videos.list(
-      ['id,player,contentDetails'],
+      ['contentDetails'],
       id: [videoId],
     );
 
