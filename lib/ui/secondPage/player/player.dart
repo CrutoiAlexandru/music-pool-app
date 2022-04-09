@@ -106,168 +106,182 @@ class _SongPlayer extends State<SongPlayer> {
           }
         }
 
-        return Column(
-          children: [
-            Hero(
-              tag: 'icon',
-              child: Center(
-                child: Image.network(
+        if (snapshot.data!.docs
+                .toList()[
+                    Provider.of<GlobalNotifier>(context, listen: false).playing]
+                .data()['platform'] ==
+            'spotify') {
+          return Column(
+            children: [
+              Hero(
+                tag: 'icon',
+                child: Center(
+                  child: Image.network(
+                    snapshot.data!.docs
+                        .toList()[Provider.of<GlobalNotifier>(context).playing]
+                        .data()['icon'],
+                    height: MediaQuery.of(context).size.height * .45,
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  loadingProgress.expectedTotalBytes!
+                              : null,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Hero(
+                tag: 'track',
+                child: Text(
                   snapshot.data!.docs
                       .toList()[Provider.of<GlobalNotifier>(context).playing]
-                      .data()['icon'],
-                  height: MediaQuery.of(context).size.height * .45,
-                  loadingBuilder: (BuildContext context, Widget child,
-                      ImageChunkEvent? loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
-                      ),
-                    );
-                  },
+                      .data()['track'],
+                  textScaleFactor: 2,
+                  style: const TextStyle(
+                    color: Color.fromARGB(230, 255, 255, 255),
+                    overflow: TextOverflow.clip,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Hero(
-              tag: 'track',
-              child: Text(
-                snapshot.data!.docs
-                    .toList()[Provider.of<GlobalNotifier>(context).playing]
-                    .data()['track'],
-                textScaleFactor: 2,
-                style: const TextStyle(
-                  color: Color.fromARGB(230, 255, 255, 255),
-                  overflow: TextOverflow.clip,
+              Hero(
+                tag: 'artist',
+                child: Text(
+                  snapshot.data!.docs
+                      .toList()[Provider.of<GlobalNotifier>(context).playing]
+                      .data()['artist'],
+                  style: const TextStyle(
+                    color: Color.fromARGB(150, 255, 255, 255),
+                  ),
                 ),
               ),
-            ),
-            Hero(
-              tag: 'artist',
-              child: Text(
-                snapshot.data!.docs
-                    .toList()[Provider.of<GlobalNotifier>(context).playing]
-                    .data()['artist'],
-                style: const TextStyle(
-                  color: Color.fromARGB(150, 255, 255, 255),
+              const SizedBox(height: 20),
+              Hero(
+                tag: 'playerState',
+                child: Column(
+                  children: [
+                    Text(GlobalNotifier.secondsToMinutes(
+                            (Provider.of<GlobalNotifier>(context).progress /
+                                    1000)
+                                .floor()) +
+                        ' / ' +
+                        GlobalNotifier.secondsToMinutes(
+                            (Provider.of<GlobalNotifier>(context).duration /
+                                    1000)
+                                .floor())),
+                    Slider(
+                      value: Provider.of<GlobalNotifier>(context).duration > 0
+                          ? Provider.of<GlobalNotifier>(context).progress
+                          : 0,
+                      min: 0,
+                      max: Provider.of<GlobalNotifier>(context).duration > 0
+                          ? Provider.of<GlobalNotifier>(context).duration
+                          : 0,
+                      onChanged: (double value) {},
+                      onChangeEnd: (double value) {
+                        if (snapshot.data!.docs
+                                .toList()[Provider.of<GlobalNotifier>(context,
+                                        listen: false)
+                                    .playing]
+                                .data()['platform'] ==
+                            'spotify') {
+                          SpotifyController.seekTo(value * 1000);
+                          SpotifyController.resume();
+                        }
+                      },
+                      inactiveColor: Config.colorStyleDark,
+                      activeColor: Config.colorStyle,
+                    ),
+                  ],
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Hero(
-              tag: 'playerState',
-              child: Column(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(GlobalNotifier.secondsToMinutes(
-                          (Provider.of<GlobalNotifier>(context).progress / 1000)
-                              .floor()) +
-                      ' / ' +
-                      GlobalNotifier.secondsToMinutes(
-                          (Provider.of<GlobalNotifier>(context).duration / 1000)
-                              .floor())),
-                  Slider(
-                    value: Provider.of<GlobalNotifier>(context).duration != 0
-                        ? Provider.of<GlobalNotifier>(context).progress
-                        : 0,
-                    min: 0,
-                    max: Provider.of<GlobalNotifier>(context).duration,
-                    onChanged: (double value) {},
-                    onChangeEnd: (double value) {
-                      if (snapshot.data!.docs
-                              .toList()[Provider.of<GlobalNotifier>(context,
-                                      listen: false)
-                                  .playing]
-                              .data()['platform'] ==
-                          'spotify') {
-                        SpotifyController.seekTo(value * 1000);
-                        SpotifyController.resume();
-                      }
-                    },
-                    inactiveColor: Config.colorStyleDark,
-                    activeColor: Config.colorStyle,
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      primary: Config.colorStyle,
+                    ),
+                    onPressed: playPrevious,
+                    child: const Icon(
+                      Icons.skip_previous,
+                      color: Colors.white,
+                      size: 50,
+                    ),
                   ),
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  style: TextButton.styleFrom(
-                    primary: Config.colorStyle,
-                  ),
-                  onPressed: playPrevious,
-                  child: const Icon(
-                    Icons.skip_previous,
-                    color: Colors.white,
-                    size: 50,
-                  ),
-                ),
-                const SizedBox(width: 40),
-                Provider.of<GlobalNotifier>(context).playState
-                    ? TextButton(
-                        style: TextButton.styleFrom(
-                          primary: Config.colorStyle,
-                        ),
-                        onPressed: () {
-                          if (snapshot.data!.docs
-                                  .toList()[Provider.of<GlobalNotifier>(context,
-                                          listen: false)
-                                      .playing]
-                                  .data()['platform'] ==
-                              'spotify') {
-                            SpotifyController.pause();
+                  const SizedBox(width: 40),
+                  Provider.of<GlobalNotifier>(context).playState
+                      ? TextButton(
+                          style: TextButton.styleFrom(
+                            primary: Config.colorStyle,
+                          ),
+                          onPressed: () {
+                            if (snapshot.data!.docs
+                                    .toList()[Provider.of<GlobalNotifier>(
+                                            context,
+                                            listen: false)
+                                        .playing]
+                                    .data()['platform'] ==
+                                'spotify') {
+                              SpotifyController.pause();
+                            }
                             Provider.of<GlobalNotifier>(context, listen: false)
                                 .setPlayingState(false);
-                          }
-                        },
-                        child: const Icon(
-                          Icons.pause,
-                          color: Colors.white,
-                          size: 50,
-                        ),
-                      )
-                    : TextButton(
-                        style: TextButton.styleFrom(
-                          primary: Config.colorStyle,
-                        ),
-                        onPressed: () {
-                          if (snapshot.data!.docs
-                                  .toList()[Provider.of<GlobalNotifier>(context,
-                                          listen: false)
-                                      .playing]
-                                  .data()['platform'] ==
-                              'spotify') {
-                            SpotifyController.resume();
+                          },
+                          child: const Icon(
+                            Icons.pause,
+                            color: Colors.white,
+                            size: 50,
+                          ),
+                        )
+                      : TextButton(
+                          style: TextButton.styleFrom(
+                            primary: Config.colorStyle,
+                          ),
+                          onPressed: () {
+                            if (snapshot.data!.docs
+                                    .toList()[Provider.of<GlobalNotifier>(
+                                            context,
+                                            listen: false)
+                                        .playing]
+                                    .data()['platform'] ==
+                                'spotify') {
+                              SpotifyController.resume();
+                            }
                             Provider.of<GlobalNotifier>(context, listen: false)
                                 .setPlayingState(true);
-                          }
-                        },
-                        child: const Icon(
-                          Icons.play_arrow,
-                          color: Colors.white,
-                          size: 50,
+                          },
+                          child: const Icon(
+                            Icons.play_arrow,
+                            color: Colors.white,
+                            size: 50,
+                          ),
                         ),
-                      ),
-                const SizedBox(width: 40),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    primary: Config.colorStyle,
-                  ),
-                  onPressed: playNext,
-                  child: const Icon(
-                    Icons.skip_next,
-                    color: Colors.white,
-                    size: 50,
-                  ),
-                )
-              ],
-            ),
-          ],
-        );
+                  const SizedBox(width: 40),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      primary: Config.colorStyle,
+                    ),
+                    onPressed: playNext,
+                    child: const Icon(
+                      Icons.skip_next,
+                      color: Colors.white,
+                      size: 50,
+                    ),
+                  )
+                ],
+              ),
+            ],
+          );
+        } else {
+          return const SizedBox();
+        }
       },
     );
   }

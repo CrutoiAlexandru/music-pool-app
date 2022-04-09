@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/global/session/session.dart';
 import 'package:music_pool_app/platform_controller/spotify/spotify_controller.dart';
-import 'package:music_pool_app/platform_controller/youtube/youtube_controller.dart';
 import 'package:music_pool_app/ui/config.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -22,7 +21,6 @@ class BuildPlayerStateWidget extends StatefulWidget {
 
 class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
   late Timer timer;
-  late Timer timerYT;
   var database;
 
   @override
@@ -34,7 +32,6 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     // ??
     getSongLengthSpotify();
     setTimerSpotify();
-    // setTimerYoutube();
     super.initState();
   }
 
@@ -115,25 +112,8 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     );
   }
 
-  setTimerYoutube() {
-    timerYT = Timer.periodic(
-      const Duration(seconds: 1),
-      (timer) async {
-        print('timerYT');
-
-        Provider.of<GlobalNotifier>(context, listen: false).setProgress(
-            Provider.of<GlobalNotifier>(context, listen: false).progress +
-                1000);
-      },
-    );
-  }
-
   cancelTimer() {
     timer.cancel();
-  }
-
-  cancelTimerYT() {
-    timerYT.cancel();
   }
 
   @override
@@ -186,12 +166,11 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     // updating method for our progress bar
     if (Provider.of<GlobalNotifier>(context).playState) {
       if (!timer.isActive) {
-        // setTimerSpotify();
+        setTimerSpotify();
       }
     } else {
       if (timer.isActive) {
         cancelTimer();
-        // cancelTimerYT();
       }
     }
 
@@ -226,31 +205,8 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
                       .playing]
                   .data()['platform'] ==
               'youtube') {
-            if (Provider.of<GlobalNotifier>(context).duration == 0 &&
-                Provider.of<GlobalNotifier>(context).playState) {
-              getSongLengthYouTube(snapshot.data!.docs
-                  .toList()[Provider.of<GlobalNotifier>(context, listen: false)
-                      .playing]
-                  .data()['playback_uri']);
-              cancelTimer();
-            }
-          }
-        }
-
-        // updating method for our progress bar
-        if (snapshot.data!.docs
-                .toList()[
-                    Provider.of<GlobalNotifier>(context, listen: false).playing]
-                .data()['platform'] ==
-            'youtube') {
-          if (Provider.of<GlobalNotifier>(context).playState) {
-            if (!timerYT.isActive) {
-              cancelTimer();
-              setTimerYoutube();
-            }
-          } else {
             if (timer.isActive) {
-              cancelTimerYT();
+              SpotifyController.pause();
               cancelTimer();
             }
           }
@@ -265,40 +221,48 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
           Provider.of<GlobalNotifier>(context, listen: false).setOver(false);
         }
 
-        return Hero(
-          tag: 'playerState',
-          child: Column(
-            children: [
-              Slider(
-                value: Provider.of<GlobalNotifier>(context).duration > 0
-                    ? Provider.of<GlobalNotifier>(context).progress
-                    : 0,
-                min: 0,
-                max: Provider.of<GlobalNotifier>(context).duration > 0
-                    ? Provider.of<GlobalNotifier>(context).duration
-                    : 0,
-                onChanged: (double value) {},
-                onChangeEnd: (double value) {
-                  if (snapshot.data!.docs
-                          .toList()[Provider.of<GlobalNotifier>(context,
-                                  listen: false)
-                              .playing]
-                          .data()['platform'] ==
-                      'spotify') {
-                    SpotifyController.seekTo(value * 1000);
-                    SpotifyController.resume();
-                  } else {
-                    Provider.of<GlobalNotifier>(context, listen: false)
-                        .setProgress(value);
-                    // youtube seek to for vid
-                  }
-                },
-                inactiveColor: Config.colorStyleDark,
-                activeColor: Config.colorStyle,
-              ),
-            ],
-          ),
-        );
+        if (snapshot.data!.docs
+                .toList()[
+                    Provider.of<GlobalNotifier>(context, listen: false).playing]
+                .data()['platform'] ==
+            'spotify') {
+          return Hero(
+            tag: 'playerState',
+            child: Column(
+              children: [
+                Slider(
+                  value: Provider.of<GlobalNotifier>(context).duration > 0
+                      ? Provider.of<GlobalNotifier>(context).progress
+                      : 0,
+                  min: 0,
+                  max: Provider.of<GlobalNotifier>(context).duration > 0
+                      ? Provider.of<GlobalNotifier>(context).duration
+                      : 0,
+                  onChanged: (double value) {},
+                  onChangeEnd: (double value) {
+                    if (snapshot.data!.docs
+                            .toList()[Provider.of<GlobalNotifier>(context,
+                                    listen: false)
+                                .playing]
+                            .data()['platform'] ==
+                        'spotify') {
+                      SpotifyController.seekTo(value * 1000);
+                      SpotifyController.resume();
+                    } else {
+                      Provider.of<GlobalNotifier>(context, listen: false)
+                          .setProgress(value);
+                      // youtube seek to for vid
+                    }
+                  },
+                  inactiveColor: Config.colorStyleDark,
+                  activeColor: Config.colorStyle,
+                ),
+              ],
+            ),
+          );
+        } else {
+          return const SizedBox();
+        }
       },
     );
   }

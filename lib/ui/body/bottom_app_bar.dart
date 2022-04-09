@@ -82,7 +82,6 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                   .toList()[Provider.of<GlobalNotifier>(context).playing]
                   .data()['platform'] ==
               'youtube') {
-            SpotifyController.pause();
             _controller = YoutubePlayerController(
               initialVideoId: snapshot.data!.docs
                   .toList()[Provider.of<GlobalNotifier>(context, listen: false)
@@ -92,7 +91,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
               params: const YoutubePlayerParams(
                 autoPlay: true,
                 // hideControls: true,
-                showControls: false,
+                showControls: true,
                 loop: false,
                 // controlsVisibleAtStart: false,
                 showFullscreenButton: false,
@@ -100,6 +99,8 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                 // hideThumbnail: true,
               ),
             );
+            _controller.play();
+            // setState(() {});
           }
 
           return Wrap(
@@ -159,8 +160,8 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                             : SizedBox(
                                 // consider transitioning it to second page
                                 // *hero probably wouldn't work
-                                height: 50,
-                                width: 50,
+                                height: 100,
+                                width: MediaQuery.of(context).size.width - 40,
                                 child: YoutubePlayerIFrame(
                                   // liveUIColor: Config.colorStyle,
                                   // width: 40,
@@ -173,48 +174,56 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                                   // },
                                 ),
                               ),
+
                         const SizedBox(width: 10),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Hero(
-                              tag: 'track',
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width - 155,
-                                child: Text(
-                                  snapshot.data!.docs
-                                      .toList()[
-                                          Provider.of<GlobalNotifier>(context)
-                                              .playing]
-                                      .data()['track'],
-                                  textScaleFactor: 2,
-                                  style: const TextStyle(
-                                    color: Color.fromARGB(230, 255, 255, 255),
+                        if (snapshot.data!.docs
+                                .toList()[Provider.of<GlobalNotifier>(context)
+                                    .playing]
+                                .data()['platform'] ==
+                            'spotify')
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Hero(
+                                tag: 'track',
+                                child: SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width - 155,
+                                  child: Text(
+                                    snapshot.data!.docs
+                                        .toList()[
+                                            Provider.of<GlobalNotifier>(context)
+                                                .playing]
+                                        .data()['track'],
+                                    textScaleFactor: 2,
+                                    style: const TextStyle(
+                                      color: Color.fromARGB(230, 255, 255, 255),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Hero(
+                                tag: 'artist',
+                                child: SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width - 155,
+                                  child: Text(
+                                    snapshot.data!.docs
+                                        .toList()[
+                                            Provider.of<GlobalNotifier>(context)
+                                                .playing]
+                                        .data()['artist'],
                                     overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Color.fromARGB(150, 255, 255, 255),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Hero(
-                              tag: 'artist',
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width - 155,
-                                child: Text(
-                                  snapshot.data!.docs
-                                      .toList()[
-                                          Provider.of<GlobalNotifier>(context)
-                                              .playing]
-                                      .data()['artist'],
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: Color.fromARGB(150, 255, 255, 255),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
                         // the play pause button is only needed for spotify?
                         // youtube can just have a video player for controlling the video
                         if (snapshot.data!.docs
@@ -257,6 +266,28 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                                 ),
                       ],
                     ),
+                    if (snapshot.data!.docs
+                            .toList()[
+                                Provider.of<GlobalNotifier>(context).playing]
+                            .data()['platform'] ==
+                        'youtube')
+                      Hero(
+                        tag: 'track',
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: Text(
+                            snapshot.data!.docs
+                                .toList()[Provider.of<GlobalNotifier>(context)
+                                    .playing]
+                                .data()['track'],
+                            textScaleFactor: 2,
+                            style: const TextStyle(
+                              color: Color.fromARGB(230, 255, 255, 255),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
