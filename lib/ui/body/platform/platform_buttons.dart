@@ -382,21 +382,25 @@ class _AddSongButton extends State<AddSongButton> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  snapshot[index]['track'],
-                  textScaleFactor: 1.25,
-                  style: const TextStyle(
-                    color: Color.fromARGB(200, 255, 255, 255),
-                    overflow: TextOverflow.clip,
+                SizedBox(
+                  child: Text(
+                    snapshot[index]['track'],
+                    textScaleFactor: 1.25,
+                    style: const TextStyle(
+                      color: Color.fromARGB(200, 255, 255, 255),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 5),
-                Text(
-                  snapshot[index]['artist'],
-                  textScaleFactor: 0.9,
-                  style: const TextStyle(
-                    color: Color.fromARGB(150, 255, 255, 255),
-                    overflow: TextOverflow.clip,
+                SizedBox(
+                  child: Text(
+                    snapshot[index]['artist'],
+                    textScaleFactor: 0.9,
+                    style: const TextStyle(
+                      color: Color.fromARGB(150, 255, 255, 255),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
               ],
@@ -408,21 +412,6 @@ class _AddSongButton extends State<AddSongButton> {
   }
 
   Widget listItemYT(snapshot, context, index) {
-    // YoutubePlayerController _controller = YoutubePlayerController(
-    //   initialVideoId: snapshot[index]['playback_uri'],
-    //   // flags: const YoutubePlayerFlags(
-    //   params: const YoutubePlayerParams(
-    //     autoPlay: false,
-    //     // hideControls: true,
-    //     showControls: false,
-    //     loop: false,
-    //     // controlsVisibleAtStart: false,
-    //     showFullscreenButton: false,
-    //     showVideoAnnotations: false,
-    //     // hideThumbnail: true,
-    //   ),
-    // );
-
     return Container(
       color: Colors.transparent,
       margin: const EdgeInsets.only(top: 10),
@@ -444,27 +433,6 @@ class _AddSongButton extends State<AddSongButton> {
         ),
         child: Row(
           children: [
-            // SizedBox(
-            //   height: 40,
-            //   width: 40,
-            //   child: AbsorbPointer(
-            //     /**
-            //     INSTEAD OF YOUTUBE PLAYER ADD JUST AN ICON
-            //     WE DON'T NEED A PLAYER JUST AN IMAGE
-            //     */
-            //     child: YoutubePlayerIFrame(
-            //       // liveUIColor: Config.colorStyle,
-            //       // width: 40,
-            //       controller: _controller,
-            //       // i think this is how you ignore the pointer somehow
-            //       // gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-            //       //   Factory<OneSequenceGestureRecognizer>(
-            //       //     () => EagerGestureRecognizer(),
-            //       //   ),
-            //       // },
-            //     ),
-            //   ),
-            // ),
             Image.network(
               snapshot[index]['icon'],
               height: 40,
@@ -489,20 +457,16 @@ class _AddSongButton extends State<AddSongButton> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  snapshot[index]['track'],
-                  textScaleFactor: 1.25,
-                  style: index ==
-                          Provider.of<GlobalNotifier>(context, listen: false)
-                              .playing // not working to listen?
-                      ? const TextStyle(
-                          color: Config.colorStyle1,
-                          overflow: TextOverflow.clip)
-                      : const TextStyle(
-                          color: Color.fromARGB(200, 255, 255, 255),
-                          overflow: TextOverflow.clip,
-                        ),
-                ), // LIVE DATA UPDATE
+                SizedBox(
+                  child: Text(
+                    snapshot[index]['track'],
+                    textScaleFactor: 1.25,
+                    style: const TextStyle(
+                      color: Color.fromARGB(200, 255, 255, 255),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 5),
               ],
             ),

@@ -170,7 +170,7 @@ class _SongPlayer extends State<SongPlayer> {
                   textScaleFactor: 2,
                   style: const TextStyle(
                     color: Color.fromARGB(230, 255, 255, 255),
-                    overflow: TextOverflow.clip,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ),

@@ -64,10 +64,11 @@ Widget listItemYT(snapshot, context, index) {
                         Provider.of<GlobalNotifier>(context, listen: false)
                             .playing // not working to listen?
                     ? const TextStyle(
-                        color: Config.colorStyle1, overflow: TextOverflow.clip)
+                        color: Config.colorStyle1,
+                        overflow: TextOverflow.ellipsis)
                     : const TextStyle(
                         color: Color.fromARGB(200, 255, 255, 255),
-                        overflow: TextOverflow.clip,
+                        overflow: TextOverflow.ellipsis,
                       ),
               ), // LIVE DATA UPDATE
               const SizedBox(height: 5),

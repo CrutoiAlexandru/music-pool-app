@@ -79,13 +79,13 @@ Widget listItemSpot(snapshot, context, index) {
                             'spotify'
                         ? const TextStyle(
                             color: Config.colorStyle1,
-                            overflow: TextOverflow.clip)
+                            overflow: TextOverflow.ellipsis)
                         : const TextStyle(
                             color: Config.colorStyle2,
-                            overflow: TextOverflow.clip)
+                            overflow: TextOverflow.ellipsis)
                     : const TextStyle(
                         color: Color.fromARGB(200, 255, 255, 255),
-                        overflow: TextOverflow.clip,
+                        overflow: TextOverflow.ellipsis,
                       ),
               ),
               const SizedBox(height: 5),
