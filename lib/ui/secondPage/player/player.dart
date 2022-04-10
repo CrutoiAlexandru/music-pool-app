@@ -17,7 +17,6 @@ class SongPlayer extends StatefulWidget {
 
 class _SongPlayer extends State<SongPlayer> {
   var database;
-  int index = -1;
 
   @override
   void initState() {
@@ -63,6 +62,18 @@ class _SongPlayer extends State<SongPlayer> {
         }
 
         playNext() {
+          if (snapshot.data!.docs
+                  .toList()[Provider.of<GlobalNotifier>(context, listen: false)
+                          .playing +
+                      1]
+                  .data()['platform'] ==
+              'spotify') {
+            if (!SpotifyController.connectedSpotify) {
+              // preferably sent message to screen saying the user needs to authenticate
+              return;
+            }
+          }
+
           Provider.of<GlobalNotifier>(context, listen: false).setPlaying(
               Provider.of<GlobalNotifier>(context, listen: false).playing + 1);
           if (snapshot.data!.docs
@@ -82,6 +93,19 @@ class _SongPlayer extends State<SongPlayer> {
         playPrevious() {
           if (Provider.of<GlobalNotifier>(context, listen: false).playing !=
               0) {
+            if (snapshot.data!.docs
+                    .toList()[
+                        Provider.of<GlobalNotifier>(context, listen: false)
+                                .playing -
+                            1]
+                    .data()['platform'] ==
+                'spotify') {
+              if (!SpotifyController.connectedSpotify) {
+                // preferably sent message to screen saying the user needs to authenticate
+                return;
+              }
+            }
+
             Provider.of<GlobalNotifier>(context, listen: false).setPlaying(
                 Provider.of<GlobalNotifier>(context, listen: false).playing -
                     1);
@@ -280,7 +304,61 @@ class _SongPlayer extends State<SongPlayer> {
             ],
           );
         } else {
-          return const SizedBox();
+          return Column(
+            children: [
+              // check for second page
+              // const SizedBox(height: 20),
+              // Center(
+              //   child: Image.network(
+              //     snapshot.data!.docs
+              //         .toList()[Provider.of<GlobalNotifier>(context).playing]
+              //         .data()['icon'],
+              //     height: MediaQuery.of(context).size.height * .45,
+              //     loadingBuilder: (BuildContext context, Widget child,
+              //         ImageChunkEvent? loadingProgress) {
+              //       if (loadingProgress == null) return child;
+              //       return Center(
+              //         child: CircularProgressIndicator(
+              //           value: loadingProgress.expectedTotalBytes != null
+              //               ? loadingProgress.cumulativeBytesLoaded /
+              //                   loadingProgress.expectedTotalBytes!
+              //               : null,
+              //         ),
+              //       );
+              //     },
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      primary: Config.colorStyle,
+                    ),
+                    onPressed: playPrevious,
+                    child: const Icon(
+                      Icons.skip_previous,
+                      color: Colors.white,
+                      size: 50,
+                    ),
+                  ),
+                  const SizedBox(width: 40),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      primary: Config.colorStyle,
+                    ),
+                    onPressed: playNext,
+                    child: const Icon(
+                      Icons.skip_next,
+                      color: Colors.white,
+                      size: 50,
+                    ),
+                  )
+                ],
+              ),
+            ],
+          );
         }
       },
     );

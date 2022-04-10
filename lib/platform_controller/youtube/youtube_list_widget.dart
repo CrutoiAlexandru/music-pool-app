@@ -2,39 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/ui/config.dart';
 import 'package:provider/provider.dart';
-// PREFEREBLY USE _FLUTTER THAN _IFRAME
-// IFRAME SEEMS BROKEN
-// this is for android and ios only
-// import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-// iframe is for web yt playback
-import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 // the ListView item for the youtube player in queue
 
 // MAKE STATEFUL WIDGET? maybe that is why play pause doesn't work
 Widget listItemYT(snapshot, context, index) {
-  /** 
-  ADDING A YOUTUBE PLAYER HERE DOES NOT HELP
-  WE SHOULD REPLACE THIS BY AN IMAGE
-  ONLY CREATE A PLAYER WHEN THE VIDEO IS PLAYED
-  MEANING WE REPLACE THE BOTTOM SPOTIFY BAR WITH ONE DESIGNED FOR THE YOUTUBE PLAYER
-  SAME FOR THE PLAYER(MUSIC)
-  */
-  // YoutubePlayerController _controller = YoutubePlayerController(
-  //   initialVideoId: snapshot.data!.docs.toList()[index].data()['playback_uri'],
-  //   // flags: const YoutubePlayerFlags(
-  //   params: const YoutubePlayerParams(
-  //     autoPlay: false,
-  //     // hideControls: true,
-  //     showControls: false,
-  //     loop: false,
-  //     // controlsVisibleAtStart: false,
-  //     showFullscreenButton: false,
-  //     showVideoAnnotations: false,
-  //     // hideThumbnail: true,
-  //   ),
-  // );
-
   return Container(
     color: Colors.transparent,
     margin: const EdgeInsets.only(top: 10),
@@ -61,23 +33,6 @@ Widget listItemYT(snapshot, context, index) {
       ),
       child: Row(
         children: [
-          // SizedBox(
-          //   height: 40,
-          //   width: 40,
-          //   child: AbsorbPointer(
-          //     child: YoutubePlayerIFrame(
-          //       // liveUIColor: Config.colorStyle,
-          //       // width: 40,
-          //       controller: _controller,
-          //       // i think this is how you ignore the pointer somehow
-          //       // gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-          //       //   Factory<OneSequenceGestureRecognizer>(
-          //       //     () => EagerGestureRecognizer(),
-          //       //   ),
-          //       // },
-          //     ),
-          //   ),
-          // ),
           Image.network(
             snapshot.data!.docs.toList()[index].data()['icon'],
             height: 40,

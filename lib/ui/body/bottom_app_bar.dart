@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/platform_controller/spotify/spotify_controller.dart';
 import 'package:music_pool_app/ui/config.dart';
+import 'package:music_pool_app/ui/secondPage/player/player.dart';
 import 'package:music_pool_app/ui/secondPage/player/player_state.dart';
 import 'package:music_pool_app/ui/secondPage/secondPage.dart';
 import 'package:provider/provider.dart';
@@ -84,8 +85,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
               'youtube') {
             _controller = YoutubePlayerController(
               initialVideoId: snapshot.data!.docs
-                  .toList()[Provider.of<GlobalNotifier>(context, listen: false)
-                      .playing]
+                  .toList()[Provider.of<GlobalNotifier>(context).playing]
                   .data()['playback_uri'],
               // flags: const YoutubePlayerFlags(
               params: const YoutubePlayerParams(
@@ -99,8 +99,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                 // hideThumbnail: true,
               ),
             );
-            _controller.play();
-            // setState(() {});
+            SpotifyController.pause();
           }
 
           return Wrap(
@@ -109,15 +108,30 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                 style: TextButton.styleFrom(
                   primary: Colors.transparent,
                 ),
-                onPressed: () {
-                  Navigator.of(context).push(_createRoute());
-                },
+                onPressed: snapshot.data!.docs
+                            .toList()[Provider.of<GlobalNotifier>(context,
+                                    listen: false)
+                                .playing]
+                            .data()['platform'] ==
+                        'spotify'
+                    ? () {
+                        Navigator.of(context).push(_createRoute());
+                      }
+                    : () {},
                 child: Column(
                   children: [
-                    const Icon(
-                      Icons.arrow_drop_up_sharp,
-                      color: Colors.white,
-                    ),
+                    snapshot.data!.docs
+                                .toList()[Provider.of<GlobalNotifier>(context)
+                                    .playing]
+                                .data()['platform'] ==
+                            'spotify'
+                        ? const Icon(
+                            Icons.arrow_drop_up_sharp,
+                            color: Colors.white,
+                          )
+                        : const SizedBox(
+                            height: 20,
+                          ),
                     Row(
                       children: [
                         if (kIsWeb) const SizedBox(width: 10),
@@ -158,20 +172,10 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                                 ),
                               )
                             : SizedBox(
-                                // consider transitioning it to second page
-                                // *hero probably wouldn't work
-                                height: 100,
+                                height: 300,
                                 width: MediaQuery.of(context).size.width - 40,
                                 child: YoutubePlayerIFrame(
-                                  // liveUIColor: Config.colorStyle,
-                                  // width: 40,
                                   controller: _controller,
-                                  // i think this is how you ignore the pointer somehow
-                                  // gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-                                  //   Factory<OneSequenceGestureRecognizer>(
-                                  //     () => EagerGestureRecognizer(),
-                                  //   ),
-                                  // },
                                 ),
                               ),
 
@@ -224,7 +228,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                               ),
                             ],
                           ),
-                        // the play pause button is only needed for spotify?
+                        // the play pause button is only needed for spotify
                         // youtube can just have a video player for controlling the video
                         if (snapshot.data!.docs
                                 .toList()[Provider.of<GlobalNotifier>(context)
@@ -271,10 +275,15 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                                 Provider.of<GlobalNotifier>(context).playing]
                             .data()['platform'] ==
                         'youtube')
-                      Hero(
-                        tag: 'track',
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
+                      const SongPlayer(),
+                    if (snapshot.data!.docs
+                            .toList()[
+                                Provider.of<GlobalNotifier>(context).playing]
+                            .data()['platform'] ==
+                        'youtube')
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Center(
                           child: Text(
                             snapshot.data!.docs
                                 .toList()[Provider.of<GlobalNotifier>(context)
@@ -293,11 +302,11 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
               ),
               // the player state widget is only needed by spotify
               // for youtube we must build a player(maybe instead of showing the icon)
-              // if (snapshot.data!.docs
-              //         .toList()[Provider.of<GlobalNotifier>(context).playing]
-              //         .data()['platform'] ==
-              //     'spotify')
-              const BuildPlayerStateWidget(),
+              if (snapshot.data!.docs
+                      .toList()[Provider.of<GlobalNotifier>(context).playing]
+                      .data()['platform'] ==
+                  'spotify')
+                const BuildPlayerStateWidget(),
             ],
           );
         },

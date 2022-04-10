@@ -29,7 +29,6 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
         .collection('default')
         .orderBy('order')
         .snapshots();
-    // ??
     getSongLengthSpotify();
     setTimerSpotify();
     super.initState();

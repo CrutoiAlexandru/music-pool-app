@@ -278,8 +278,8 @@ class _AddSongButton extends State<AddSongButton> {
       for (int i = 0; i < 5; i++) {
         requiredSongList.add(
           {
-            'track': json['tracks']['items'][i]['artists'][0]['name'],
-            'artist': json['tracks']['items'][i]['name'],
+            'track': json['tracks']['items'][i]['name'],
+            'artist': json['tracks']['items'][i]['artists'][0]['name'],
             'playback_uri': json['tracks']['items'][i]['uri'],
             'icon': json['tracks']['items'][i]['album']['images'][0]['url'],
             'platform': Provider.of<GlobalNotifier>(context, listen: false)
