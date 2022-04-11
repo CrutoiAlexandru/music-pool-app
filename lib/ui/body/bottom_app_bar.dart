@@ -36,7 +36,24 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
 
   @override
   void dispose() {
+    _controller.close();
     super.dispose();
+  }
+
+  // autoplay method to skip to next song
+  autoPlayNext(snapshot) {
+    Provider.of<GlobalNotifier>(context, listen: false).setPlaying(
+        Provider.of<GlobalNotifier>(context, listen: false).playing + 1);
+    if (snapshot.data!.docs
+            .toList()[
+                Provider.of<GlobalNotifier>(context, listen: false).playing]
+            .data()['platform'] ==
+        'spotify') {
+      SpotifyController.play(snapshot.data!.docs
+          .toList()[Provider.of<GlobalNotifier>(context, listen: false).playing]
+          .data()['playback_uri']);
+      Provider.of<GlobalNotifier>(context, listen: false).setPlayingState(true);
+    }
   }
 
   @override
@@ -178,7 +195,6 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                                   controller: _controller,
                                 ),
                               ),
-
                         const SizedBox(width: 10),
                         if (snapshot.data!.docs
                                 .toList()[Provider.of<GlobalNotifier>(context)
@@ -269,6 +285,20 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                                   ),
                                 ),
                       ],
+                    ),
+                    // youtube value builder for autoplay support
+                    YoutubeValueBuilder(
+                      controller: _controller,
+                      builder: (context, value) {
+                        print(value.playerState);
+
+                        if (value.playerState == PlayerState.ended) {
+                          // when the video is over autoplay next in queue
+                          autoPlayNext(snapshot);
+                        }
+
+                        return const SizedBox();
+                      },
                     ),
                     if (snapshot.data!.docs
                             .toList()[
