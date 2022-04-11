@@ -157,9 +157,8 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
             .toList()[
                 Provider.of<GlobalNotifier>(context, listen: false).playing]
             .data()['playback_uri']);
-        Provider.of<GlobalNotifier>(context, listen: false)
-            .setPlayingState(true);
       }
+      Provider.of<GlobalNotifier>(context, listen: false).setPlayingState(true);
     }
 
     // updating method for our progress bar

@@ -134,6 +134,7 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
       ),
       bottomNavigationBar: Container(
         color: Config.back2,
+        // WOULD BE BETTER TO BUILD ONE EVERYTIME WE PLAY SOMETHING
         child: const SongBottomAppBar(),
       ),
       body: Container(

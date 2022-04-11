@@ -10,7 +10,6 @@ import 'package:music_pool_app/platform_controller/youtube/youtube_controller.da
 import 'package:provider/provider.dart';
 import 'package:music_pool_app/global/session/session.dart';
 import 'package:music_pool_app/ui/config.dart';
-import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 class AddSongButton extends StatefulWidget {
   const AddSongButton({Key? key}) : super(key: key);
@@ -312,7 +311,7 @@ class _AddSongButton extends State<AddSongButton> {
 
       // populate requiredSongList with top 5 songs from YouTube
       // list has also 5 items
-      for (int i = 0; i < 5; i++) {
+      for (int i = 0; i < res.length; i++) {
         requiredSongList.add(
           {
             'track': res[i].snippet.title,

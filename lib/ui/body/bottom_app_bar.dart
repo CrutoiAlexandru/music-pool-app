@@ -52,8 +52,29 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
       SpotifyController.play(snapshot.data!.docs
           .toList()[Provider.of<GlobalNotifier>(context, listen: false).playing]
           .data()['playback_uri']);
-      Provider.of<GlobalNotifier>(context, listen: false).setPlayingState(true);
     }
+    Provider.of<GlobalNotifier>(context, listen: false).setPlayingState(true);
+  }
+
+  buildYController(snapshot) {
+    _controller = YoutubePlayerController(
+      initialVideoId: snapshot.data!.docs
+          .toList()[Provider.of<GlobalNotifier>(context).playing]
+          .data()['playback_uri'],
+      // flags: const YoutubePlayerFlags(
+      params: const YoutubePlayerParams(
+        autoPlay: true,
+        // hideControls: true,
+        showControls: true,
+        loop: false,
+        // controlsVisibleAtStart: false,
+        showFullscreenButton: false,
+        showVideoAnnotations: false,
+        // hideThumbnail: true,
+      ),
+    );
+
+    // setState(() {});
   }
 
   @override
@@ -100,22 +121,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                   .toList()[Provider.of<GlobalNotifier>(context).playing]
                   .data()['platform'] ==
               'youtube') {
-            _controller = YoutubePlayerController(
-              initialVideoId: snapshot.data!.docs
-                  .toList()[Provider.of<GlobalNotifier>(context).playing]
-                  .data()['playback_uri'],
-              // flags: const YoutubePlayerFlags(
-              params: const YoutubePlayerParams(
-                autoPlay: true,
-                // hideControls: true,
-                showControls: true,
-                loop: false,
-                // controlsVisibleAtStart: false,
-                showFullscreenButton: false,
-                showVideoAnnotations: false,
-                // hideThumbnail: true,
-              ),
-            );
+            buildYController(snapshot);
             SpotifyController.pause();
           }
 
@@ -287,19 +293,22 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                       ],
                     ),
                     // youtube value builder for autoplay support
-                    YoutubeValueBuilder(
-                      controller: _controller,
-                      builder: (context, value) {
-                        print(value.playerState);
+                    if (snapshot.data!.docs
+                            .toList()[
+                                Provider.of<GlobalNotifier>(context).playing]
+                            .data()['platform'] ==
+                        'youtube')
+                      YoutubeValueBuilder(
+                        controller: _controller,
+                        builder: (context, value) {
+                          if (value.playerState == PlayerState.ended) {
+                            // when the video is over autoplay next in queue
+                            autoPlayNext(snapshot);
+                          }
 
-                        if (value.playerState == PlayerState.ended) {
-                          // when the video is over autoplay next in queue
-                          autoPlayNext(snapshot);
-                        }
-
-                        return const SizedBox();
-                      },
-                    ),
+                          return const SizedBox();
+                        },
+                      ),
                     if (snapshot.data!.docs
                             .toList()[
                                 Provider.of<GlobalNotifier>(context).playing]

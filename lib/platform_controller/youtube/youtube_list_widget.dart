@@ -16,13 +16,11 @@ Widget listItemYT(snapshot, context, index) {
         if (!Provider.of<GlobalNotifier>(context, listen: false).playState ||
             Provider.of<GlobalNotifier>(context, listen: false).playing !=
                 index) {
-          // _controller.play();
           Provider.of<GlobalNotifier>(context, listen: false).setPlaying(index);
           Provider.of<GlobalNotifier>(context, listen: false)
               .setPlayingState(true);
         } else {
           Provider.of<GlobalNotifier>(context, listen: false).setPlaying(index);
-          // _controller.pause();
           Provider.of<GlobalNotifier>(context, listen: false)
               .setPlayingState(false);
         }
