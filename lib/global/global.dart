@@ -60,7 +60,7 @@ class GlobalNotifier extends ChangeNotifier {
 
   setPlaying(int index) {
     playing = index;
-    if (playing == playlistSize) {
+    if (playing >= playlistSize) {
       playing = 0;
     }
 

@@ -85,9 +85,9 @@ class _SongPlayer extends State<SongPlayer> {
                 .toList()[
                     Provider.of<GlobalNotifier>(context, listen: false).playing]
                 .data()['playback_uri']);
-            Provider.of<GlobalNotifier>(context, listen: false)
-                .setPlayingState(true);
           }
+          Provider.of<GlobalNotifier>(context, listen: false)
+              .setPlayingState(true);
         }
 
         playPrevious() {
@@ -119,14 +119,21 @@ class _SongPlayer extends State<SongPlayer> {
                   .toList()[Provider.of<GlobalNotifier>(context, listen: false)
                       .playing]
                   .data()['playback_uri']);
+            }
+            Provider.of<GlobalNotifier>(context, listen: false)
+                .setPlayingState(true);
+          } else {
+            if (snapshot.data!.docs
+                    .toList()[
+                        Provider.of<GlobalNotifier>(context, listen: false)
+                            .playing]
+                    .data()['platform'] ==
+                'spotify') {
+              SpotifyController.seekTo(0);
+              SpotifyController.resume();
               Provider.of<GlobalNotifier>(context, listen: false)
                   .setPlayingState(true);
             }
-          } else {
-            SpotifyController.seekTo(0);
-            SpotifyController.resume();
-            Provider.of<GlobalNotifier>(context, listen: false)
-                .setPlayingState(true);
           }
         }
 

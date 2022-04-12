@@ -4,8 +4,6 @@ import 'package:music_pool_app/ui/config.dart';
 import 'package:provider/provider.dart';
 
 // the ListView item for the youtube player in queue
-
-// MAKE STATEFUL WIDGET? maybe that is why play pause doesn't work
 Widget listItemYT(snapshot, context, index) {
   return Container(
     color: Colors.transparent,
@@ -20,7 +18,7 @@ Widget listItemYT(snapshot, context, index) {
           Provider.of<GlobalNotifier>(context, listen: false)
               .setPlayingState(true);
         } else {
-          Provider.of<GlobalNotifier>(context, listen: false).setPlaying(index);
+          Provider.of<GlobalNotifier>(context, listen: false).setPlaying(-1);
           Provider.of<GlobalNotifier>(context, listen: false)
               .setPlayingState(false);
         }

@@ -140,24 +140,6 @@ class LiveSongList extends State<SongList> {
                           index--;
                         },
                       );
-
-                      // might be wrong!!!
-                      // we have to setState when updating the youtube player?
-                      // might not even be needed!!!
-                      // FirebaseFirestore.instance
-                      //     .collection(Provider.of<SessionNotifier>(context,
-                      //             listen: false)
-                      //         .session)
-                      //     .orderBy('order')
-                      //     .get()
-                      //     .then(
-                      //   (snapshot) {
-                      //     if (snapshot.docs[index].data()['platform'] ==
-                      //         'youtube') {
-                      //       setState(() {});
-                      //     }
-                      //   },
-                      // );
                     }
                   },
                 );

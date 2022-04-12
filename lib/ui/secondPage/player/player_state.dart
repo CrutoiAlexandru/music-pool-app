@@ -54,35 +54,6 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     }
   }
 
-  // method for getting the youtube video duration
-  // converts format PT#M#S to miliseconds
-  getSongLengthYouTube(String videoId) {
-    String durationString =
-        'PT5M40S'; //YoutubeController.getVideoDuration(videoId);
-    String minutes = '', seconds = '';
-    double durationMs = 0;
-
-    for (int i = durationString.lastIndexOf('PT') + 2;
-        i < durationString.lastIndexOf('M');
-        i++) {
-      minutes = minutes + durationString[i];
-    }
-    print(minutes);
-
-    for (int i = durationString.lastIndexOf('M') + 1;
-        i < durationString.lastIndexOf('S');
-        i++) {
-      seconds = seconds + durationString[i];
-    }
-    print(seconds);
-
-    durationMs =
-        double.parse(minutes) * 60 * 1000 + double.parse(seconds) * 1000;
-    print(durationMs);
-
-    Provider.of<GlobalNotifier>(context, listen: false).setDuration(durationMs);
-  }
-
   // this way we get the progress of our song every second
   // we do it this way because the stream from spotify sdk about playerstate does not currently update
   // even though there will be a lot of calls to spotify api
@@ -91,7 +62,6 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     timer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) async {
-        print('timerSP');
         var body;
         var url = Uri.https('api.spotify.com', '/v1/me/player');
         final res = await http.get(url,
@@ -195,72 +165,36 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
           return const SizedBox();
         }
 
-        // error(probably fine for release)
-        // get youtube video length and start counting progress
-        if (snapshot.data.docs.isNotEmpty) {
-          if (snapshot.data!.docs
-                  .toList()[Provider.of<GlobalNotifier>(context, listen: false)
-                      .playing]
-                  .data()['platform'] ==
-              'youtube') {
-            if (timer.isActive) {
-              SpotifyController.pause();
-              cancelTimer();
-            }
-          }
-        }
-
         // when song is over play next song in queue
         if (Provider.of<GlobalNotifier>(context).over) {
-          // pause every platform in case of autoplay?
-          // SpotifyController.pause(); // ???????
           // currently the method gets executed while building, not ok but works in case of not being able to wrok around it
           autoPlayNext(snapshot);
           Provider.of<GlobalNotifier>(context, listen: false).setOver(false);
         }
 
-        if (snapshot.data!.docs
-                .toList()[
-                    Provider.of<GlobalNotifier>(context, listen: false).playing]
-                .data()['platform'] ==
-            'spotify') {
-          return Hero(
-            tag: 'playerState',
-            child: Column(
-              children: [
-                Slider(
-                  value: Provider.of<GlobalNotifier>(context).duration > 0
-                      ? Provider.of<GlobalNotifier>(context).progress
-                      : 0,
-                  min: 0,
-                  max: Provider.of<GlobalNotifier>(context).duration > 0
-                      ? Provider.of<GlobalNotifier>(context).duration
-                      : 0,
-                  onChanged: (double value) {},
-                  onChangeEnd: (double value) {
-                    if (snapshot.data!.docs
-                            .toList()[Provider.of<GlobalNotifier>(context,
-                                    listen: false)
-                                .playing]
-                            .data()['platform'] ==
-                        'spotify') {
-                      SpotifyController.seekTo(value * 1000);
-                      SpotifyController.resume();
-                    } else {
-                      Provider.of<GlobalNotifier>(context, listen: false)
-                          .setProgress(value);
-                      // youtube seek to for vid
-                    }
-                  },
-                  inactiveColor: Config.colorStyleDark,
-                  activeColor: Config.colorStyle,
-                ),
-              ],
-            ),
-          );
-        } else {
-          return const SizedBox();
-        }
+        return Hero(
+          tag: 'playerState',
+          child: Column(
+            children: [
+              Slider(
+                value: Provider.of<GlobalNotifier>(context).duration > 0
+                    ? Provider.of<GlobalNotifier>(context).progress
+                    : 0,
+                min: 0,
+                max: Provider.of<GlobalNotifier>(context).duration > 0
+                    ? Provider.of<GlobalNotifier>(context).duration
+                    : 0,
+                onChanged: (double value) {},
+                onChangeEnd: (double value) {
+                  SpotifyController.seekTo(value * 1000);
+                  SpotifyController.resume();
+                },
+                inactiveColor: Config.colorStyleDark,
+                activeColor: Config.colorStyle,
+              ),
+            ],
+          ),
+        );
       },
     );
   }

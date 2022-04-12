@@ -23,7 +23,7 @@ class SongBottomAppBar extends StatefulWidget {
 class _SongBottomAppBar extends State<SongBottomAppBar> {
   var database;
   int index = -1;
-  late YoutubePlayerController _controller;
+  var _controller;
 
   @override
   void initState() {
@@ -73,8 +73,6 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
         // hideThumbnail: true,
       ),
     );
-
-    // setState(() {});
   }
 
   @override
@@ -104,7 +102,8 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                 textAlign: TextAlign.center);
           }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              snapshot.data.docs.isEmpty) {
             return const SizedBox(
               height: 80,
               child: Text('loading', textAlign: TextAlign.center),
@@ -123,6 +122,10 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
               'youtube') {
             buildYController(snapshot);
             SpotifyController.pause();
+          } else {
+            if (_controller != null) {
+              _controller.close();
+            }
           }
 
           return Wrap(
