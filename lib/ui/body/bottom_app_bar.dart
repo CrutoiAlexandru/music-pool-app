@@ -102,12 +102,16 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                 textAlign: TextAlign.center);
           }
 
-          if (snapshot.connectionState == ConnectionState.waiting &&
-              snapshot.data.docs.isEmpty) {
-            return const SizedBox(
-              height: 80,
-              child: Text('loading', textAlign: TextAlign.center),
-            );
+          if (snapshot.connectionState == ConnectionState.waiting
+              // &&
+              // snapshot.data.docs.isEmpty
+              ) {
+            if (snapshot.data.docs.isEmpty) {
+              return const SizedBox(
+                height: 80,
+                child: Text('loading', textAlign: TextAlign.center),
+              );
+            }
           }
 
           if (snapshot.data.docs.isEmpty ||
@@ -124,7 +128,8 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
             SpotifyController.pause();
           } else {
             if (_controller != null) {
-              _controller.close();
+              _controller.reset();
+              // _controller.close();
             }
           }
 
