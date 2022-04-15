@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
 import 'package:music_pool_app/platform_controller/spotify/spotify_controller.dart';
@@ -382,6 +383,9 @@ class _AddSongButton extends State<AddSongButton> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
+                  width: kIsWeb
+                      ? MediaQuery.of(context).size.width * 0.6
+                      : MediaQuery.of(context).size.width * 0.4,
                   child: Text(
                     snapshot[index]['track'],
                     textScaleFactor: 1.25,
@@ -457,6 +461,9 @@ class _AddSongButton extends State<AddSongButton> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
+                  width: kIsWeb
+                      ? MediaQuery.of(context).size.width * 0.6
+                      : MediaQuery.of(context).size.width * 0.4,
                   child: Text(
                     snapshot[index]['track'],
                     textScaleFactor: 1.25,

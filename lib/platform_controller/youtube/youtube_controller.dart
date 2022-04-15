@@ -8,7 +8,6 @@ import 'package:music_pool_app/.config_for_app.dart';
 class YoutubeController {
   static var httpClient;
   static var youTubeApi;
-
   // the url from which the video is playing
   static const url = 'https://www.youtube.com/watch?v=';
   // google sign in requesting wanted scope(api)

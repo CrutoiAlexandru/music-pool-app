@@ -71,22 +71,27 @@ Widget listItemSpot(snapshot, context, index) {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                snapshot.data!.docs.toList()[index].data()['track'],
-                textScaleFactor: 1.25,
-                style: index == Provider.of<GlobalNotifier>(context).playing
-                    ? snapshot.data!.docs.toList()[index].data()['platform'] ==
-                            'spotify'
-                        ? const TextStyle(
-                            color: Config.colorStyle1,
-                            overflow: TextOverflow.ellipsis)
-                        : const TextStyle(
-                            color: Config.colorStyle2,
-                            overflow: TextOverflow.ellipsis)
-                    : const TextStyle(
-                        color: Color.fromARGB(200, 255, 255, 255),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: Text(
+                  snapshot.data!.docs.toList()[index].data()['track'],
+                  textScaleFactor: 1.25,
+                  style: index == Provider.of<GlobalNotifier>(context).playing
+                      ? snapshot.data!.docs
+                                  .toList()[index]
+                                  .data()['platform'] ==
+                              'spotify'
+                          ? const TextStyle(
+                              color: Config.colorStyle1,
+                              overflow: TextOverflow.ellipsis)
+                          : const TextStyle(
+                              color: Config.colorStyle2,
+                              overflow: TextOverflow.ellipsis)
+                      : const TextStyle(
+                          color: Color.fromARGB(200, 255, 255, 255),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                ),
               ),
               const SizedBox(height: 5),
               Text(

@@ -45,10 +45,11 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
     Provider.of<GlobalNotifier>(context, listen: false).setPlaying(
         Provider.of<GlobalNotifier>(context, listen: false).playing + 1);
     if (snapshot.data!.docs
-            .toList()[
-                Provider.of<GlobalNotifier>(context, listen: false).playing]
-            .data()['platform'] ==
-        'spotify') {
+                .toList()[
+                    Provider.of<GlobalNotifier>(context, listen: false).playing]
+                .data()['platform'] ==
+            'spotify' &&
+        Provider.of<GlobalNotifier>(context, listen: false).connectedSpotify) {
       SpotifyController.play(snapshot.data!.docs
           .toList()[Provider.of<GlobalNotifier>(context, listen: false).playing]
           .data()['playback_uri']);
@@ -63,14 +64,14 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
           .data()['playback_uri'],
       // flags: const YoutubePlayerFlags(
       params: const YoutubePlayerParams(
+        // still doesn't work on web???
         autoPlay: true,
-        // hideControls: true,
+        // this enables autoplay to work
+        desktopMode: true,
         showControls: true,
         loop: false,
-        // controlsVisibleAtStart: false,
         showFullscreenButton: false,
         showVideoAnnotations: false,
-        // hideThumbnail: true,
       ),
     );
   }
@@ -102,21 +103,26 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                 textAlign: TextAlign.center);
           }
 
-          if (snapshot.connectionState == ConnectionState.waiting
-              // &&
-              // snapshot.data.docs.isEmpty
-              ) {
-            if (snapshot.data.docs.isEmpty) {
+          if (snapshot.data.docs.isEmpty ||
+              Provider.of<GlobalNotifier>(context).playing == -1) {
+            return const SizedBox();
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            if (snapshot.data!.docs
+                    .toList()[Provider.of<GlobalNotifier>(context).playing]
+                    .data()['platform'] ==
+                'youtube') {
+              return const SizedBox(
+                height: 80,
+                child: Text('loading', textAlign: TextAlign.center),
+              );
+            } else if (snapshot.data.docs.isEmpty) {
               return const SizedBox(
                 height: 80,
                 child: Text('loading', textAlign: TextAlign.center),
               );
             }
-          }
-
-          if (snapshot.data.docs.isEmpty ||
-              Provider.of<GlobalNotifier>(context).playing == -1) {
-            return const SizedBox();
           }
 
           // if we are playing from youtube update the controller with actual data
@@ -129,7 +135,6 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
           } else {
             if (_controller != null) {
               _controller.reset();
-              // _controller.close();
             }
           }
 
@@ -203,7 +208,8 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                                 ),
                               )
                             : SizedBox(
-                                height: 300,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.2,
                                 width: MediaQuery.of(context).size.width - 40,
                                 child: YoutubePlayerIFrame(
                                   controller: _controller,

@@ -53,19 +53,22 @@ Widget listItemYT(snapshot, context, index) {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                snapshot.data!.docs.toList()[index].data()['track'],
-                textScaleFactor: 1.25,
-                style: index ==
-                        Provider.of<GlobalNotifier>(context, listen: false)
-                            .playing // not working to listen?
-                    ? const TextStyle(
-                        color: Config.colorStyle1,
-                        overflow: TextOverflow.ellipsis)
-                    : const TextStyle(
-                        color: Color.fromARGB(200, 255, 255, 255),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: Text(
+                  snapshot.data!.docs.toList()[index].data()['track'],
+                  textScaleFactor: 1.25,
+                  style: index ==
+                          Provider.of<GlobalNotifier>(context, listen: false)
+                              .playing // not working to listen?
+                      ? const TextStyle(
+                          color: Config.colorStyle1,
+                          overflow: TextOverflow.ellipsis)
+                      : const TextStyle(
+                          color: Color.fromARGB(200, 255, 255, 255),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                ),
               ), // LIVE DATA UPDATE
               const SizedBox(height: 5),
             ],
