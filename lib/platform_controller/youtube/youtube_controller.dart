@@ -1,13 +1,15 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
-
 import 'package:googleapis/youtube/v3.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
+import 'package:http/http.dart';
 import 'package:music_pool_app/.config_for_app.dart';
 
+// class that handles all methods concerning youtube: connection, data receving
 class YoutubeController {
-  static var httpClient;
-  static var youTubeApi;
+  // client for connecting to google api
+  static late Client httpClient;
+  // client for connecting to the youtube api
+  static late YouTubeApi youTubeApi;
   // the url from which the video is playing
   static const url = 'https://www.youtube.com/watch?v=';
   // google sign in requesting wanted scope(api)
@@ -16,7 +18,7 @@ class YoutubeController {
     clientId: GoogleConfig.clientID,
   );
 
-  // auth to google and connect to youtube api
+  // method for authenticatign to google and connecting to the youtube api
   static apiConnect() async {
     try {
       await _googleSignIn.signIn();
@@ -29,7 +31,7 @@ class YoutubeController {
     youTubeApi = YouTubeApi(httpClient);
   }
 
-  // disconnect from google and yt api
+  // method for disconnecting from the google and youtube api
   static apiDisconnect() async {
     try {
       await _googleSignIn.disconnect();
@@ -38,7 +40,8 @@ class YoutubeController {
     }
   }
 
-  // get a search list result for our query
+  // method for receiving a search list result for our query
+  // gets the top 5 results for our video search
   static searchFor(String input) async {
     var list = await youTubeApi.search.list(
       ['id,snippet'],
@@ -50,24 +53,13 @@ class YoutubeController {
     return list.items;
   }
 
-  // get video data for specific videoId got by ^ upper search method
-  static getVideoDuration(String videoId) async {
-    var video = await youTubeApi.videos.list(
-      ['contentDetails'],
-      id: [videoId],
-    );
-
-    // return the duration of the video
-    return video.items[0].contentDetails.duration;
-  }
-
+  // method for retrieving the icon for out youtube video(based on the youtube video id)
   static getIcon(String videoId) async {
     var video = await youTubeApi.videos.list(
       ['snippet'],
       id: [videoId],
     );
 
-    // return the duration of the video
-    return video.items[0].snippet.thumbnails.default_.url;
+    return video.items![0].snippet!.thumbnails!.default_?.url;
   }
 }

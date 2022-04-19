@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
@@ -10,6 +9,7 @@ import 'package:provider/provider.dart';
 // WEB ONLY LIBRARIES MUST BE REMOVED BEFORE ANDROID BUILD
 import 'dart:js' as js;
 
+// class designed for logging in on a platform and logging out of a platform
 class PlatformController extends StatefulWidget {
   const PlatformController({Key? key}) : super(key: key);
 
@@ -67,7 +67,7 @@ class _PlatformController extends State<PlatformController> {
                                 backgroundColor: Colors.transparent,
                               ),
                               onPressed: () async {
-                                // SPOTIFY AUTH MEDIUM
+                                // Spotify AUTH MEDIUM
                                 SpotifyController.token =
                                     await SpotifyController.auth();
                                 if (SpotifyController.connectedSpotify) {
@@ -79,6 +79,7 @@ class _PlatformController extends State<PlatformController> {
                                 setState(() {});
 
                                 // ONLY FOR WEB, DISABLE FOR ANDROID BUILD
+                                // either create a web player for web or connect to the spotify app on mobile
                                 if (kIsWeb) {
                                   js.allowInterop(
                                       SpotifyController.createWebPlayer);
@@ -173,7 +174,7 @@ class _PlatformController extends State<PlatformController> {
                                   backgroundColor: Colors.transparent,
                                 ),
                                 onPressed: () async {
-                                  // SPOTIFY DISCONNECT MEDIUM
+                                  // Spotify DISCONNECT MEDIUM
                                   SpotifyController.disconnect();
                                   Provider.of<GlobalNotifier>(context,
                                           listen: false)

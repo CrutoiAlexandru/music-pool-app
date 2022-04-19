@@ -1,9 +1,8 @@
-// ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/ui/config.dart';
 import 'package:music_pool_app/ui/secondPage/player/player.dart';
 
+// class for building the second page containing the player(mostly for spotify)
 class SecondPage extends StatefulWidget {
   const SecondPage({Key? key}) : super(key: key);
 
@@ -44,8 +43,7 @@ class _SecondPage extends State<SecondPage> {
                       ),
                     ),
                     const SongPlayer(),
-                    const SizedBox(
-                        height: 50), // ISSUE ON HEIGHT WITH FIXED MEASURES
+                    const SizedBox(height: 50),
                   ],
                 ),
               ),

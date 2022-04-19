@@ -3,6 +3,11 @@ import 'package:music_pool_app/global/session/session.dart';
 import 'package:music_pool_app/platform_controller/platform_controller.dart';
 import 'package:music_pool_app/ui/config.dart';
 
+// class that creates a drawer widget
+// the drawer shows:
+//    the session options
+//    platform logging options(only show log out if we are logged in)
+//    exit button(on mobile)
 class DrawerAdder extends StatelessWidget {
   const DrawerAdder({Key? key}) : super(key: key);
 
@@ -11,8 +16,6 @@ class DrawerAdder extends StatelessWidget {
     return Drawer(
       backgroundColor: Config.back2,
       child: Column(
-        // Important: Remove any padding from the ListView.
-        // padding: EdgeInsets.zero,
         children: [
           ListView(
             shrinkWrap: true,

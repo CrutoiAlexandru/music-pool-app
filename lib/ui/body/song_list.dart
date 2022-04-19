@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
@@ -11,15 +9,21 @@ import 'package:music_pool_app/platform_controller/spotify/spotify_list_widget.d
 
 import 'package:music_pool_app/ui/config.dart';
 
+// class made for showing the widget containing the list of audio items
+// show data about the items and allows the user to play or paused certain audio
+//    in the case of youtube the second click will remove the player from the screen
+//    in the case of spotify the second click will pause the song
 class SongList extends StatefulWidget {
   const SongList({Key? key}) : super(key: key);
 
   @override
-  LiveSongList createState() => LiveSongList();
+  State<SongList> createState() => _SongList();
 }
 
-class LiveSongList extends State<SongList> {
-  static var database;
+class _SongList extends State<SongList> {
+  // stream of data from database
+  static late Stream database;
+  // current playing audio(represented by an integer in the list, position)
   int playing = 0;
 
   @override
@@ -59,6 +63,7 @@ class LiveSongList extends State<SongList> {
         // set state exception thrown by foundation
         // called during build
         // no drawbacks?
+        // we need this in order to know the current playlist size
         Provider.of<GlobalNotifier>(context, listen: false)
             .setPlaylistSize(snapshot.requireData.size);
 

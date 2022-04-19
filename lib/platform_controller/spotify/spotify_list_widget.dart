@@ -4,6 +4,8 @@ import 'package:music_pool_app/platform_controller/spotify/spotify_controller.da
 import 'package:music_pool_app/ui/config.dart';
 import 'package:provider/provider.dart';
 
+// list item(used in the audio queue) for our spotify based items
+// made of a track: title, artist, icon
 Widget listItemSpot(snapshot, context, index) {
   return Container(
     color: Colors.transparent,
@@ -21,7 +23,6 @@ Widget listItemSpot(snapshot, context, index) {
             } else {
               // everytime a song is played we need to check for the platform to play from
               // this is set when we add the song to our queue/databasecd
-              // REDUNDANT
               if (snapshot.data!.docs.toList()[index].data()['platform'] ==
                   'spotify') {
                 SpotifyController.play(

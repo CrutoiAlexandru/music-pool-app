@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 // containt basic config info across multiple files like main theme color, etc...
-
 class Config {
   static const colorStyle2 =
       Color.fromARGB(255, 248, 188, 23); //Color.fromARGB(186, 255, 88, 54);

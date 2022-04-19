@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:music_pool_app/global/global.dart';
@@ -8,6 +6,10 @@ import 'package:music_pool_app/platform_controller/spotify/spotify_controller.da
 import 'package:music_pool_app/ui/config.dart';
 import 'package:provider/provider.dart';
 
+// class meant for showing audio options such as:
+//    play next
+//    play previous
+//    pause/play(spotify)
 class SongPlayer extends StatefulWidget {
   const SongPlayer({Key? key}) : super(key: key);
 
@@ -16,7 +18,8 @@ class SongPlayer extends StatefulWidget {
 }
 
 class _SongPlayer extends State<SongPlayer> {
-  var database;
+  // stream of data from our database
+  late Stream database;
 
   @override
   void initState() {
@@ -61,6 +64,7 @@ class _SongPlayer extends State<SongPlayer> {
           return const SizedBox();
         }
 
+        // method for skipping to next audio source
         playNext() {
           if (snapshot.data!.docs
                   .toList()[Provider.of<GlobalNotifier>(context, listen: false)
@@ -69,8 +73,23 @@ class _SongPlayer extends State<SongPlayer> {
                   .data()['platform'] ==
               'spotify') {
             if (!SpotifyController.connectedSpotify) {
-              // preferably sent message to screen saying the user needs to authenticate
-              return;
+              // inform the user he's not authenticated to spotify
+              return showDialog(
+                context: context,
+                builder: (BuildContext context) => const AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Config.colorStyle),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                  backgroundColor: Config.back2,
+                  title: Text(
+                    'You are not logged in to Spotify!',
+                    style: TextStyle(color: Config.colorStyle),
+                  ),
+                ),
+              );
             }
           }
 
@@ -90,6 +109,7 @@ class _SongPlayer extends State<SongPlayer> {
               .setPlayingState(true);
         }
 
+        // method for skipping to previous audio source
         playPrevious() {
           if (Provider.of<GlobalNotifier>(context, listen: false).playing !=
               0) {
@@ -101,8 +121,23 @@ class _SongPlayer extends State<SongPlayer> {
                     .data()['platform'] ==
                 'spotify') {
               if (!SpotifyController.connectedSpotify) {
-                // preferably sent message to screen saying the user needs to authenticate
-                return;
+                // inform the user he's not authenticated to spotify
+                return showDialog(
+                  context: context,
+                  builder: (BuildContext context) => const AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Config.colorStyle),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
+                      ),
+                    ),
+                    backgroundColor: Config.back2,
+                    title: Text(
+                      'You are not logged in to Spotify!',
+                      style: TextStyle(color: Config.colorStyle),
+                    ),
+                  ),
+                );
               }
             }
 
@@ -137,6 +172,8 @@ class _SongPlayer extends State<SongPlayer> {
           }
         }
 
+        // in the case of spotify show a player on the second page containing the icon and song details
+        // otherwise present the user with the ability of skipping audios
         if (snapshot.data!.docs
                 .toList()[
                     Provider.of<GlobalNotifier>(context, listen: false).playing]
@@ -313,29 +350,6 @@ class _SongPlayer extends State<SongPlayer> {
         } else {
           return Column(
             children: [
-              // check for second page
-              // const SizedBox(height: 20),
-              // Center(
-              //   child: Image.network(
-              //     snapshot.data!.docs
-              //         .toList()[Provider.of<GlobalNotifier>(context).playing]
-              //         .data()['icon'],
-              //     height: MediaQuery.of(context).size.height * .45,
-              //     loadingBuilder: (BuildContext context, Widget child,
-              //         ImageChunkEvent? loadingProgress) {
-              //       if (loadingProgress == null) return child;
-              //       return Center(
-              //         child: CircularProgressIndicator(
-              //           value: loadingProgress.expectedTotalBytes != null
-              //               ? loadingProgress.cumulativeBytesLoaded /
-              //                   loadingProgress.expectedTotalBytes!
-              //               : null,
-              //         ),
-              //       );
-              //     },
-              //   ),
-              // ),
-              // const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [

@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
-
 import 'dart:async';
 import 'dart:convert';
 
@@ -12,6 +10,9 @@ import 'package:music_pool_app/ui/config.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
+// class made for retrieving and showing player state data such as:
+//    audio progress(spotify)
+//    audio duration(spotify)
 class BuildPlayerStateWidget extends StatefulWidget {
   const BuildPlayerStateWidget({Key? key}) : super(key: key);
 
@@ -20,8 +21,10 @@ class BuildPlayerStateWidget extends StatefulWidget {
 }
 
 class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
+  // timer used for second based progress update from spotify
   late Timer timer;
-  var database;
+  // data stream from our database
+  late Stream database;
 
   @override
   void initState() {
@@ -40,7 +43,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     super.dispose();
   }
 
-  // gets the song length everytime the song changes
+  // method for retrieving the song length everytime the song changes
   getSongLengthSpotify() async {
     var url = Uri.https('api.spotify.com', '/v1/me/player');
     final res = await http.get(url,
@@ -81,6 +84,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     );
   }
 
+  // method for canceling the timer
   cancelTimer() {
     timer.cancel();
   }
@@ -100,13 +104,11 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
           .snapshots();
     }
 
-    /**
-    if the progress and duration are equal it means the song is over
-    if so we tell our player state that over = true in order to play the next song in queue
-    we have to do it manually because we use a separate queue held in firestore
-    we do not use the automatic queues given by our playing services
-    should >= with duration - 1 in case of mistakes or timing induced errors
-    */
+    // if the progress and duration are equal it means the song is over
+    // if so we tell our player state that over = true in order to play the next song in queue
+    // we have to do it manually because we use a separate queue held in firestore
+    // we do not use the automatic queues given by our playing services
+    // should >= with duration - 1 in case of mistakes or timing induced errors
     if ((Provider.of<GlobalNotifier>(context).progress / 1000).floor() >=
             (Provider.of<GlobalNotifier>(context).duration / 1000).floor() -
                 1 &&
@@ -143,9 +145,8 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     }
 
     // shouldn't execute when playing from yt
-    // should change to duration == 0?
     // everytime the song changes get its length
-    // executes too many times because of the way functions() and providers work
+    // executes too many times because of the way providers work
     if ((Provider.of<GlobalNotifier>(context).progress / 1000).floor() <= 1 &&
         Provider.of<GlobalNotifier>(context).playState) {
       getSongLengthSpotify();

@@ -1,6 +1,3 @@
-// ignore_for_file: deprecated_member_use, prefer_typing_uninitialized_variables,
-// ignore_for_file: import_of_legacy_library_into_null_safe
-
 import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -12,12 +9,13 @@ import 'package:music_pool_app/ui/body/bottom_app_bar.dart';
 import 'package:music_pool_app/ui/body/song_list.dart';
 import 'package:music_pool_app/ui/config.dart';
 import 'ui/drawer/drawer.dart';
-import 'ui/body/platform/platform_buttons.dart';
+import 'ui/body/add_song_button.dart';
 import 'package:provider/provider.dart';
 
-// leave here in case of errors
+// only needed in the case of web app
 import 'firebase_options.dart';
 
+// main method for running the flutter application
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -39,24 +37,16 @@ void main() async {
   );
 }
 
+// class for building the home page
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  // This widget is the root of the application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'MusicPoolApp',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         brightness: Brightness.dark,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -83,14 +73,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
-  var timer;
+  // timer made for refreshing the user spotify login every hour(best made by using the refresh token)
+  late Timer timer;
 
   @override
   void initState() {
     super.initState();
-    // simple way of refreshing the token
-    // by creating a new one
-    // probably not good
+    // simple way of refreshing the token, should use refresh token instead
     timer = Timer.periodic(const Duration(seconds: 3600), (Timer t) {
       try {
         if (SpotifyController.connectedSpotify) {
@@ -105,7 +94,7 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
   @override
   void dispose() {
     SpotifyController.pause();
-    timer?.cancel();
+    timer.cancel();
     super.dispose();
   }
 
@@ -134,14 +123,13 @@ class MyHomePageState extends State<MyHomePage> with ChangeNotifier {
       ),
       bottomNavigationBar: Container(
         color: Config.back2,
-        // WOULD BE BETTER TO BUILD ONE EVERYTIME WE PLAY SOMETHING
         child: const SongBottomAppBar(),
       ),
       body: Container(
         color: Config.back2,
         child: ListView(
           children: const [
-            MusicAddButtons(),
+            AddSongButton(),
             SongList(),
           ],
         ),

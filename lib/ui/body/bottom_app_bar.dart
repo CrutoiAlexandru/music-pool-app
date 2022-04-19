@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +6,20 @@ import 'package:music_pool_app/platform_controller/spotify/spotify_controller.da
 import 'package:music_pool_app/ui/config.dart';
 import 'package:music_pool_app/ui/secondPage/player/player.dart';
 import 'package:music_pool_app/ui/secondPage/player/player_state.dart';
-import 'package:music_pool_app/ui/secondPage/secondPage.dart';
+import 'package:music_pool_app/ui/secondPage/second_page.dart';
 import 'package:provider/provider.dart';
 import 'package:music_pool_app/global/session/session.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
+// class for creating the bottom app bar
+// Spotify show:
+//    track: icon, name, artist
+//    progress bar
+//    play button
+// Youtube show:
+//    youtube player
+//    next and previous buttons
+//    video title
 class SongBottomAppBar extends StatefulWidget {
   const SongBottomAppBar({Key? key}) : super(key: key);
 
@@ -21,9 +28,11 @@ class SongBottomAppBar extends StatefulWidget {
 }
 
 class _SongBottomAppBar extends State<SongBottomAppBar> {
-  var database;
-  int index = -1;
-  var _controller;
+  // the stream of data from Firestore
+  late Stream database;
+  // the youtube player controller meant for retaining data about the video
+  // this way we can controll which video we play, pause, etc...
+  late YoutubePlayerController _controller;
 
   @override
   void initState() {
@@ -42,14 +51,39 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
 
   // autoplay method to skip to next song
   autoPlayNext(snapshot) {
+    if (snapshot.data!.docs
+            .toList()[
+                Provider.of<GlobalNotifier>(context, listen: false).playing + 1]
+            .data()['platform'] ==
+        'spotify') {
+      if (!SpotifyController.connectedSpotify) {
+        // show a message that the user is not authenticated to spotify
+        return showDialog(
+          context: context,
+          builder: (BuildContext context) => const AlertDialog(
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: Config.colorStyle),
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+            ),
+            backgroundColor: Config.back2,
+            title: Text(
+              'You are not logged in to Spotify!',
+              style: TextStyle(color: Config.colorStyle),
+            ),
+          ),
+        );
+      }
+    }
+
     Provider.of<GlobalNotifier>(context, listen: false).setPlaying(
         Provider.of<GlobalNotifier>(context, listen: false).playing + 1);
     if (snapshot.data!.docs
-                .toList()[
-                    Provider.of<GlobalNotifier>(context, listen: false).playing]
-                .data()['platform'] ==
-            'spotify' &&
-        Provider.of<GlobalNotifier>(context, listen: false).connectedSpotify) {
+            .toList()[
+                Provider.of<GlobalNotifier>(context, listen: false).playing]
+            .data()['platform'] ==
+        'spotify') {
       SpotifyController.play(snapshot.data!.docs
           .toList()[Provider.of<GlobalNotifier>(context, listen: false).playing]
           .data()['playback_uri']);
@@ -57,16 +91,16 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
     Provider.of<GlobalNotifier>(context, listen: false).setPlayingState(true);
   }
 
+  // method for building/rebuilding the youtube player controller with current data
   buildYController(snapshot) {
     _controller = YoutubePlayerController(
       initialVideoId: snapshot.data!.docs
           .toList()[Provider.of<GlobalNotifier>(context).playing]
           .data()['playback_uri'],
-      // flags: const YoutubePlayerFlags(
       params: const YoutubePlayerParams(
-        // still doesn't work on web???
+        // not supported on web?
         autoPlay: true,
-        // this enables autoplay to work
+        // this enables autoplay to work on android
         desktopMode: true,
         showControls: true,
         loop: false,
@@ -132,10 +166,6 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
               'youtube') {
             buildYController(snapshot);
             SpotifyController.pause();
-          } else {
-            if (_controller != null) {
-              _controller.reset();
-            }
           }
 
           return Wrap(
@@ -368,6 +398,8 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
   }
 }
 
+// route creted for going to the second page(the spotify player)
+// this is only for spotify in order to show more optionality in the user controlls
 Route _createRoute() {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => const SecondPage(),
