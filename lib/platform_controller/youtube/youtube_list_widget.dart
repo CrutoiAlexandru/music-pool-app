@@ -10,7 +10,7 @@ Widget listItemYT(snapshot, context, index) {
     margin: const EdgeInsets.only(top: 10),
     child: TextButton(
       onPressed: () {
-        // WHEN PRESSED JUST OPEN THE VIDEO PLAYER WITH AUTOPLAY ON
+        // WHEN PRESSED JUST OPEN THE VIDEO PLAYER WITH AUTO PLAY ON
         if (!Provider.of<GlobalNotifier>(context, listen: false).playState ||
             Provider.of<GlobalNotifier>(context, listen: false).playing !=
                 index) {

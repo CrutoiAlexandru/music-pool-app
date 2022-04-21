@@ -201,7 +201,7 @@ class _AddSongButton extends State<AddSongButton> {
                 TextButton(
                   style: TextButton.styleFrom(
                       primary: Config.colorStyle,
-                      backgroundColor: Config.colorStyleOposite),
+                      backgroundColor: Config.colorStyleOpposite),
                   onPressed: () => Navigator.pop(context, 'Cancel'),
                   child: const Text(
                     'Cancel',
@@ -376,7 +376,9 @@ class _AddSongButton extends State<AddSongButton> {
       String icon, String platform) async {
     // if the user is in the default session we cannot add anything because there is nowhere to add to
     if (session == 'default') {
-      print('no session');
+      if (kDebugMode) {
+        print('no session');
+      }
       // inform the user that he's not in a session
       return showDialog(
         context: context,
@@ -399,7 +401,7 @@ class _AddSongButton extends State<AddSongButton> {
     // if we set to order by order and the id to order it somehow fixes the order in the db?
     if (Provider.of<GlobalNotifier>(context, listen: false).playlistSize > 0) {
       var aux = await database.orderBy('order').get();
-      var lastId = await aux.docs[
+      var lastId = aux.docs[
           Provider.of<GlobalNotifier>(context, listen: false).playlistSize - 1];
       Provider.of<GlobalNotifier>(context, listen: false)
           .setOrder(lastId['order']);
@@ -416,28 +418,36 @@ class _AddSongButton extends State<AddSongButton> {
             .order
             .toString())
         .set({
-          // track name
-          'track': name,
-          // track artist(only spotify)
-          'artist': artist,
-          // track playback uri(or video id for youtube)
-          'playback_uri': playbackUri,
-          // track icon
-          'icon': icon,
-          // the platform from which the track was added
-          'platform': platform,
-          // the order maintained to be able to order the items in the list
-          'order': Provider.of<GlobalNotifier>(context, listen: false).order
-        })
-        .then((value) => print('Added song'))
-        .catchError((error) => print("Failed to add data: $error"));
+      // track name
+      'track': name,
+      // track artist(only spotify)
+      'artist': artist,
+      // track playback uri(or video id for youtube)
+      'playback_uri': playbackUri,
+      // track icon
+      'icon': icon,
+      // the platform from which the track was added
+      'platform': platform,
+      // the order maintained to be able to order the items in the list
+      'order': Provider.of<GlobalNotifier>(context, listen: false).order
+    }).then((value) {
+      if (kDebugMode) {
+        print('Added song');
+      }
+    }).catchError((error) {
+      if (kDebugMode) {
+        print("Failed to add data: $error");
+      }
+    });
   }
 
-  // method for updating the search result everytime the user types a new input
+  // method for updating the search result every time the user types a new input
   void isEntered() async {
-    // do nothin if there is no input
+    // do nothing if there is no input
     if (input.isEmpty) {
-      print('No input');
+      if (kDebugMode) {
+        print('No input');
+      }
       setState(() {
         requiredSongList.clear();
       });
@@ -455,7 +465,9 @@ class _AddSongButton extends State<AddSongButton> {
       // check for connection
       if (!Provider.of<GlobalNotifier>(context, listen: false)
           .connectedSpotify) {
-        print('Not connectedSpotify to spotify');
+        if (kDebugMode) {
+          print('Not connectedSpotify to spotify');
+        }
         // inform the user that he's not connected to spotify
         return showDialog(
           context: context,
@@ -511,7 +523,9 @@ class _AddSongButton extends State<AddSongButton> {
       // check for connection
       if (!Provider.of<GlobalNotifier>(context, listen: false)
           .connectedYouTube) {
-        print('Not connectedSpotify to youtube');
+        if (kDebugMode) {
+          print('Not connectedSpotify to youtube');
+        }
         // inform the user that he's not connected to youtube
         return showDialog(
           context: context,

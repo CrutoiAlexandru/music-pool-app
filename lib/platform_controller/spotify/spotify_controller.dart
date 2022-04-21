@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:music_pool_app/.config_for_app.dart';
 import 'package:spotify_sdk/spotify_sdk.dart';
@@ -7,7 +8,7 @@ import 'package:http/http.dart' as http;
 // WEB ONLY LIBRARIES MUST BE REMOVED BEFORE ANDROID BUILD
 import 'package:spotify_sdk/spotify_sdk_web.dart';
 
-// class that handles all methods concerning spotify: connection, audio playback, data receving
+// class that handles all methods concerning spotify: connection, audio playback, data receiving
 class SpotifyController {
   // boolean for knowing if we connected to spotify
   static bool connectedSpotify = false;
@@ -17,7 +18,7 @@ class SpotifyController {
   static String redirectUrl = 'https://music-pool-app-50127.web.app/auth.html';
   // String for out spotify token used to transactions with spotify
   static String token = '';
-  // player, more specificaly used for creating the web player(diferent from the android player which is the app installed on the mobile)
+  // player, more specifically used for creating the web player(different from the android player which is the app installed on the mobile)
   static late Player player;
 
   // method for searching for an audio
@@ -64,7 +65,9 @@ class SpotifyController {
             'user-modify-playback-state',
       );
       connectedSpotify = true;
-      print('Got token: $authenticationToken');
+      if (kDebugMode) {
+        print('Got token: $authenticationToken');
+      }
       return authenticationToken;
     } on PlatformException catch (e) {
       return Future.error('$e.code: $e.message');
@@ -86,19 +89,27 @@ class SpotifyController {
     );
 
     player.addListener("not_ready", (e) {
-      print("Device ID has gone offline $e");
+      if (kDebugMode) {
+        print("Device ID has gone offline $e");
+      }
     });
 
     player.addListener("initialization_error", (message) {
-      print(message);
+      if (kDebugMode) {
+        print(message);
+      }
     });
 
     player.addListener("authentication_error", (message) {
-      print(message);
+      if (kDebugMode) {
+        print(message);
+      }
     });
 
     player.addListener("account_error", (message) {
-      print(message);
+      if (kDebugMode) {
+        print(message);
+      }
     });
 
     player.connect();
@@ -114,7 +125,9 @@ class SpotifyController {
         redirectUrl: redirectUrl,
         accessToken: token,
       );
-      print(result);
+      if (kDebugMode) {
+        print(result);
+      }
       setStatus(result
           ? 'connect to spotify successful'
           : 'connect to spotify failed');
@@ -154,7 +167,7 @@ class SpotifyController {
   }
 
   // method for resuming the audio
-  // diferent than play, play starts the audio from 0
+  // different than play, play starts the audio from 0
   static Future<void> resume() async {
     try {
       await SpotifySdk.resume();
@@ -180,6 +193,8 @@ class SpotifyController {
   // testing method
   static void setStatus(String code, {String? message}) {
     var text = message ?? '';
-    print('$code$text');
+    if (kDebugMode) {
+      print('$code$text');
+    }
   }
 }

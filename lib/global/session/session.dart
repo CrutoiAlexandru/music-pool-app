@@ -63,7 +63,7 @@ class SessionNotifier extends ChangeNotifier {
   // as data is loaded in the session based on the session(code)
   leaveSession() {
     session = '';
-    // when leaving we have to pause the independent player manually as discused above^
+    // when leaving we have to pause the independent player manually as discussed above^
     SpotifyController.pause();
     notifyListeners();
   }
@@ -141,7 +141,7 @@ class _SessionWidget extends State<Session> {
                     TextButton(
                       style: TextButton.styleFrom(
                           primary: Config.colorStyle,
-                          backgroundColor: Config.colorStyleOposite),
+                          backgroundColor: Config.colorStyleOpposite),
                       onPressed: () => Navigator.pop(context, 'Cancel'),
                       child: const Text('Cancel'),
                     ),

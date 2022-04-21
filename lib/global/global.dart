@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// GlobalNotifier is a ChangeNotifier meant for handling all global data accross our application
-// this is more diferent data that is needed live accross multiple screens and widgets
+// GlobalNotifier is a ChangeNotifier meant for handling all global data across our application
+// this is more different data that is needed live across multiple screens and widgets
 class GlobalNotifier extends ChangeNotifier {
   // the number in queue of the song playing
   int playing = -1;
@@ -58,13 +58,13 @@ class GlobalNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  // method for setting globaly the duration of an audio source
+  // method for setting globally the duration of an audio source
   setDuration(duration) {
     this.duration = duration;
     notifyListeners();
   }
 
-  // method for setting globaly the progress of an audio source
+  // method for setting globally the progress of an audio source
   setProgress(progress) {
     this.progress = progress;
     notifyListeners();
@@ -83,7 +83,7 @@ class GlobalNotifier extends ChangeNotifier {
   }
 
   // reset the playing index to -1
-  // this is a number that lets our widgets know notghin is playing because we start ordering our queue starting with 0
+  // this is a number that lets our widgets know nothing is playing because we start ordering our queue starting with 0
   resetNumber() {
     playing = -1;
     notifyListeners();

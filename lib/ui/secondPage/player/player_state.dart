@@ -43,7 +43,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     super.dispose();
   }
 
-  // method for retrieving the song length everytime the song changes
+  // method for retrieving the song length every time the song changes
   getSongLengthSpotify() async {
     var url = Uri.https('api.spotify.com', '/v1/me/player');
     final res = await http.get(url,
@@ -58,14 +58,14 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
   }
 
   // this way we get the progress of our song every second
-  // we do it this way because the stream from spotify sdk about playerstate does not currently update
+  // we do it this way because the stream from spotify sdk about player state does not currently update
   // even though there will be a lot of calls to spotify api
   // more precise it would be for even more often calls?
   setTimerSpotify() {
     timer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) async {
-        var body;
+        Map body;
         var url = Uri.https('api.spotify.com', '/v1/me/player');
         final res = await http.get(url,
             headers: {'Authorization': 'Bearer ${SpotifyController.token}'});
@@ -116,7 +116,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
       Provider.of<GlobalNotifier>(context, listen: false).setOver(true);
     }
 
-    // autoplay method to skip to next song
+    // auto play method to skip to next song
     autoPlayNext(snapshot) {
       Provider.of<GlobalNotifier>(context, listen: false).setPlaying(
           Provider.of<GlobalNotifier>(context, listen: false).playing + 1);
@@ -145,7 +145,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
     }
 
     // shouldn't execute when playing from yt
-    // everytime the song changes get its length
+    // every time the song changes get its length
     // executes too many times because of the way providers work
     if ((Provider.of<GlobalNotifier>(context).progress / 1000).floor() <= 1 &&
         Provider.of<GlobalNotifier>(context).playState) {
@@ -168,7 +168,7 @@ class _BuildPlayerStateWidget extends State<BuildPlayerStateWidget> {
 
         // when song is over play next song in queue
         if (Provider.of<GlobalNotifier>(context).over) {
-          // currently the method gets executed while building, not ok but works in case of not being able to wrok around it
+          // currently the method gets executed while building, not ok but works in case of not being able to work around it
           autoPlayNext(snapshot);
           Provider.of<GlobalNotifier>(context, listen: false).setOver(false);
         }

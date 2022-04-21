@@ -21,8 +21,8 @@ Widget listItemSpot(snapshot, context, index) {
                 index) {
               SpotifyController.resume();
             } else {
-              // everytime a song is played we need to check for the platform to play from
-              // this is set when we add the song to our queue/databasecd
+              // every time a song is played we need to check for the platform to play from
+              // this is set when we add the song to our queue/database
               if (snapshot.data!.docs.toList()[index].data()['platform'] ==
                   'spotify') {
                 SpotifyController.play(
@@ -86,7 +86,7 @@ Widget listItemSpot(snapshot, context, index) {
                               color: Config.colorStyle1,
                               overflow: TextOverflow.ellipsis)
                           : const TextStyle(
-                              color: Config.colorStyle2,
+                              color: Config.colorStyle,
                               overflow: TextOverflow.ellipsis)
                       : const TextStyle(
                           color: Color.fromARGB(200, 255, 255, 255),
@@ -102,7 +102,7 @@ Widget listItemSpot(snapshot, context, index) {
                     ? snapshot.data!.docs.toList()[index].data()['platform'] ==
                             'spotify'
                         ? const TextStyle(color: Config.colorStyle1Dark)
-                        : const TextStyle(color: Config.colorStyle2Dark)
+                        : const TextStyle(color: Config.colorStyleDark)
                     : const TextStyle(
                         color: Color.fromARGB(150, 255, 255, 255),
                       ),

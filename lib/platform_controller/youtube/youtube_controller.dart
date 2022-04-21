@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:googleapis/youtube/v3.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:http/http.dart';
 import 'package:music_pool_app/.config_for_app.dart';
 
-// class that handles all methods concerning youtube: connection, data receving
+// class that handles all methods concerning youtube: connection, data receiving
 class YoutubeController {
   // client for connecting to google api
   static late Client httpClient;
@@ -18,12 +19,14 @@ class YoutubeController {
     clientId: GoogleConfig.clientID,
   );
 
-  // method for authenticatign to google and connecting to the youtube api
+  // method for authenticating to google and connecting to the youtube api
   static apiConnect() async {
     try {
       await _googleSignIn.signIn();
     } catch (error) {
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
     }
 
     httpClient = (await _googleSignIn.authenticatedClient())!;
@@ -36,7 +39,9 @@ class YoutubeController {
     try {
       await _googleSignIn.disconnect();
     } catch (error) {
-      print(error);
+      if (kDebugMode) {
+        print(error);
+      }
     }
   }
 

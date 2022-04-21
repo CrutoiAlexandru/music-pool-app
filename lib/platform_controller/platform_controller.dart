@@ -133,7 +133,7 @@ class _PlatformController extends State<PlatformController> {
             style: TextButton.styleFrom(
               primary: Config.colorStyle,
               minimumSize: const Size(280, 40),
-              backgroundColor: Config.colorStyleOposite,
+              backgroundColor: Config.colorStyleOpposite,
             ),
             child: const Text(
               'Log out',

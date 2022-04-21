@@ -31,7 +31,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
   // the stream of data from Firestore
   late Stream database;
   // the youtube player controller meant for retaining data about the video
-  // this way we can controll which video we play, pause, etc...
+  // this way we can control which video we play, pause, etc...
   late YoutubePlayerController _controller;
 
   @override
@@ -49,7 +49,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
     super.dispose();
   }
 
-  // autoplay method to skip to next song
+  // auto play method to skip to next song
   autoPlayNext(snapshot) {
     if (snapshot.data!.docs
             .toList()[
@@ -100,7 +100,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
       params: const YoutubePlayerParams(
         // not supported on web?
         autoPlay: true,
-        // this enables autoplay to work on android
+        // this enables auto play to work on android
         desktopMode: true,
         showControls: true,
         loop: false,
@@ -202,7 +202,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                       children: [
                         if (kIsWeb) const SizedBox(width: 10),
                         // only build the icon for spotify
-                        // for youtube we will show a player to controll the video
+                        // for youtube we will show a player to control the video
                         snapshot.data!.docs
                                     .toList()[
                                         Provider.of<GlobalNotifier>(context)
@@ -336,7 +336,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                                 ),
                       ],
                     ),
-                    // youtube value builder for autoplay support
+                    // youtube value builder for auto play support
                     if (snapshot.data!.docs
                             .toList()[
                                 Provider.of<GlobalNotifier>(context).playing]
@@ -346,7 +346,7 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
                         controller: _controller,
                         builder: (context, value) {
                           if (value.playerState == PlayerState.ended) {
-                            // when the video is over autoplay next in queue
+                            // when the video is over auto play next in queue
                             autoPlayNext(snapshot);
                           }
 
@@ -398,8 +398,8 @@ class _SongBottomAppBar extends State<SongBottomAppBar> {
   }
 }
 
-// route creted for going to the second page(the spotify player)
-// this is only for spotify in order to show more optionality in the user controlls
+// route created for going to the second page(the spotify player)
+// this is only for spotify in order to show more optionality in the user controls
 Route _createRoute() {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) => const SecondPage(),
