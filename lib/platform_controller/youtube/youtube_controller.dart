@@ -46,10 +46,11 @@ class YoutubeController {
   }
 
   // method for receiving a search list result for our query
-  // gets the top 5 results for our video search
+  // gets the top [x] results for our video search
   static searchFor(String input) async {
     var list = await youTubeApi.search.list(
       ['id,snippet'],
+      maxResults: 10,
       q: input,
     );
     // only return the items, this is the data we are interested in

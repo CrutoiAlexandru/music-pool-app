@@ -13,7 +13,7 @@ import 'package:music_pool_app/ui/config.dart';
 // class that creates a button for adding music(audio/video) from Spotify or YouTube
 // the user can first choose a platform
 // the user can search for such audio source and retrieve live data on each type
-// the user gets a top 5 list from the platform chosen
+// the user gets a list with top results from the platform chosen
 // the user can add a certain audio source to the session queue by clicking the list item
 class AddSongButton extends StatefulWidget {
   const AddSongButton({Key? key}) : super(key: key);
@@ -31,7 +31,7 @@ class _AddSongButton extends State<AddSongButton> {
   // if the user is in no session the default session is 'default'
   // this way we know when the user is in the default session to not add any songs
   String session = 'default';
-  // the required audio list from a specific platform(top 5 search results)
+  // the required audio list from a specific platform(top search results)
   List requiredSongList = <Map>[];
 
   @override
@@ -158,7 +158,7 @@ class _AddSongButton extends State<AddSongButton> {
                         hintText: 'Enter a song',
                       ),
                     ),
-                    // LIST TOP 5 SONG RESULTS
+                    // LIST TOP SONG RESULTS
                     if (Provider.of<GlobalNotifier>(context)
                         .requiredSongList
                         .isNotEmpty)
@@ -491,9 +491,8 @@ class _AddSongButton extends State<AddSongButton> {
 
       final json = jsonDecode(res);
 
-      // populate requiredSongList with top 5 songs from Spotify
-      // list has also 5 items
-      for (int i = 0; i < 5; i++) {
+      // populate requiredSongList with top songs from Spotify
+      for (int i = 0; i < json['tracks']['items'].length; i++) {
         requiredSongList.add(
           {
             'track': json['tracks']['items'][i]['name'],
@@ -547,8 +546,7 @@ class _AddSongButton extends State<AddSongButton> {
 
       final res = await YoutubeController.searchFor(input);
 
-      // populate requiredSongList with top 5 songs from YouTube
-      // list has also 5 items
+      // populate requiredSongList with top songs from YouTube
       for (int i = 0; i < res.length; i++) {
         requiredSongList.add(
           {

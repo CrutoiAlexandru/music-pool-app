@@ -22,12 +22,12 @@ class SpotifyController {
   static late Player player;
 
   // method for searching for an audio
-  // retrieve first 5 audio results
+  // retrieve first [x] audio results
   static Future<String> search(audio) async {
     var url = Uri.https('api.spotify.com', '/v1/search', {
       'q': audio,
       'type': ['track'],
-      'limit': '5',
+      'limit': '10',
     });
     final res =
         await http.get(url, headers: {'Authorization': 'Bearer $token'});
