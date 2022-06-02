@@ -3,7 +3,7 @@ import 'package:googleapis/youtube/v3.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:http/http.dart';
-import 'package:music_pool_app/.config_for_app.dart';
+import 'package:MusicPool/.config_for_app.dart';
 
 // class that handles all methods concerning youtube: connection, data receiving
 class YoutubeController {

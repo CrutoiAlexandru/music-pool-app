@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(music_pool_app LANGUAGES CXX)
+project(MusicPool LANGUAGES CXX)
 
-set(BINARY_NAME "music_pool_app")
+set(BINARY_NAME "MusicPool")
 
 cmake_policy(SET CMP0063 NEW)
 

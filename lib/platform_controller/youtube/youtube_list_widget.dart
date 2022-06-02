@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:music_pool_app/global/global.dart';
-import 'package:music_pool_app/ui/config.dart';
+import 'package:MusicPool/global/global.dart';
+import 'package:MusicPool/ui/config.dart';
 import 'package:provider/provider.dart';
 
 // the ListView item for the youtube player in queue

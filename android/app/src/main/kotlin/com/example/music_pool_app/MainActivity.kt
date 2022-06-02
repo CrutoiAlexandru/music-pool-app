@@ -1,4 +1,4 @@
-package com.CrutoiAlexandru.music_pool_app
+package com.CrutoiAlexandru.MusicPool
 
 // import io.flutter.embedding.android.FlutterActivity
 

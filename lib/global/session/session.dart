@@ -2,11 +2,11 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:music_pool_app/global/global.dart';
-import 'package:music_pool_app/platform_controller/spotify/spotify_controller.dart';
+import 'package:MusicPool/global/global.dart';
+import 'package:MusicPool/platform_controller/spotify/spotify_controller.dart';
 import 'package:provider/provider.dart';
 
-import 'package:music_pool_app/ui/config.dart';
+import 'package:MusicPool/ui/config.dart';
 
 // the SessionNotifier class is a ChangeNotifier that handles all global data involving the current session the user is in
 // this is done in order to change data live across multiple screens(in app)

@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:music_pool_app/global/global.dart';
-import 'package:music_pool_app/platform_controller/spotify/spotify_controller.dart';
-import 'package:music_pool_app/ui/config.dart';
-import 'package:music_pool_app/ui/secondPage/player/player.dart';
-import 'package:music_pool_app/ui/secondPage/player/player_state.dart';
-import 'package:music_pool_app/ui/secondPage/second_page.dart';
+import 'package:MusicPool/global/global.dart';
+import 'package:MusicPool/platform_controller/spotify/spotify_controller.dart';
+import 'package:MusicPool/ui/config.dart';
+import 'package:MusicPool/ui/secondPage/player/player.dart';
+import 'package:MusicPool/ui/secondPage/player/player_state.dart';
+import 'package:MusicPool/ui/secondPage/second_page.dart';
 import 'package:provider/provider.dart';
-import 'package:music_pool_app/global/session/session.dart';
+import 'package:MusicPool/global/session/session.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 // class for creating the bottom app bar

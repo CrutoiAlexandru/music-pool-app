@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.CrutoiAlexandru" "\0"
-            VALUE "FileDescription", "music_pool_app" "\0"
+            VALUE "FileDescription", "MusicPool" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "music_pool_app" "\0"
+            VALUE "InternalName", "MusicPool" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2022 com.CrutoiAlexandru. All rights reserved." "\0"
-            VALUE "OriginalFilename", "music_pool_app.exe" "\0"
-            VALUE "ProductName", "music_pool_app" "\0"
+            VALUE "OriginalFilename", "MusicPool.exe" "\0"
+            VALUE "ProductName", "MusicPool" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

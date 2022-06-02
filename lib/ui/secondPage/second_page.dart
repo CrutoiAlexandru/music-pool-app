@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:music_pool_app/ui/config.dart';
-import 'package:music_pool_app/ui/secondPage/player/player.dart';
+import 'package:MusicPool/ui/config.dart';
+import 'package:MusicPool/ui/secondPage/player/player.dart';
 
 // class for building the second page containing the player(mostly for spotify)
 class SecondPage extends StatefulWidget {

@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:228130743588:android:19362cb3eb0dd7ef27ffb1",
         "android_client_info": {
-          "package_name": "com.CrutoiAlexandru.music_pool_app"
+          "package_name": "com.CrutoiAlexandru.MusicPool"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "228130743588-1nk9hk6gv9he31b8ao8l8gs0ct5ndahb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.CrutoiAlexandru.music_pool_app",
+            "package_name": "com.CrutoiAlexandru.MusicPool",
             "certificate_hash": "dd4e9381e75f35059f2a986d9943601fcebdb02e"
           }
         },

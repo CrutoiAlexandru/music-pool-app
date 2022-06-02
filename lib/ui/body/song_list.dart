@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:music_pool_app/global/global.dart';
-import 'package:music_pool_app/global/session/session.dart';
-import 'package:music_pool_app/platform_controller/spotify/spotify_controller.dart';
-import 'package:music_pool_app/platform_controller/youtube/youtube_list_widget.dart';
+import 'package:MusicPool/global/global.dart';
+import 'package:MusicPool/global/session/session.dart';
+import 'package:MusicPool/platform_controller/spotify/spotify_controller.dart';
+import 'package:MusicPool/platform_controller/youtube/youtube_list_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:music_pool_app/platform_controller/spotify/spotify_list_widget.dart';
+import 'package:MusicPool/platform_controller/spotify/spotify_list_widget.dart';
 
-import 'package:music_pool_app/ui/config.dart';
+import 'package:MusicPool/ui/config.dart';
 
 // class made for showing the widget containing the list of audio items
 // show data about the items and allows the user to play or paused certain audio

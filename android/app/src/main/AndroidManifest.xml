@@ -1,18 +1,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.CrutoiAlexandru.music_pool_app">
+    package="com.CrutoiAlexandru.MusicPool">
     <!-- Required to fetch data from the internet. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
    <application android:usesCleartextTraffic="true"
-        android:label="music_pool_app"
+        android:label="MusicPool"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity android:name="com.linusu.flutter_web_auth.CallbackActivity" >
             <intent-filter android:label="flutter_web_auth">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="com.CrutoiAlexandru.music_pool_app" />
+                <data android:scheme="com.CrutoiAlexandru.MusicPool" />
                 <!-- <data android:host="music-pool-app-50127.web.app" /> -->
             </intent-filter>
         </activity>

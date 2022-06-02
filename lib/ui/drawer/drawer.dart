@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:music_pool_app/global/session/session.dart';
-import 'package:music_pool_app/platform_controller/platform_controller.dart';
-import 'package:music_pool_app/ui/config.dart';
+import 'package:MusicPool/global/session/session.dart';
+import 'package:MusicPool/platform_controller/platform_controller.dart';
+import 'package:MusicPool/ui/config.dart';
 
 // class that creates a drawer widget
 // the drawer shows:
